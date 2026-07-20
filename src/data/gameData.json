@@ -1,0 +1,434 @@
+{
+  "meta": {
+    "id": "quiet_good_life",
+    "title": "Тихий хороший день",
+    "version": "0.1.0",
+    "startSceneId": "chapter1_scene1"
+  },
+  "initialState": {
+    "flags": {},
+    "stats": {
+      "care": 0,
+      "connection": 0,
+      "calm": 0
+    },
+    "inventory": [],
+    "visitedScenes": []
+  },
+  "chapters": [
+    {
+      "id": 1,
+      "title": "Дом и утро",
+      "image": "/images/chapter1.png",
+      "startScene": "chapter1_scene1"
+    },
+    {
+      "id": 2,
+      "title": "Люди и дела",
+      "image": "/images/chapter2.png",
+      "startScene": "chapter2_scene1"
+    },
+    {
+      "id": 3,
+      "title": "Спокойствие и выбор",
+      "image": "/images/chapter3.png",
+      "startScene": "chapter3_scene1"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "chapter1_scene1",
+      "chapter": 1,
+      "step": 1,
+      "title": "Пробуждение",
+      "text": "Утро мягко просачивается сквозь занавески. За окном слышны птицы, где-то скрипит калитка. В воздухе пахнет хлебом и травой.",
+      "choices": [
+        {
+          "id": "c1_s1_choice1",
+          "text": "Остаться в постели и прислушаться к утру",
+          "nextSceneId": "chapter1_scene2",
+          "effects": [
+            { "type": "change_stat", "stat": "calm", "delta": 1 },
+            { "type": "set_flag", "key": "started_slowly", "value": true }
+          ]
+        },
+        {
+          "id": "c1_s1_choice2",
+          "text": "Встать и открыть окно",
+          "nextSceneId": "chapter1_scene2",
+          "effects": [
+            { "type": "change_stat", "stat": "connection", "delta": 1 },
+            { "type": "set_flag", "key": "opened_window", "value": true }
+          ]
+        },
+        {
+          "id": "c1_s1_choice3",
+          "text": "Пойти готовить завтрак",
+          "nextSceneId": "chapter1_scene2",
+          "effects": [
+            { "type": "change_stat", "stat": "care", "delta": 1 },
+            { "type": "set_flag", "key": "made_breakfast", "value": true }
+          ]
+        },
+        {
+          "id": "c1_s1_choice4",
+          "text": "Выйти на улицу босиком",
+          "nextSceneId": "chapter1_scene2",
+          "effects": [
+            { "type": "change_stat", "stat": "calm", "delta": 1 },
+            { "type": "change_stat", "stat": "connection", "delta": 1 },
+            { "type": "set_flag", "key": "felt_grass", "value": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter1_scene2",
+      "chapter": 1,
+      "step": 2,
+      "title": "Первое дело",
+      "text": "День начинается неторопливо. Время будто не давит. Дом наполнен мягким светом, а за дверью уже просыпается деревня.",
+      "choices": [
+        {
+          "id": "c1_s2_choice1",
+          "text": "Приготовить что-то вкусное",
+          "nextSceneId": "chapter1_scene3",
+          "effects": [
+            { "type": "change_stat", "stat": "care", "delta": 1 },
+            { "type": "add_item", "item": "fresh_pie" }
+          ]
+        },
+        {
+          "id": "c1_s2_choice2",
+          "text": "Поздороваться с соседом",
+          "nextSceneId": "chapter1_scene3",
+          "effects": [
+            { "type": "change_stat", "stat": "connection", "delta": 1 },
+            { "type": "set_flag", "key": "greeted_neighbor", "value": true }
+          ]
+        },
+        {
+          "id": "c1_s2_choice3",
+          "text": "Навести порядок в доме",
+          "nextSceneId": "chapter1_scene3",
+          "effects": [
+            { "type": "change_stat", "stat": "calm", "delta": 1 },
+            { "type": "set_flag", "key": "cleaned_home", "value": true }
+          ]
+        },
+        {
+          "id": "c1_s2_choice4",
+          "text": "Посидеть с чаем",
+          "nextSceneId": "chapter1_scene3",
+          "effects": [{ "type": "change_stat", "stat": "calm", "delta": 2 }]
+        }
+      ]
+    },
+    {
+      "id": "chapter1_scene3",
+      "chapter": 1,
+      "step": 3,
+      "title": "Маленькое решение",
+      "text": "День уже набрал ход, но всё ещё остается мягким. Где-то смеются дети, на дороге слышны шаги, а в саду качаются ветви.",
+      "choices": [
+        {
+          "id": "c1_s3_choice1",
+          "text": "Помочь соседу донести корзину",
+          "nextSceneId": "chapter2_scene1",
+          "effects": [
+            { "type": "change_stat", "stat": "care", "delta": 1 },
+            { "type": "change_stat", "stat": "connection", "delta": 1 },
+            { "type": "set_flag", "key": "helped_neighbor", "value": true }
+          ]
+        },
+        {
+          "id": "c1_s3_choice2",
+          "text": "Заняться своим маленьким делом",
+          "nextSceneId": "chapter2_scene1",
+          "effects": [
+            { "type": "change_stat", "stat": "calm", "delta": 1 },
+            { "type": "set_flag", "key": "kept_personal_rhythm", "value": true }
+          ]
+        },
+        {
+          "id": "c1_s3_choice3",
+          "text": "Пойти гулять по тропинке",
+          "nextSceneId": "chapter2_scene1",
+          "effects": [
+            { "type": "change_stat", "stat": "connection", "delta": 1 },
+            { "type": "set_flag", "key": "walked_path", "value": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter2_scene1",
+      "chapter": 2,
+      "step": 1,
+      "title": "Площадь деревни",
+      "text": "Дорога приводит к небольшой площади. Кто-то раскладывает яблоки, кто-то чинит вывеску, кто-то просто стоит на солнце и разговаривает.",
+      "choices": [
+        {
+          "id": "c2_s1_choice1",
+          "text": "Заговорить с продавцом яблок",
+          "nextSceneId": "chapter2_scene2",
+          "effects": [
+            { "type": "change_stat", "stat": "connection", "delta": 1 },
+            { "type": "add_item", "item": "red_apple" }
+          ]
+        },
+        {
+          "id": "c2_s1_choice2",
+          "text": "Помочь починить вывеску",
+          "nextSceneId": "chapter2_scene2",
+          "effects": [
+            { "type": "change_stat", "stat": "care", "delta": 1 },
+            { "type": "set_flag", "key": "fixed_sign", "value": true }
+          ]
+        },
+        {
+          "id": "c2_s1_choice3",
+          "text": "Просто наблюдать за жизнью площади",
+          "nextSceneId": "chapter2_scene2",
+          "effects": [{ "type": "change_stat", "stat": "calm", "delta": 1 }]
+        }
+      ]
+    },
+    {
+      "id": "chapter2_scene2",
+      "chapter": 2,
+      "step": 2,
+      "title": "Небольшая просьба",
+      "text": "К тебе обращаются с простой просьбой: передать маленький сверток в дом у ручья. Ничего срочного, но человеку будет приятно.",
+      "choices": [
+        {
+          "id": "c2_s2_choice1",
+          "text": "Сразу согласиться",
+          "nextSceneId": "chapter2_scene3",
+          "effects": [
+            { "type": "change_stat", "stat": "care", "delta": 1 },
+            { "type": "add_item", "item": "small_parcel" },
+            { "type": "set_flag", "key": "accepted_parcel", "value": true }
+          ]
+        },
+        {
+          "id": "c2_s2_choice2",
+          "text": "Сначала уточнить дорогу",
+          "nextSceneId": "chapter2_scene3",
+          "effects": [
+            { "type": "change_stat", "stat": "connection", "delta": 1 },
+            { "type": "add_item", "item": "small_parcel" },
+            { "type": "set_flag", "key": "asked_for_directions", "value": true }
+          ]
+        },
+        {
+          "id": "c2_s2_choice3",
+          "text": "Вежливо отказаться и сохранить свой ритм",
+          "nextSceneId": "chapter2_scene3",
+          "effects": [
+            { "type": "change_stat", "stat": "calm", "delta": 1 },
+            { "type": "set_flag", "key": "kept_boundary", "value": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter2_scene3",
+      "chapter": 2,
+      "step": 3,
+      "title": "У ручья",
+      "text": "Ручей тихо бежит между травами. Воздух здесь прохладнее, а шум деревни почти исчезает.",
+      "choices": [
+        {
+          "id": "c2_s3_choice1",
+          "text": "Передать сверток, если он у тебя есть",
+          "nextSceneId": "chapter3_scene1",
+          "conditions": [{ "type": "has_item", "item": "small_parcel" }],
+          "effects": [
+            { "type": "change_stat", "stat": "care", "delta": 1 },
+            { "type": "change_stat", "stat": "connection", "delta": 1 },
+            { "type": "remove_item", "item": "small_parcel" },
+            { "type": "set_flag", "key": "delivered_parcel", "value": true }
+          ]
+        },
+        {
+          "id": "c2_s3_choice2",
+          "text": "Посидеть у воды",
+          "nextSceneId": "chapter3_scene1",
+          "effects": [
+            { "type": "change_stat", "stat": "calm", "delta": 2 },
+            { "type": "set_flag", "key": "rested_by_stream", "value": true }
+          ]
+        },
+        {
+          "id": "c2_s3_choice3",
+          "text": "Вернуться другой тропой",
+          "nextSceneId": "chapter3_scene1",
+          "effects": [
+            { "type": "change_stat", "stat": "connection", "delta": 1 },
+            { "type": "set_flag", "key": "took_new_path", "value": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter3_scene1",
+      "chapter": 3,
+      "step": 1,
+      "title": "Возвращение",
+      "text": "Солнце клонится к закату. Тени становятся длиннее, воздух пахнет дымком, травой и теплым деревом.",
+      "choices": [
+        {
+          "id": "c3_s1_choice1",
+          "text": "Вернуться домой",
+          "nextSceneId": "chapter3_scene2",
+          "effects": [{ "type": "change_stat", "stat": "calm", "delta": 1 }]
+        },
+        {
+          "id": "c3_s1_choice2",
+          "text": "Заглянуть к знакомым",
+          "nextSceneId": "chapter3_scene2",
+          "effects": [
+            { "type": "change_stat", "stat": "connection", "delta": 1 }
+          ]
+        },
+        {
+          "id": "c3_s1_choice3",
+          "text": "Остаться на улице до сумерек",
+          "nextSceneId": "chapter3_scene2",
+          "effects": [
+            { "type": "change_stat", "stat": "calm", "delta": 1 },
+            { "type": "change_stat", "stat": "connection", "delta": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter3_scene2",
+      "chapter": 3,
+      "step": 2,
+      "title": "Итог дня",
+      "text": "Вечер приносит ощущение завершенности. День не требовал подвигов, но оставил после себя след.",
+      "choices": [
+        {
+          "id": "c3_s2_choice1",
+          "text": "Вспомнить, кому сегодня стало легче",
+          "nextSceneId": "chapter3_scene3",
+          "effects": [{ "type": "change_stat", "stat": "care", "delta": 1 }]
+        },
+        {
+          "id": "c3_s2_choice2",
+          "text": "Вспомнить людей, с которыми пересекся день",
+          "nextSceneId": "chapter3_scene3",
+          "effects": [
+            { "type": "change_stat", "stat": "connection", "delta": 1 }
+          ]
+        },
+        {
+          "id": "c3_s2_choice3",
+          "text": "Вспомнить моменты тишины",
+          "nextSceneId": "chapter3_scene3",
+          "effects": [{ "type": "change_stat", "stat": "calm", "delta": 1 }]
+        }
+      ]
+    },
+    {
+      "id": "chapter3_scene3",
+      "chapter": 3,
+      "step": 3,
+      "title": "Точка покоя",
+      "text": "Наступает ночь. Дом становится тихим. За окном видны первые звезды, а внутри появляется чувство: день был прожит.",
+      "choices": [
+        {
+          "id": "c3_s3_choice1",
+          "text": "Лечь спать с чувством завершенности",
+          "nextSceneId": "ending_balanced",
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "ended_with_completion",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "c3_s3_choice2",
+          "text": "Посмотреть на звезды",
+          "nextSceneId": "ending_calm",
+          "conditions": [{ "type": "stat_gte", "stat": "calm", "value": 5 }],
+          "effects": [
+            { "type": "set_flag", "key": "ended_with_stars", "value": true }
+          ]
+        },
+        {
+          "id": "c3_s3_choice3",
+          "text": "Оставить у двери маленький подарок для соседа",
+          "nextSceneId": "ending_care",
+          "conditions": [{ "type": "stat_gte", "stat": "care", "value": 5 }],
+          "effects": [
+            { "type": "set_flag", "key": "ended_with_gift", "value": true }
+          ]
+        },
+        {
+          "id": "c3_s3_choice4",
+          "text": "Пойти на вечерний разговор у изгороди",
+          "nextSceneId": "ending_connection",
+          "conditions": [
+            { "type": "stat_gte", "stat": "connection", "value": 5 }
+          ],
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "ended_with_conversation",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ending_balanced",
+      "chapter": 0,
+      "step": 0,
+      "title": "Концовка: День прожит",
+      "text": "День завершился ровно и спокойно. В нем было достаточно света, простых дел и мягкого отдыха. Ничего не нужно исправлять. Ничего не нужно догонять.",
+      "image": "/images/ending_balanced.png",
+      "isEnding": true,
+      "endingType": "balanced",
+      "choices": []
+    },
+    {
+      "id": "ending_calm",
+      "chapter": 0,
+      "step": 0,
+      "title": "Концовка: Глубокий покой",
+      "text": "Ночь раскрылась тихо. Звезды казались близкими, а день — добрым и завершенным. Внутри осталось чистое ощущение покоя.",
+      "image": "/images/ending_calm.png",
+      "isEnding": true,
+      "endingType": "calm",
+      "choices": []
+    },
+    {
+      "id": "ending_care",
+      "chapter": 0,
+      "step": 0,
+      "title": "Концовка: Тихая забота",
+      "text": "Утром кто-то найдет маленький подарок у двери и улыбнется. День закончился не громким поступком, а простым следом доброты.",
+      "image": "/images/ending_care.png",
+      "isEnding": true,
+      "endingType": "care",
+      "choices": []
+    },
+    {
+      "id": "ending_connection",
+      "chapter": 0,
+      "step": 0,
+      "title": "Концовка: Связанный мир",
+      "text": "У изгороди горел теплый фонарь, звучали голоса, и вечер становился общим. Ты был не отдельно от мира, а внутри него.",
+      "image": "/images/ending_connection.png",
+      "isEnding": true,
+      "endingType": "connection",
+      "choices": []
+    }
+  ]
+}

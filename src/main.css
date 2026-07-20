@@ -1,0 +1,74 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Marck+Script&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-heading: "Marck Script", cursive;
+  --font-title: "Playfair Display", serif;
+  --font-text: "Inter", sans-serif;
+
+  --color-black: #080a14;
+  --color-grey-60: rgba(255, 255, 255, 0.06);
+
+  --color-light-blue: #dcdfe9;
+  --color-grey-blue: #767fa0;
+  --color-dark-blue: #12172a;
+  --color-grey: #c3c7db;
+
+  --color-grey-160: rgba(255, 255, 255, 0.16);
+
+  --text-xs: 1rem;
+  --text-sm: 1.125rem;
+  --text-md: 1.875rem;
+  --text-lg: 2rem;
+  --text-xl: 3.25rem;
+  --text-2xl: 5.25rem;
+
+  --leading-tight: 1.15;
+  --leading-normal: 1.4;
+  --leading-free: 1.6;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+
+  --ease-soft: cubic-bezier(0.2, 0.7, 0.3, 1);
+
+  --animate-fade-up: fade-up 0.55s var(--ease-soft) both;
+  --animate-scale-in: scale-in 0.6s var(--ease-soft) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.875rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Отключаем анимации появления, если система просит уменьшить движение.
+   animation-delay тоже сбрасываем: иначе ступенчатые задержки на кнопках
+   выбора продолжат держать их скрытыми (animation-fill-mode: both). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
