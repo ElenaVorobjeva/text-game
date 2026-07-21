@@ -41,7 +41,7 @@ export function GamePage({ onMainMenu, onChapterSelect }: Props) {
       ) : (
         <div
           key={scene.id}
-          className="flex grow animate-fade-up flex-col items-center justify-center gap-4 px-6 py-5"
+          className="animate-fade-up flex grow flex-col items-center justify-center gap-4 px-6 py-5"
         >
           <SceneView image={image} title={scene.title} text={scene.text} />
 

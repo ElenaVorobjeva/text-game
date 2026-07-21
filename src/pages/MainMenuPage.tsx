@@ -14,11 +14,11 @@ export function MainMenuPage({ onStart, onContinue, onChapterSelect }: Props) {
   return (
     <Main classes="gap-11">
       <div>
-        <h1 className="font-heading text-xl md:text-2xl leading-tight text-light-blue">
+        <h1 className="font-heading text-light-blue text-xl leading-tight md:text-2xl">
           Тихий хороший день
         </h1>
 
-        <p className="mx-auto mt-5 max-w-[40rem] text-sm leading-free text-grey-blue">
+        <p className="leading-free text-grey-blue mx-auto mt-5 max-w-[40rem] text-sm">
           Небольшая текстовая игра о мягком ритме жизни, простых решениях и
           спокойном дне.
         </p>

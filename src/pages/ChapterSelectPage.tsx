@@ -12,7 +12,7 @@ export function ChapterSelectPage({ onBack }: { onBack: () => void }) {
 
   return (
     <Main classes="gap-9">
-      <h1 className="text-lg font-bold text-light-blue">Выбор главы</h1>
+      <h1 className="text-light-blue text-lg font-bold">Выбор главы</h1>
 
       <div className="flex max-w-[56.25rem] flex-wrap justify-center gap-7">
         {chapters.map((chapterData, index) => {
