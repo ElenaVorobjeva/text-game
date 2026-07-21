@@ -14,12 +14,12 @@ export function ChapterCard({ id, title, image, disabled, onClick }: Props) {
       onClick={onClick}
     >
       <img
-        className="aspect-square w-70 max-w-full rounded-lg border border-grey-160 bg-stone-100 object-cover sm:w-45"
+        className="border-grey-160 aspect-square w-70 max-w-full rounded-lg border bg-stone-100 object-cover sm:w-45"
         src={image}
         alt={title}
       />
 
-      <span className="mt-3 max-w-70 text-[0.9375rem] leading-normal text-grey-blue sm:max-w-45">
+      <span className="text-grey-blue mt-3 max-w-70 text-[0.9375rem] leading-normal sm:max-w-45">
         {`Глава ${id}: ${title}${disabled ? " — закрыта" : ""}`}
       </span>
     </button>

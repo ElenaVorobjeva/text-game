@@ -9,7 +9,7 @@ type Props = {
 export function ChoiceList({ choices, onChoose }: Props) {
   if (choices.length === 0) {
     return (
-      <p className="text-[0.9375rem] text-grey-blue">Доступных действий нет.</p>
+      <p className="text-grey-blue text-[0.9375rem]">Доступных действий нет.</p>
     );
   }
 

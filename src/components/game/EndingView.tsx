@@ -17,20 +17,20 @@ export function EndingView({
   onChapterSelect,
 }: Props) {
   return (
-    <div className="flex grow animate-fade-up flex-col items-center justify-center gap-5.5 px-6 py-5 text-center">
+    <div className="animate-fade-up flex grow flex-col items-center justify-center gap-5.5 px-6 py-5 text-center">
       {image && (
         <img
-          className="block h-[min(22vh,11.25rem)] w-full max-w-[51.25rem] animate-scale-in rounded-sm object-cover"
+          className="animate-scale-in block h-[min(22vh,11.25rem)] w-full max-w-[51.25rem] rounded-sm object-cover"
           src={image}
           alt={title}
         />
       )}
 
-      <h2 className="font-heading text-xl leading-tight text-light-blue">
+      <h2 className="font-heading text-light-blue text-xl leading-tight">
         {title}
       </h2>
 
-      <p className="max-w-[37.5rem] text-[0.9375rem] leading-free text-grey-blue">
+      <p className="leading-free text-grey-blue max-w-[37.5rem] text-[0.9375rem]">
         {text}
       </p>
 
