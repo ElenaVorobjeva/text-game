@@ -4,6 +4,16 @@ export type GameStats = Record<StatKey, number>;
 
 export type GameFlags = Record<string, boolean>;
 
+export type ChapterSnapshot = Pick<
+  GameStateData,
+  "flags" | "stats" | "inventory"
+>;
+
+export type InitialGameState = Pick<
+  GameStateData,
+  "flags" | "stats" | "inventory" | "visitedScenes"
+>;
+
 export type GameStateData = {
   currentSceneId: string;
   flags: GameFlags;
@@ -12,6 +22,7 @@ export type GameStateData = {
   visitedScenes: string[];
   unlockedChapters: number[];
   unlockedEndings: string[];
+  gameStatistic: Record<number, ChapterSnapshot>;
 };
 
 export type GameData = {
@@ -21,12 +32,7 @@ export type GameData = {
     version: string;
     startSceneId: string;
   };
-  initialState: {
-    flags: GameFlags;
-    stats: GameStats;
-    inventory: string[];
-    visitedScenes: string[];
-  };
+  initialState: InitialGameState;
   chapters: Chapter[];
   scenes: Scene[];
 };

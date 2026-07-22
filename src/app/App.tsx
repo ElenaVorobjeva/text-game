@@ -14,7 +14,10 @@ export default function App() {
   return (
     <div className={layoutStyles}>
       {screen === "chapterSelect" && (
-        <ChapterSelectPage onBack={() => setScreen("mainMenu")} />
+        <ChapterSelectPage
+          onBack={() => setScreen("mainMenu")}
+          onChapterChosen={() => setScreen("game")}
+        />
       )}
 
       {screen === "game" && (

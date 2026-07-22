@@ -1,8 +1,12 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import type { GameStateData } from "../types/game";
-import { clearSave, loadGame, saveGame } from "./saveLoad";
-
-const SAVE_KEY = "quiet-good-life-save";
+import {
+  SAVE_KEY,
+  SAVE_VERSION,
+  clearSave,
+  loadGame,
+  saveGame,
+} from "./saveLoad";
 
 // Тесты не поднимают jsdom: localStorage подменяется минимальной заглушкой
 // в памяти. Как только появятся тесты компонентов, вместо неё будет environment.
@@ -32,6 +36,7 @@ function makeState(overrides: Partial<GameStateData> = {}): GameStateData {
     visitedScenes: ["chapter1_scene1", "chapter2_scene1"],
     unlockedChapters: [1, 2],
     unlockedEndings: [],
+    gameStatistic: {},
     ...overrides,
   };
 }
@@ -84,6 +89,80 @@ describe("loadGame", () => {
     loadGame();
 
     expect(localStorage.getItem(SAVE_KEY)).toBeNull();
+  });
+});
+
+describe("loadGame: format migration", () => {
+  test("stamps saves with the current format version", () => {
+    saveGame(makeState());
+
+    const raw = localStorage.getItem(SAVE_KEY) ?? "";
+
+    expect(JSON.parse(raw).version).toBe(SAVE_VERSION);
+  });
+
+  test("does not leak the version field into the game state", () => {
+    saveGame(makeState());
+
+    expect(loadGame()).not.toHaveProperty("version");
+  });
+
+  test("fills in fields missing from an older save", () => {
+    // Сохранение формата до появления снимков глав
+    localStorage.setItem(
+      SAVE_KEY,
+      JSON.stringify({
+        currentSceneId: "chapter2_scene1",
+        flags: {},
+        stats: { care: 1, connection: 1, calm: 1 },
+        inventory: [],
+        visitedScenes: ["chapter1_scene1", "chapter2_scene1"],
+        unlockedChapters: [1, 2],
+        unlockedEndings: [],
+      }),
+    );
+
+    const loaded = loadGame();
+
+    expect(loaded?.gameStatistic).toBeDefined();
+    expect(loaded?.stats).toEqual({ care: 1, connection: 1, calm: 1 });
+    expect(loaded?.unlockedChapters).toEqual([1, 2]);
+  });
+
+  test("refuses a save written by a newer build", () => {
+    saveGame(makeState());
+    const raw = JSON.parse(localStorage.getItem(SAVE_KEY) ?? "");
+    localStorage.setItem(
+      SAVE_KEY,
+      JSON.stringify({ ...raw, version: SAVE_VERSION + 1 }),
+    );
+
+    expect(loadGame()).toBeNull();
+    expect(localStorage.getItem(SAVE_KEY)).toBeNull();
+  });
+});
+
+describe("loadGame: content drift", () => {
+  test("refuses a save pointing at a scene that no longer exists", () => {
+    // Сцену переименовали в gameData.json, а сохранение осталось старым.
+    // Без этой проверки getSceneById падает прямо в рендере — белый экран.
+    saveGame(makeState({ currentSceneId: "chapter1_scene_removed" }));
+
+    expect(loadGame()).toBeNull();
+  });
+
+  test("drops such a save so the next load starts clean", () => {
+    saveGame(makeState({ currentSceneId: "chapter1_scene_removed" }));
+
+    loadGame();
+
+    expect(localStorage.getItem(SAVE_KEY)).toBeNull();
+  });
+
+  test("keeps a save whose scene still exists", () => {
+    saveGame(makeState({ currentSceneId: "chapter3_scene1" }));
+
+    expect(loadGame()?.currentSceneId).toBe("chapter3_scene1");
   });
 });
 
