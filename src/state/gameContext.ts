@@ -11,7 +11,9 @@ export type GameContextValue = {
   continueGame: () => void;
   resetGame: () => void;
   choose: (choice: Choice) => void;
-  chooseChapter: (chapter: Chapter) => void;
+  /** Возвращает false, если в главу нельзя перейти — тогда экран менять не нужно. */
+  chooseChapter: (chapter: Chapter) => boolean;
+  canEnterChapter: (chapterId: number) => boolean;
 };
 
 export const GameContext = createContext<GameContextValue | null>(null);

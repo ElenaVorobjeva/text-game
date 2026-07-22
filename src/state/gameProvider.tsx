@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import type { Chapter, Choice, GameStateData } from "../types/game";
 import {
+  canEnterChapter,
   createInitialGameState,
+  enterChapter,
   getAvailableChoices,
   getCurrentScene,
   makeChoice,
@@ -10,13 +12,14 @@ import { loadGame, saveGame, clearSave } from "../utils/saveLoad";
 import { GameContext } from "./gameContext";
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
-  const savedState = loadGame();
-
+  // Ленивые инициализаторы: loadGame читает localStorage и может его очистить,
+  // а побочным эффектам не место в теле рендера — React волен вызывать его
+  // повторно (в StrictMode так и происходит).
   const [gameState, setGameState] = useState<GameStateData>(
-    savedState ?? createInitialGameState(),
+    () => loadGame() ?? createInitialGameState(),
   );
 
-  const [hasSave, setHasSave] = useState(Boolean(savedState));
+  const [hasSave, setHasSave] = useState(() => Boolean(loadGame()));
 
   const scene = useMemo(() => getCurrentScene(gameState), [gameState]);
 
@@ -59,9 +62,16 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setHasSave(true);
   }
 
-  // TODO: механика перехода к выбранной главе — переключить currentSceneId
-  // на chapter.startScene и увести игрока на игровой экран.
-  function chooseChapter(_chapter: Chapter) {}
+  function chooseChapter(chapter: Chapter): boolean {
+    const next = enterChapter(chapter, gameState);
+
+    if (!next) return false;
+
+    saveGame(next);
+    setGameState(next);
+
+    return true;
+  }
 
   const value = {
     gameState,
@@ -73,6 +83,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     resetGame,
     choose,
     chooseChapter,
+    canEnterChapter: (chapterId: number) =>
+      canEnterChapter(chapterId, gameState),
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

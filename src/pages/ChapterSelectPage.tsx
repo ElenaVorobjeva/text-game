@@ -1,12 +1,16 @@
 import Button from "../components/base/Button";
 import Main from "../components/base/Main";
 import { ChapterCard } from "../components/chapters/ChapterCard";
-import gameData from "../data/gameData.json";
+import { gameData } from "../engine/gameEngine";
 import { useGame } from "../state/useGame";
 
-export function ChapterSelectPage({ onBack }: { onBack: () => void }) {
-  const { gameState, chooseChapter } = useGame();
-  const { unlockedChapters } = gameState;
+type Props = {
+  onBack: () => void;
+  onChapterChosen: () => void;
+};
+
+export function ChapterSelectPage({ onBack, onChapterChosen }: Props) {
+  const { chooseChapter, canEnterChapter } = useGame();
 
   const chapters = gameData.chapters;
 
@@ -17,7 +21,11 @@ export function ChapterSelectPage({ onBack }: { onBack: () => void }) {
       <div className="flex max-w-[56.25rem] flex-wrap justify-center gap-7">
         {chapters.map((chapterData, index) => {
           const { id, title, image } = chapterData;
-          const isUnlocked = unlockedChapters.includes(id);
+
+          // Доступность считается по наличию снимка, а не по unlockedChapters:
+          // у сохранений, мигрированных со старого формата, главы отмечены
+          // открытыми, но снимков для них нет — перейти туда всё равно нельзя.
+          const isAvailable = canEnterChapter(id);
 
           return (
             <div
@@ -29,9 +37,9 @@ export function ChapterSelectPage({ onBack }: { onBack: () => void }) {
                 id={id}
                 title={title}
                 image={image}
-                disabled={!isUnlocked}
+                disabled={!isAvailable}
                 onClick={() => {
-                  chooseChapter(chapterData);
+                  if (chooseChapter(chapterData)) onChapterChosen();
                 }}
               />
             </div>
