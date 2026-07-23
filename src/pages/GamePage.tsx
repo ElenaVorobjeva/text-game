@@ -33,9 +33,7 @@ export function GamePage() {
           title={scene.title}
           text={scene.text}
           onRestart={restart}
-          onChapterSelect={() => {
-            navigate("/chapters");
-          }}
+          onChapterSelect={() => navigate("/chapters")}
         />
       ) : (
         <div
