@@ -1,39 +1,25 @@
-import { useState } from "react";
 import { MainMenuPage } from "../pages/MainMenuPage";
 import { GamePage } from "../pages/GamePage";
 import { ChapterSelectPage } from "../pages/ChapterSelectPage";
-
-type Screen = "mainMenu" | "game" | "chapterSelect";
+import { Navigate, Route, Routes } from "react-router";
+import { useGame } from "../state/useGame";
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("mainMenu");
-
+  const { hasSave } = useGame();
   const layoutStyles =
     "flex min-h-screen flex-col bg-black font-text text-light-blue";
 
   return (
     <div className={layoutStyles}>
-      {screen === "chapterSelect" && (
-        <ChapterSelectPage
-          onBack={() => setScreen("mainMenu")}
-          onChapterChosen={() => setScreen("game")}
+      <Routes>
+        <Route path="/" element={<MainMenuPage />} />
+        <Route
+          path="/game"
+          element={hasSave ? <GamePage /> : <Navigate to="/" replace />}
         />
-      )}
-
-      {screen === "game" && (
-        <GamePage
-          onMainMenu={() => setScreen("mainMenu")}
-          onChapterSelect={() => setScreen("chapterSelect")}
-        />
-      )}
-
-      {screen === "mainMenu" && (
-        <MainMenuPage
-          onStart={() => setScreen("game")}
-          onContinue={() => setScreen("game")}
-          onChapterSelect={() => setScreen("chapterSelect")}
-        />
-      )}
+        <Route path="/chapters" element={<ChapterSelectPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </div>
   );
 }

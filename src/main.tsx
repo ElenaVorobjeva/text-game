@@ -4,15 +4,16 @@ import App from "./app/App.tsx";
 import { ErrorBoundary } from "./components/base/ErrorBoundary.tsx";
 import { GameProvider } from "./state/gameProvider.tsx";
 import "./main.css";
+import { HashRouter } from "react-router";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {/* Снаружи провайдера: падение при загрузке сохранения тоже должно
-        показывать экран ошибки, а не пустую страницу. */}
     <ErrorBoundary>
-      <GameProvider>
-        <App />
-      </GameProvider>
+      <HashRouter>
+        <GameProvider>
+          <App />
+        </GameProvider>
+      </HashRouter>
     </ErrorBoundary>
   </StrictMode>,
 );
