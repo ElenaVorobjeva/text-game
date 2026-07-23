@@ -38,11 +38,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   function continueGame() {
     const saved = loadGame();
-
-    if (!saved) return;
+    if (!saved) return false;
 
     setGameState(saved);
     setHasSave(true);
+
+    return true;
   }
 
   function resetGame() {

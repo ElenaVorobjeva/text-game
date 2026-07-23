@@ -10,6 +10,7 @@
 - React 19 + TypeScript
 - Vite 8
 - Tailwind CSS v4 (токены дизайн-системы в `@theme`)
+- react-router (HashRouter)
 
 ## Запуск
 
@@ -37,7 +38,7 @@ npm run format:check # prettier --check (только проверить)
 
 ```
 src/
-├── app/App.tsx           # переключение экранов (роутера нет)
+├── app/App.tsx           # маршруты экранов (react-router, HashRouter)
 ├── pages/                # экраны: меню, выбор главы, игра
 ├── components/
 │   ├── base/             # Button, Link, Main — общие примитивы

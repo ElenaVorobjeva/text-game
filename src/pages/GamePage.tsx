@@ -4,13 +4,10 @@ import { SceneView } from "../components/game/SceneView";
 import { ChoiceList } from "../components/game/ChoiceList";
 import { EndingView } from "../components/game/EndingView";
 import { getSceneImage } from "../engine/gameEngine";
+import { useNavigate } from "react-router";
 
-type Props = {
-  onMainMenu: () => void;
-  onChapterSelect: () => void;
-};
-
-export function GamePage({ onMainMenu, onChapterSelect }: Props) {
+export function GamePage() {
+  const navigate = useNavigate();
   const { scene, choices, choose, resetGame } = useGame();
   const image = getSceneImage(scene);
 
@@ -18,14 +15,14 @@ export function GamePage({ onMainMenu, onChapterSelect }: Props) {
 
   const restart = () => {
     resetGame();
-    onMainMenu();
+    navigate("/");
   };
 
   return (
     <div className="flex grow flex-col">
       <GameHeader
-        onMainMenu={onMainMenu}
-        onChapterSelect={onChapterSelect}
+        onMainMenu={() => navigate("/")}
+        onChapterSelect={() => navigate("/chapters")}
         onRestart={restart}
       />
 
@@ -36,7 +33,7 @@ export function GamePage({ onMainMenu, onChapterSelect }: Props) {
           title={scene.title}
           text={scene.text}
           onRestart={restart}
-          onChapterSelect={onChapterSelect}
+          onChapterSelect={() => navigate("/chapters")}
         />
       ) : (
         <div

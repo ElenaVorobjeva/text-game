@@ -1,15 +1,11 @@
+import { useNavigate } from "react-router";
 import Button from "../components/base/Button";
 import Main from "../components/base/Main";
 import { useGame } from "../state/useGame";
 
-type Props = {
-  onStart: () => void;
-  onContinue: () => void;
-  onChapterSelect: () => void;
-};
-
-export function MainMenuPage({ onStart, onContinue, onChapterSelect }: Props) {
+export function MainMenuPage() {
   const { hasSave, startNewGame, resetGame, continueGame } = useGame();
+  const navigate = useNavigate();
 
   return (
     <Main classes="gap-11">
@@ -31,7 +27,7 @@ export function MainMenuPage({ onStart, onContinue, onChapterSelect }: Props) {
             width="fullOnMobile"
             onClick={() => {
               startNewGame();
-              onStart();
+              navigate("/game");
             }}
           >
             Старт
@@ -44,8 +40,8 @@ export function MainMenuPage({ onStart, onContinue, onChapterSelect }: Props) {
               size="lg"
               width="fullOnMobile"
               onClick={() => {
-                continueGame();
-                onContinue();
+                const shouldNavigate = continueGame();
+                if (shouldNavigate) navigate("/game");
               }}
             >
               Продолжить
@@ -57,13 +53,19 @@ export function MainMenuPage({ onStart, onContinue, onChapterSelect }: Props) {
               onClick={() => {
                 resetGame();
                 startNewGame();
-                onStart();
+                navigate("/game");
               }}
             >
               Начать сначала
             </Button>
 
-            <Button size="lg" width="fullOnMobile" onClick={onChapterSelect}>
+            <Button
+              size="lg"
+              width="fullOnMobile"
+              onClick={() => {
+                navigate("/chapters");
+              }}
+            >
               Выбрать главу
             </Button>
           </>

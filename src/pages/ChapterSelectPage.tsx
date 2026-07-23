@@ -1,18 +1,22 @@
+import { useLocation, useNavigate } from "react-router";
 import Button from "../components/base/Button";
 import Main from "../components/base/Main";
 import { ChapterCard } from "../components/chapters/ChapterCard";
 import { gameData } from "../engine/gameEngine";
 import { useGame } from "../state/useGame";
 
-type Props = {
-  onBack: () => void;
-  onChapterChosen: () => void;
-};
+export function ChapterSelectPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-export function ChapterSelectPage({ onBack, onChapterChosen }: Props) {
   const { chooseChapter, canEnterChapter } = useGame();
 
   const chapters = gameData.chapters;
+
+  function goBack() {
+    if (location.key !== "default") navigate(-1);
+    else navigate("/");
+  }
 
   return (
     <Main classes="gap-9">
@@ -39,7 +43,7 @@ export function ChapterSelectPage({ onBack, onChapterChosen }: Props) {
                 image={image}
                 disabled={!isAvailable}
                 onClick={() => {
-                  if (chooseChapter(chapterData)) onChapterChosen();
+                  if (chooseChapter(chapterData)) navigate("/game");
                 }}
               />
             </div>
@@ -47,7 +51,7 @@ export function ChapterSelectPage({ onBack, onChapterChosen }: Props) {
         })}
       </div>
 
-      <Button width="fullOnMobile" onClick={onBack}>
+      <Button width="fullOnMobile" onClick={goBack}>
         Назад
       </Button>
     </Main>

@@ -8,7 +8,7 @@ export type GameContextValue = {
   choices: Choice[];
   hasSave: boolean;
   startNewGame: () => void;
-  continueGame: () => void;
+  continueGame: () => boolean;
   resetGame: () => void;
   choose: (choice: Choice) => void;
   /** Возвращает false, если в главу нельзя перейти — тогда экран менять не нужно. */
