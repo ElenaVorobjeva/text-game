@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import Button from "../components/base/Button";
 import Main from "../components/base/Main";
 import { useGame } from "../state/useGame";
+import RouteAnimation from "../components/base/RouteAnimation";
 
 export function MainMenuPage() {
   const { hasSave, startNewGame, resetGame, continueGame } = useGame();
@@ -19,6 +20,8 @@ export function MainMenuPage() {
           спокойном дне.
         </p>
       </div>
+
+      <RouteAnimation width="600px" height="200px" speed={25} />
 
       <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center">
         {!hasSave && (
