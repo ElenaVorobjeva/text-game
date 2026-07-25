@@ -1,5 +1,4 @@
 import Button from "../base/Button";
-import { StatsBar } from "./StatsBar";
 
 type Props = {
   image: string;
@@ -33,8 +32,6 @@ export function EndingView({
       <p className="leading-free text-grey-blue max-w-[37.5rem] text-[0.9375rem]">
         {text}
       </p>
-
-      <StatsBar gap="lg" />
 
       <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center">
         <Button size="lg" width="fullOnMobile" onClick={onRestart}>
