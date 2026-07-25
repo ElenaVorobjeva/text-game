@@ -10,7 +10,7 @@ export const EndingsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const endings = gameData.scenes.filter(({ isEnding }) => isEnding) || [];
+  const endings = gameData.scenes.filter(({ isEnding }) => isEnding);
 
   function goBack() {
     if (location.key !== "default") navigate(-1);
