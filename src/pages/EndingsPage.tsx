@@ -4,6 +4,7 @@ import { gameData } from "../engine/gameEngine";
 import { useLocation, useNavigate } from "react-router";
 import { loadUserProfile } from "../user/userProfile";
 import { Card } from "../components/base/Card";
+import { goBack } from "../utils/common";
 
 export const EndingsPage = () => {
   const userData = loadUserProfile();
@@ -11,11 +12,6 @@ export const EndingsPage = () => {
   const location = useLocation();
 
   const endings = gameData.scenes.filter(({ isEnding }) => isEnding);
-
-  function goBack() {
-    if (location.key !== "default") navigate(-1);
-    else navigate("/");
-  }
 
   return (
     <Main classes="gap-9">
@@ -40,7 +36,10 @@ export const EndingsPage = () => {
         })}
       </div>
 
-      <Button width="fullOnMobile" onClick={goBack}>
+      <Button
+        width="fullOnMobile"
+        onClick={() => goBack(navigate, location, "/")}
+      >
         Назад
       </Button>
     </Main>

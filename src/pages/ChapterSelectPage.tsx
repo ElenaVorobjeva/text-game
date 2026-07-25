@@ -4,6 +4,7 @@ import Main from "../components/base/Main";
 import { gameData } from "../engine/gameEngine";
 import { useGame } from "../state/useGame";
 import { Card } from "../components/base/Card";
+import { goBack } from "../utils/common";
 
 export function ChapterSelectPage() {
   const navigate = useNavigate();
@@ -12,11 +13,6 @@ export function ChapterSelectPage() {
   const { chooseChapter, canEnterChapter } = useGame();
 
   const chapters = gameData.chapters;
-
-  function goBack() {
-    if (location.key !== "default") navigate(-1);
-    else navigate("/");
-  }
 
   return (
     <Main classes="gap-9">
@@ -53,7 +49,10 @@ export function ChapterSelectPage() {
         })}
       </div>
 
-      <Button width="fullOnMobile" onClick={goBack}>
+      <Button
+        width="fullOnMobile"
+        onClick={() => goBack(navigate, location, "/")}
+      >
         Назад
       </Button>
     </Main>

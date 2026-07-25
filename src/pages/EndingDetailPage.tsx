@@ -3,19 +3,12 @@ import Main from "../components/base/Main";
 import Button from "../components/base/Button";
 import { gameData } from "../engine/gameEngine";
 import { isEndingCompleted } from "../user/userProfile";
+import { goBack } from "../utils/common";
 
 export const EndingDetailPage = () => {
   const { endingType } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-
-  // «Назад» идёт по истории — так стек не засоряется (иначе navigate по пути
-  // делает push, а «Назад» на списке — pop, и получается зацикливание между
-  // списком и деталью). Запасной путь — список, если истории нет (прямой заход).
-  function goBack() {
-    if (location.key !== "default") navigate(-1);
-    else navigate("/endings");
-  }
 
   const ending = gameData.scenes.find(
     (scene) => scene.isEnding && scene.endingType === endingType,
@@ -45,7 +38,10 @@ export const EndingDetailPage = () => {
         {ending.text}
       </p>
 
-      <Button width="fullOnMobile" onClick={goBack}>
+      <Button
+        width="fullOnMobile"
+        onClick={() => goBack(navigate, location, "/endings")}
+      >
         Назад
       </Button>
     </Main>
