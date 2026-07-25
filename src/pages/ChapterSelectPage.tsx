@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router";
-import Button from "../components/base/Button";
-import Main from "../components/base/Main";
+import { Button } from "../components/base/Button";
+import { Main } from "../components/base/Main";
 import { gameData } from "../engine/gameEngine";
 import { useGame } from "../state/useGame";
 import { Card } from "../components/base/Card";

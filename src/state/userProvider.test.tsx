@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
-import App from "../app/App";
+import { App } from "../app/App";
 import { GameProvider } from "./gameProvider";
 import { UserProvider } from "./userProvider";
 import { createInitialGameState, gameData } from "../engine/gameEngine";
@@ -15,8 +15,9 @@ import { addCompletedEnding, USER_KEY } from "../user/userProfile";
 // места, где кэш может разойтись с реальностью: концовка, открытая в текущей
 // сессии, и запись из соседней вкладки.
 
-const isEndingId = (id: string) =>
-  gameData.scenes.some((scene) => scene.id === id && scene.isEnding);
+function isEndingId(id: string) {
+  return gameData.scenes.some((scene) => scene.id === id && scene.isEnding);
+}
 
 // Финальная развилка и её безусловный вариант: единственный путь к концовке,
 // доступный при любых характеристиках. Всё берётся из данных — id сцен и тексты

@@ -1,5 +1,5 @@
 import type { Choice } from "../../types/game";
-import Button from "../base/Button";
+import { Button } from "../base/Button";
 
 type Props = {
   choices: Choice[];

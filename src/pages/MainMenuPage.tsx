@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
-import Button from "../components/base/Button";
-import Main from "../components/base/Main";
+import { Button } from "../components/base/Button";
+import { Main } from "../components/base/Main";
 import { useGame } from "../state/useGame";
 
 export function MainMenuPage() {

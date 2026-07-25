@@ -1,6 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { clearSave } from "../../utils/saveLoad";
-import Button from "./Button";
+import { Button } from "./Button";
 
 type Props = { children: ReactNode };
 type State = { hasError: boolean };

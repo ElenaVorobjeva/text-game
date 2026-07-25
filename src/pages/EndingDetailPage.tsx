@@ -1,11 +1,11 @@
 import { Navigate, useLocation, useNavigate, useParams } from "react-router";
-import Main from "../components/base/Main";
-import Button from "../components/base/Button";
+import { Main } from "../components/base/Main";
+import { Button } from "../components/base/Button";
 import { gameData } from "../engine/gameEngine";
 import { goBack } from "../utils/common";
 import { useUser } from "../state/useUser";
 
-export const EndingDetailPage = () => {
+export function EndingDetailPage() {
   const { isEndingCompleted } = useUser();
   const { endingType } = useParams();
   const navigate = useNavigate();
@@ -53,4 +53,4 @@ export const EndingDetailPage = () => {
       </Button>
     </Main>
   );
-};
+}

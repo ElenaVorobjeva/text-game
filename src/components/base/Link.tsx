@@ -7,7 +7,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default function Link({
+export function Link({
   type = "link",
   href,
   size = "md",

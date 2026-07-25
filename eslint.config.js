@@ -32,4 +32,23 @@ export default defineConfig([
       "react-hooks/exhaustive-deps": "error",
     },
   },
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    rules: {
+      // Компоненты и функции объявляются через `function`, а не `const … = () =>`.
+      // Стрелки в аргументах (колбэки, useCallback) правило не трогает.
+      "func-style": ["error", "declaration", { allowArrowFunctions: false }],
+
+      // Только именованные экспорты: default позволяет импортировать компонент
+      // под произвольным именем и ломает автоимпорт. Скоуп — src, потому что
+      // vite.config.ts и postcss.config.js без default-экспорта не работают.
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "ExportDefaultDeclaration",
+          message: "Только именованный экспорт: export function Foo() {}",
+        },
+      ],
+    },
+  },
 ]);

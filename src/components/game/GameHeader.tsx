@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import Link from "../base/Link";
+import { Link } from "../base/Link";
 import { useGame } from "../../state/useGame";
 import GitHubLogo from "../../assets/images/github-logo.svg?react";
 import { restartGame } from "../../utils/common";

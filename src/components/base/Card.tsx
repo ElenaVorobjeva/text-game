@@ -12,7 +12,7 @@ type Props = {
 const IMAGE_CLASSES =
   "border-grey-160 aspect-square w-70 max-w-full rounded-lg border object-cover sm:w-45";
 
-export const Card = ({ type, id, title, image, disabled, onClick }: Props) => {
+export function Card({ type, id, title, image, disabled, onClick }: Props) {
   const text =
     type === "chapter"
       ? `${disabled ? "???" : `Глава ${id}: ${title}`}`
@@ -46,4 +46,4 @@ export const Card = ({ type, id, title, image, disabled, onClick }: Props) => {
       </span>
     </button>
   );
-};
+}

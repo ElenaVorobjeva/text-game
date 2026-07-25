@@ -7,7 +7,7 @@ import { EndingsPage } from "../pages/EndingsPage";
 import { EndingDetailPage } from "../pages/EndingDetailPage";
 import { GameHeader } from "../components/game/GameHeader";
 
-export default function App() {
+export function App() {
   const { hasSave } = useGame();
   const location = useLocation();
   const layoutStyles =

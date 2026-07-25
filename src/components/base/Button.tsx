@@ -7,7 +7,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default function Button({
+export function Button({
   variant = "filled",
   size = "md",
   color = "white",

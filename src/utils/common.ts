@@ -12,10 +12,7 @@ export function goBack(
 }
 
 // Функция перезапуска игрового процесса
-export const restartGame = (
-  resetGame: () => void,
-  navigate: NavigateFunction,
-) => {
+export function restartGame(resetGame: () => void, navigate: NavigateFunction) {
   resetGame();
   navigate("/");
-};
+}
