@@ -2,20 +2,20 @@ type Props = {
   className?: string;
 };
 
-// Заглушка для ещё не открытой концовки: вместо иллюстрации — знак вопроса,
-// чтобы не спойлерить содержание. Цвета из палитры проекта (main.css):
-// фон dark-blue, рамка/знак — grey-blue. Квадрат под aspect-square карточки.
-export function EndingPlaceholder({ className }: Props) {
+// Заглушка для изображения в карочке: вместо иллюстрации — знак вопроса,
+// чтобы не спойлерить содержание главы или концовки.
+// Цвета из палитры проекта (main.css): фон dark-blue, рамка/знак — grey-blue.
+// Квадрат под aspect-square карточки.
+export function ImagePlaceholder({ className }: Props) {
   return (
     <svg
       className={className}
       viewBox="0 0 100 100"
       role="img"
-      aria-label="Концовка не открыта"
+      aria-label="Скрыто"
     >
       <rect width="100" height="100" rx="6" fill="#12172a" />
 
-      {/* Пунктирная рамка внутри — перекликается с маршрутом на главном экране */}
       <rect
         x="8"
         y="8"

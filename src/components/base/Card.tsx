@@ -1,7 +1,8 @@
-import { EndingPlaceholder } from "./EndingPlaceholder";
+import { ImagePlaceholder } from "./ImagePlaceholder";
 
 type Props = {
-  id: string;
+  type: "chapter" | "ending";
+  id?: string | number;
   title: string;
   image: string | undefined;
   disabled: boolean;
@@ -11,7 +12,13 @@ type Props = {
 const IMAGE_CLASSES =
   "border-grey-160 aspect-square w-70 max-w-full rounded-lg border object-cover sm:w-45";
 
-export const EndingCard = ({ title, image, disabled, onClick }: Props) => {
+export const Card = ({ type, id, title, image, disabled, onClick }: Props) => {
+  const text =
+    type === "chapter"
+      ? `${disabled ? "???" : `Глава ${id}: ${title}`}`
+      : disabled
+        ? "???"
+        : title.replace("Концовка: ", "");
   return (
     <button
       className="flex flex-col items-center transition duration-150 enabled:cursor-pointer enabled:hover:-translate-y-[3px]"
@@ -19,7 +26,7 @@ export const EndingCard = ({ title, image, disabled, onClick }: Props) => {
       onClick={onClick}
     >
       {disabled || !image ? (
-        <EndingPlaceholder className={IMAGE_CLASSES} />
+        <ImagePlaceholder className={IMAGE_CLASSES} />
       ) : (
         <img
           className={`${IMAGE_CLASSES} bg-stone-100`}
@@ -29,7 +36,7 @@ export const EndingCard = ({ title, image, disabled, onClick }: Props) => {
       )}
 
       <span className="text-grey-blue mt-3 max-w-70 text-[0.9375rem] leading-normal sm:max-w-45">
-        {disabled ? "???" : title}
+        {text}
       </span>
     </button>
   );

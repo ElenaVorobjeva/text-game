@@ -2,8 +2,8 @@ import Main from "../components/base/Main";
 import Button from "../components/base/Button";
 import { gameData } from "../engine/gameEngine";
 import { useLocation, useNavigate } from "react-router";
-import { EndingCard } from "../components/game/EndingCard";
 import { loadUserProfile } from "../user/userProfile";
+import { Card } from "../components/base/Card";
 
 export const EndingsPage = () => {
   const userData = loadUserProfile();
@@ -27,8 +27,9 @@ export const EndingsPage = () => {
             !!endingType && userData.completedEndings.includes(endingType);
 
           return (
-            <EndingCard
+            <Card
               key={id}
+              type="ending"
               id={id}
               title={title}
               image={image}

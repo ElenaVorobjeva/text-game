@@ -1,9 +1,9 @@
 import { useLocation, useNavigate } from "react-router";
 import Button from "../components/base/Button";
 import Main from "../components/base/Main";
-import { ChapterCard } from "../components/chapters/ChapterCard";
 import { gameData } from "../engine/gameEngine";
 import { useGame } from "../state/useGame";
+import { Card } from "../components/base/Card";
 
 export function ChapterSelectPage() {
   const navigate = useNavigate();
@@ -37,7 +37,9 @@ export function ChapterSelectPage() {
               className="animate-fade-up"
               style={{ animationDelay: `${0.05 + index * 0.07}s` }}
             >
-              <ChapterCard
+              <Card
+                key={id}
+                type="chapter"
                 id={id}
                 title={title}
                 image={image}
