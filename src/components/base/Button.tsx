@@ -45,7 +45,11 @@ export default function Button({
     fullOnMobile: "w-full sm:w-auto",
   };
 
-  const buttonStyles = `${variantsMap[variant][color]} ${sizeMap[size]} ${widthMap[width]} cursor-pointer transition duration-150`;
+  // will-change-transform заранее даёт кнопке свой композитный слой. Иначе
+  // первый hover, меняя translate, создаёт слой на лету — на фоне ещё «висящей»
+  // (fill:both) анимации появления родителя это даёт разовое мелькание. Готовый
+  // слой убирает этот первый relayer.
+  const buttonStyles = `${variantsMap[variant][color]} ${sizeMap[size]} ${widthMap[width]} cursor-pointer transition duration-150 will-change-transform`;
 
   return (
     <button className={buttonStyles} onClick={onClick}>

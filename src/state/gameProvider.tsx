@@ -9,6 +9,7 @@ import {
   makeChoice,
 } from "../engine/gameEngine";
 import { loadGame, saveGame, clearSave } from "../utils/saveLoad";
+import { addCompletedEnding } from "../user/userProfile";
 import { GameContext } from "./gameContext";
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
@@ -57,6 +58,13 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   function choose(choice: Choice) {
     const nextState = makeChoice(choice, gameState);
+
+    // Дошли до концовки — отмечаем её в профиле пользователя. Это мета-прогресс:
+    // он живёт отдельно от сохранения и переживает «Начать заново».
+    const nextScene = getCurrentScene(nextState);
+    if (nextScene.isEnding && nextScene.endingType) {
+      addCompletedEnding(nextScene.endingType);
+    }
 
     saveGame(nextState);
     setGameState(nextState);

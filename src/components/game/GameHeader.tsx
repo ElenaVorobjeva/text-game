@@ -1,28 +1,44 @@
+import { useNavigate } from "react-router";
 import Link from "../base/Link";
-import { StatsBar } from "./StatsBar";
+import { useGame } from "../../state/useGame";
+import { hasCompletedEndings } from "../../user/userProfile";
+import GitHubLogo from "../../assets/images/github-logo.svg?react";
 
-type Props = {
-  onMainMenu: () => void;
-  onChapterSelect: () => void;
-  onRestart: () => void;
-};
+// Общая шапка для всех экранов, кроме главного меню. Навигацию и сброс делает
+// сама через useNavigate/useGame — снаружи её подключают без пропсов. Статы
+// здесь не живут: они видны только во время игры, над сценой (см. GamePage).
+export function GameHeader() {
+  const navigate = useNavigate();
+  const { resetGame } = useGame();
 
-export function GameHeader({ onMainMenu, onChapterSelect, onRestart }: Props) {
+  const restart = () => {
+    resetGame();
+    navigate("/");
+  };
+
   return (
-    <header className="border-grey-60 flex flex-none flex-col gap-3 border-b px-6 py-3.5 lg:flex-row lg:items-center lg:justify-between lg:gap-4 lg:px-10">
-      <nav className="flex flex-wrap justify-center gap-x-7 gap-y-2 lg:justify-between">
-        <Link type="button" color="gray" onClick={onMainMenu}>
+    <header className="border-grey-60 flex flex-none flex-wrap justify-between gap-x-7 gap-y-2 border-b px-6 py-3.5 lg:px-10">
+      <div className="flex flex-wrap justify-center gap-x-7 gap-y-2">
+        <Link type="button" color="gray" onClick={() => navigate("/")}>
           Меню
         </Link>
-        <Link type="button" color="gray" onClick={onChapterSelect}>
+        <Link type="button" color="gray" onClick={() => navigate("/chapters")}>
           Выбор главы
         </Link>
-        <Link type="button" color="gray" onClick={onRestart}>
+        <Link type="button" color="gray" onClick={restart}>
           Начать заново
         </Link>
-      </nav>
-
-      <StatsBar />
+        {hasCompletedEndings() && (
+          <Link type="button" color="gray" onClick={() => navigate("/endings")}>
+            Концовки
+          </Link>
+        )}
+      </div>
+      <div className="hidden lg:block">
+        <a href="https://github.com/ElenaVorobjeva/text-game" target="_blank">
+          <GitHubLogo className="fill-grey-blue hover:fill-light-blue" />
+        </a>
+      </div>
     </header>
   );
 }

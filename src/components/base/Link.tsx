@@ -3,7 +3,7 @@ type Props = {
   href?: string;
   size?: "sm" | "md" | "lg";
   color?: "white" | "gray";
-  onClick: () => void;
+  onClick?: () => void;
   children: React.ReactNode;
 };
 
