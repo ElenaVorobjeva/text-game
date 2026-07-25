@@ -38,6 +38,7 @@ export function GameHeader() {
         <a
           href="https://github.com/ElenaVorobjeva/text-game"
           target="_blank"
+          rel="noopener noreferrer"
           title="Проект на GitHub"
           aria-label="Проект на GitHub"
         >
