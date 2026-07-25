@@ -12,10 +12,6 @@ import { applyEffects } from "./effects";
 
 export const gameData = rawGameData as GameData;
 
-// У концовок в gameData.json стоит chapter: 0 — это не настоящая глава,
-// поэтому их не открывают в списке глав и не снимают для них снимок.
-export const ENDINGS_CHAPTER = 0;
-
 // С какой главы начинается игра: она открыта и имеет снимок с самого старта.
 export const FIRST_CHAPTER = 1;
 
@@ -65,7 +61,7 @@ export function makeChoice(
   const currentScene = getSceneById(state.currentSceneId);
   const nextScene = getSceneById(choice.nextSceneId);
 
-  const isRealChapter = nextScene.chapter !== ENDINGS_CHAPTER;
+  const isRealChapter = !nextScene.isEnding;
 
   // Игрок входит в новую главу — запоминаем, с чем он в неё вошёл.
   const isEnteredNewChapter =
@@ -146,14 +142,14 @@ export function canEnterChapter(
 }
 
 export function getSceneImage(scene: Scene): string {
-  if (scene.chapter === ENDINGS_CHAPTER) {
+  if (scene.isEnding) {
     // Концовка: изображение хранится в сцене
     return scene.image || "";
-  } else {
-    // Сцена игры: изображение хранится в данных о соотвествующей главе
-    const chapter = getChapterById(scene.chapter);
-    return chapter && chapter.image ? chapter.image : "";
   }
+
+  // Сцена игры: изображение хранится в данных о соответствующей главе
+  const chapter = getChapterById(scene.chapter);
+  return chapter && chapter.image ? chapter.image : "";
 }
 
 export function getChapterById(id: number): Chapter {
