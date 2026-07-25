@@ -35,8 +35,16 @@ export function GameHeader() {
         )}
       </div>
       <div className="hidden lg:block">
-        <a href="https://github.com/ElenaVorobjeva/text-game" target="_blank">
-          <GitHubLogo className="fill-grey-blue hover:fill-light-blue" />
+        <a
+          href="https://github.com/ElenaVorobjeva/text-game"
+          target="_blank"
+          title="Проект на GitHub"
+          aria-label="Проект на GitHub"
+        >
+          <GitHubLogo
+            aria-hidden="true"
+            className="fill-grey-blue hover:fill-light-blue"
+          />
         </a>
       </div>
     </header>
