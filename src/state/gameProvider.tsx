@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { Chapter, Choice, GameStateData } from "../types/game";
 import {
   canEnterChapter,
@@ -9,7 +9,6 @@ import {
   makeChoice,
 } from "../engine/gameEngine";
 import { loadGame, saveGame, clearSave } from "../utils/saveLoad";
-import { addCompletedEnding } from "../user/userProfile";
 import { GameContext } from "./gameContext";
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
@@ -29,15 +28,15 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     [scene, gameState],
   );
 
-  function startNewGame() {
+  const startNewGame = useCallback(() => {
     const initialState = createInitialGameState();
 
     saveGame(initialState);
     setGameState(initialState);
     setHasSave(true);
-  }
+  }, []);
 
-  function continueGame() {
+  const continueGame = useCallback(() => {
     const saved = loadGame();
     if (!saved) return false;
 
@@ -45,56 +44,62 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setHasSave(true);
 
     return true;
-  }
+  }, []);
 
-  function resetGame() {
+  const resetGame = useCallback(() => {
     clearSave();
 
     const initialState = createInitialGameState();
 
     setGameState(initialState);
     setHasSave(false);
-  }
+  }, []);
 
-  function choose(choice: Choice) {
-    const nextState = makeChoice(choice, gameState);
+  const choose = useCallback(
+    (choice: Choice) => {
+      const nextState = makeChoice(choice, gameState);
 
-    // Дошли до концовки — отмечаем её в профиле пользователя. Это мета-прогресс:
-    // он живёт отдельно от сохранения и переживает «Начать заново».
-    const nextScene = getCurrentScene(nextState);
-    if (nextScene.isEnding && nextScene.endingType) {
-      addCompletedEnding(nextScene.endingType);
-    }
+      saveGame(nextState);
+      setGameState(nextState);
+      setHasSave(true);
+    },
+    [gameState],
+  );
 
-    saveGame(nextState);
-    setGameState(nextState);
-    setHasSave(true);
-  }
+  const chooseChapter = useCallback(
+    (chapter: Chapter): boolean => {
+      const next = enterChapter(chapter, gameState);
 
-  function chooseChapter(chapter: Chapter): boolean {
-    const next = enterChapter(chapter, gameState);
+      if (!next) return false;
 
-    if (!next) return false;
+      saveGame(next);
+      setGameState(next);
 
-    saveGame(next);
-    setGameState(next);
+      return true;
+    },
+    [gameState],
+  );
 
-    return true;
-  }
+  const shouldEnterChapter = useCallback(
+    (chapterId: number) => canEnterChapter(chapterId, gameState),
+    [gameState],
+  );
 
-  const value = {
-    gameState,
-    scene,
-    choices,
-    hasSave,
-    startNewGame,
-    continueGame,
-    resetGame,
-    choose,
-    chooseChapter,
-    canEnterChapter: (chapterId: number) =>
-      canEnterChapter(chapterId, gameState),
-  };
+  const value = useMemo(
+    () => ({
+      gameState,
+      scene,
+      choices,
+      hasSave,
+      startNewGame,
+      continueGame,
+      resetGame,
+      choose,
+      chooseChapter,
+      shouldEnterChapter,
+    }),
+    [gameState],
+  );
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 }

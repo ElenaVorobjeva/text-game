@@ -6,11 +6,18 @@ import { StatsBar } from "../components/game/StatsBar";
 import { getSceneImage } from "../engine/gameEngine";
 import { useNavigate } from "react-router";
 import { restartGame } from "../utils/common";
+import { useEffect } from "react";
+import { useUser } from "../state/useUser";
 
 export function GamePage() {
   const navigate = useNavigate();
   const { scene, choices, choose, resetGame } = useGame();
+  const { completeEnding } = useUser();
   const image = getSceneImage(scene);
+
+  useEffect(() => {
+    if (scene.isEnding && scene.endingType) completeEnding(scene.endingType);
+  }, [scene, completeEnding]);
 
   const isEnding = Boolean(scene.isEnding);
 

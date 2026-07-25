@@ -2,12 +2,12 @@ import Main from "../components/base/Main";
 import Button from "../components/base/Button";
 import { gameData } from "../engine/gameEngine";
 import { useLocation, useNavigate } from "react-router";
-import { loadUserProfile } from "../user/userProfile";
 import { Card } from "../components/base/Card";
 import { goBack } from "../utils/common";
+import { useUser } from "../state/useUser";
 
 export const EndingsPage = () => {
-  const userData = loadUserProfile();
+  const { completedEndings } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,7 +20,7 @@ export const EndingsPage = () => {
       <div className="flex max-w-[56.25rem] flex-wrap justify-center gap-7">
         {endings.map(({ id, title, image, endingType }) => {
           const isAvailable =
-            !!endingType && userData.completedEndings.includes(endingType);
+            !!endingType && completedEndings.includes(endingType);
 
           return (
             <Card

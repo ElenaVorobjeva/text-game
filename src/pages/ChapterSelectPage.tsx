@@ -10,7 +10,7 @@ export function ChapterSelectPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { chooseChapter, canEnterChapter } = useGame();
+  const { chooseChapter, shouldEnterChapter } = useGame();
 
   const chapters = gameData.chapters;
 
@@ -25,7 +25,7 @@ export function ChapterSelectPage() {
           // Доступность считается по наличию снимка, а не по unlockedChapters:
           // у сохранений, мигрированных со старого формата, главы отмечены
           // открытыми, но снимков для них нет — перейти туда всё равно нельзя.
-          const isAvailable = canEnterChapter(id);
+          const isAvailable = shouldEnterChapter(id);
 
           return (
             <div

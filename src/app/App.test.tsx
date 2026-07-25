@@ -7,6 +7,7 @@ import App from "./App";
 import { GameProvider } from "../state/gameProvider";
 import { createInitialGameState, getCurrentScene } from "../engine/gameEngine";
 import { saveGame } from "../utils/saveLoad";
+import { UserProvider } from "../state/userProvider";
 
 // Тесты навигации: проверяют маршруты и переходы через реальный react-router
 // (MemoryRouter). Роутинг иначе покрыт только ручной проверкой.
@@ -31,9 +32,11 @@ const BUTTON = {
 function renderAt(path: string, history: string[] = [path]) {
   return render(
     <MemoryRouter initialEntries={history} initialIndex={history.length - 1}>
-      <GameProvider>
-        <App />
-      </GameProvider>
+      <UserProvider>
+        <GameProvider>
+          <App />
+        </GameProvider>
+      </UserProvider>
     </MemoryRouter>,
   );
 }

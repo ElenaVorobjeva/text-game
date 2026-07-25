@@ -5,14 +5,17 @@ import { ErrorBoundary } from "./components/base/ErrorBoundary.tsx";
 import { GameProvider } from "./state/gameProvider.tsx";
 import "./main.css";
 import { HashRouter } from "react-router";
+import { UserProvider } from "./state/userProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary>
       <HashRouter>
-        <GameProvider>
-          <App />
-        </GameProvider>
+        <UserProvider>
+          <GameProvider>
+            <App />
+          </GameProvider>
+        </UserProvider>
       </HashRouter>
     </ErrorBoundary>
   </StrictMode>,

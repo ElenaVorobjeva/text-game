@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router";
 import Link from "../base/Link";
 import { useGame } from "../../state/useGame";
-import { hasCompletedEndings } from "../../user/userProfile";
 import GitHubLogo from "../../assets/images/github-logo.svg?react";
 import { restartGame } from "../../utils/common";
+import { useUser } from "../../state/useUser";
 
 // Общая шапка для всех экранов, кроме главного меню. Навигацию и сброс делает
 // сама через useNavigate/useGame — снаружи её подключают без пропсов. Статы
@@ -11,6 +11,7 @@ import { restartGame } from "../../utils/common";
 export function GameHeader() {
   const navigate = useNavigate();
   const { resetGame } = useGame();
+  const { hasCompletedEndings } = useUser();
 
   return (
     <header className="border-grey-60 flex flex-none flex-wrap justify-between gap-x-7 gap-y-2 border-b px-6 py-3.5 lg:px-10">
@@ -28,7 +29,7 @@ export function GameHeader() {
         >
           Начать заново
         </Link>
-        {hasCompletedEndings() && (
+        {hasCompletedEndings && (
           <Link type="button" color="gray" onClick={() => navigate("/endings")}>
             Концовки
           </Link>

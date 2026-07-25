@@ -2,10 +2,11 @@ import { Navigate, useLocation, useNavigate, useParams } from "react-router";
 import Main from "../components/base/Main";
 import Button from "../components/base/Button";
 import { gameData } from "../engine/gameEngine";
-import { isEndingCompleted } from "../user/userProfile";
 import { goBack } from "../utils/common";
+import { useUser } from "../state/useUser";
 
 export const EndingDetailPage = () => {
+  const { isEndingCompleted } = useUser();
   const { endingType } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
