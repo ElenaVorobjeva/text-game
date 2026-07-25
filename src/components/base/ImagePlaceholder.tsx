@@ -1,18 +1,22 @@
 type Props = {
   className?: string;
+  label: string;
 };
 
-// Заглушка для изображения в карочке: вместо иллюстрации — знак вопроса,
+// Заглушка для изображения в карточке: вместо иллюстрации — знак вопроса,
 // чтобы не спойлерить содержание главы или концовки.
 // Цвета из палитры проекта (main.css): фон dark-blue, рамка/знак — grey-blue.
 // Квадрат под aspect-square карточки.
-export function ImagePlaceholder({ className }: Props) {
+//
+// label обязателен: у svg с role="img" это единственное доступное имя, и без
+// него скринридер прочитает все закрытые карточки одинаково.
+export function ImagePlaceholder({ className, label }: Props) {
   return (
     <svg
       className={className}
       viewBox="0 0 100 100"
       role="img"
-      aria-label="Скрыто"
+      aria-label={label}
     >
       <rect width="100" height="100" rx="6" fill="#12172a" />
 

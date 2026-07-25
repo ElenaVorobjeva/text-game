@@ -32,13 +32,19 @@ export const EndingDetailPage = () => {
       )}
 
       <h1 className="font-heading text-light-blue text-xl leading-tight">
-        {ending.title}
+        Концовка: {ending.title}
       </h1>
 
       <p className="leading-free text-grey-blue max-w-[37.5rem] text-[0.9375rem]">
         {ending.text}
       </p>
 
+      {/* 
+        onClick:
+        «Назад» идёт по истории — так стек не засоряется (иначе navigate по пути
+        делает push, а «Назад» на списке — pop, и получается зацикливание между
+        списком и деталью). Запасной путь — список, если истории нет (прямой заход).
+      */}
       <Button
         width="fullOnMobile"
         onClick={() => goBack(navigate, location, "/endings")}

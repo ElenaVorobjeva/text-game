@@ -2,7 +2,7 @@ import { ImagePlaceholder } from "./ImagePlaceholder";
 
 type Props = {
   type: "chapter" | "ending";
-  id?: string | number;
+  id: string | number;
   title: string;
   image: string | undefined;
   disabled: boolean;
@@ -18,15 +18,21 @@ export const Card = ({ type, id, title, image, disabled, onClick }: Props) => {
       ? `${disabled ? "???" : `Глава ${id}: ${title}`}`
       : disabled
         ? "???"
-        : title.replace("Концовка: ", "");
+        : title;
   return (
     <button
+      type="button"
       className="flex flex-col items-center transition duration-150 enabled:cursor-pointer enabled:hover:-translate-y-[3px]"
       disabled={disabled}
       onClick={onClick}
     >
       {disabled || !image ? (
-        <ImagePlaceholder className={IMAGE_CLASSES} />
+        <ImagePlaceholder
+          className={IMAGE_CLASSES}
+          label={
+            type === "chapter" ? "Глава закрыта" : "Концовка ещё не открыта"
+          }
+        />
       ) : (
         <img
           className={`${IMAGE_CLASSES} bg-stone-100`}

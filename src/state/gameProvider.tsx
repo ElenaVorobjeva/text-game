@@ -80,7 +80,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     [gameState],
   );
 
-  const shouldEnterChapter = useCallback(
+  // Локальное имя, чтобы не затенять одноимённую функцию движка: наружу она
+  // всё равно уходит как canEnterChapter.
+  const checkCanEnterChapter = useCallback(
     (chapterId: number) => canEnterChapter(chapterId, gameState),
     [gameState],
   );
@@ -96,9 +98,20 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       resetGame,
       choose,
       chooseChapter,
-      shouldEnterChapter,
+      canEnterChapter: checkCanEnterChapter,
     }),
-    [gameState],
+    [
+      gameState,
+      scene,
+      choices,
+      hasSave,
+      startNewGame,
+      continueGame,
+      resetGame,
+      choose,
+      chooseChapter,
+      checkCanEnterChapter,
+    ],
   );
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
