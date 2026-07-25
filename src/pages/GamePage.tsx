@@ -5,6 +5,7 @@ import { EndingView } from "../components/game/EndingView";
 import { StatsBar } from "../components/game/StatsBar";
 import { getSceneImage } from "../engine/gameEngine";
 import { useNavigate } from "react-router";
+import { restartGame } from "../utils/common";
 
 export function GamePage() {
   const navigate = useNavigate();
@@ -13,11 +14,6 @@ export function GamePage() {
 
   const isEnding = Boolean(scene.isEnding);
 
-  const restart = () => {
-    resetGame();
-    navigate("/");
-  };
-
   if (isEnding) {
     return (
       <EndingView
@@ -25,7 +21,7 @@ export function GamePage() {
         image={image}
         title={scene.title}
         text={scene.text}
-        onRestart={restart}
+        onRestart={() => restartGame(resetGame, navigate)}
         onChapterSelect={() => navigate("/chapters")}
       />
     );
