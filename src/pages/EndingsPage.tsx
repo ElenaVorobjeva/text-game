@@ -2,20 +2,16 @@ import Main from "../components/base/Main";
 import Button from "../components/base/Button";
 import { gameData } from "../engine/gameEngine";
 import { useLocation, useNavigate } from "react-router";
-import { EndingCard } from "../components/game/EndingCard";
-import { loadUserProfile } from "../user/userProfile";
+import { Card } from "../components/base/Card";
+import { goBack } from "../utils/common";
+import { useUser } from "../state/useUser";
 
 export const EndingsPage = () => {
-  const userData = loadUserProfile();
+  const { completedEndings } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const endings = gameData.scenes.filter(({ isEnding }) => isEnding) || [];
-
-  function goBack() {
-    if (location.key !== "default") navigate(-1);
-    else navigate("/");
-  }
+  const endings = gameData.scenes.filter(({ isEnding }) => isEnding);
 
   return (
     <Main classes="gap-9">
@@ -24,11 +20,12 @@ export const EndingsPage = () => {
       <div className="flex max-w-[56.25rem] flex-wrap justify-center gap-7">
         {endings.map(({ id, title, image, endingType }) => {
           const isAvailable =
-            !!endingType && userData.completedEndings.includes(endingType);
+            !!endingType && completedEndings.includes(endingType);
 
           return (
-            <EndingCard
+            <Card
               key={id}
+              type="ending"
               id={id}
               title={title}
               image={image}
@@ -39,7 +36,10 @@ export const EndingsPage = () => {
         })}
       </div>
 
-      <Button width="fullOnMobile" onClick={goBack}>
+      <Button
+        width="fullOnMobile"
+        onClick={() => goBack(navigate, location, "/")}
+      >
         Назад
       </Button>
     </Main>

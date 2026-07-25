@@ -33,7 +33,7 @@ export default function Link({
 
   if (type === "button") {
     return (
-      <button className={linkStyles} onClick={onClick}>
+      <button type="button" className={linkStyles} onClick={onClick}>
         {children}
       </button>
     );

@@ -26,6 +26,10 @@ export default defineConfig([
           varsIgnorePattern: "^_",
         },
       ],
+      // По умолчанию правило — предупреждение, а `npm run check` предупреждения
+      // пропускает. На неполных зависимостях уже дважды ловились настоящие баги
+      // (замороженный isEndingCompleted, протухший hasSave), поэтому ошибка.
+      "react-hooks/exhaustive-deps": "error",
     },
   },
 ]);

@@ -26,7 +26,7 @@ export function EndingView({
       )}
 
       <h2 className="font-heading text-light-blue text-xl leading-tight">
-        {title}
+        Концовка: {title}
       </h2>
 
       <p className="leading-free text-grey-blue max-w-[37.5rem] text-[0.9375rem]">

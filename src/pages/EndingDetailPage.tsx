@@ -2,20 +2,14 @@ import { Navigate, useLocation, useNavigate, useParams } from "react-router";
 import Main from "../components/base/Main";
 import Button from "../components/base/Button";
 import { gameData } from "../engine/gameEngine";
-import { isEndingCompleted } from "../user/userProfile";
+import { goBack } from "../utils/common";
+import { useUser } from "../state/useUser";
 
 export const EndingDetailPage = () => {
+  const { isEndingCompleted } = useUser();
   const { endingType } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-
-  // «Назад» идёт по истории — так стек не засоряется (иначе navigate по пути
-  // делает push, а «Назад» на списке — pop, и получается зацикливание между
-  // списком и деталью). Запасной путь — список, если истории нет (прямой заход).
-  function goBack() {
-    if (location.key !== "default") navigate(-1);
-    else navigate("/endings");
-  }
 
   const ending = gameData.scenes.find(
     (scene) => scene.isEnding && scene.endingType === endingType,
@@ -38,14 +32,23 @@ export const EndingDetailPage = () => {
       )}
 
       <h1 className="font-heading text-light-blue text-xl leading-tight">
-        {ending.title}
+        Концовка: {ending.title}
       </h1>
 
       <p className="leading-free text-grey-blue max-w-[37.5rem] text-[0.9375rem]">
         {ending.text}
       </p>
 
-      <Button width="fullOnMobile" onClick={goBack}>
+      {/* 
+        onClick:
+        «Назад» идёт по истории — так стек не засоряется (иначе navigate по пути
+        делает push, а «Назад» на списке — pop, и получается зацикливание между
+        списком и деталью). Запасной путь — список, если истории нет (прямой заход).
+      */}
+      <Button
+        width="fullOnMobile"
+        onClick={() => goBack(navigate, location, "/endings")}
+      >
         Назад
       </Button>
     </Main>

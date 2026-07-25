@@ -9,7 +9,7 @@ export function SceneView({ image, title, text }: Props) {
     <>
       {image && (
         <img
-          className="animate-scale-in block h-[min(22vh,11.25rem)] w-full max-w-[51.25rem] rounded-sm object-cover"
+          className="animate-scale-in block h-[min(22vh,11.25rem)] w-full max-w-[43.75rem] rounded-sm object-cover"
           src={image}
           alt={title}
         />
@@ -20,7 +20,7 @@ export function SceneView({ image, title, text }: Props) {
           {title}
         </h2>
 
-        <p className="leading-free text-grey-blue text-[0.9375rem]">{text}</p>
+        <p className="leading-free text-light-blue text-[0.9375rem]">{text}</p>
       </div>
     </>
   );

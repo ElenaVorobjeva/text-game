@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router";
 import Link from "../base/Link";
 import { useGame } from "../../state/useGame";
-import { hasCompletedEndings } from "../../user/userProfile";
 import GitHubLogo from "../../assets/images/github-logo.svg?react";
+import { restartGame } from "../../utils/common";
+import { useUser } from "../../state/useUser";
 
 // Общая шапка для всех экранов, кроме главного меню. Навигацию и сброс делает
 // сама через useNavigate/useGame — снаружи её подключают без пропсов. Статы
@@ -10,11 +11,7 @@ import GitHubLogo from "../../assets/images/github-logo.svg?react";
 export function GameHeader() {
   const navigate = useNavigate();
   const { resetGame } = useGame();
-
-  const restart = () => {
-    resetGame();
-    navigate("/");
-  };
+  const { hasCompletedEndings } = useUser();
 
   return (
     <header className="border-grey-60 flex flex-none flex-wrap justify-between gap-x-7 gap-y-2 border-b px-6 py-3.5 lg:px-10">
@@ -25,18 +22,31 @@ export function GameHeader() {
         <Link type="button" color="gray" onClick={() => navigate("/chapters")}>
           Выбор главы
         </Link>
-        <Link type="button" color="gray" onClick={restart}>
+        <Link
+          type="button"
+          color="gray"
+          onClick={() => restartGame(resetGame, navigate)}
+        >
           Начать заново
         </Link>
-        {hasCompletedEndings() && (
+        {hasCompletedEndings && (
           <Link type="button" color="gray" onClick={() => navigate("/endings")}>
             Концовки
           </Link>
         )}
       </div>
       <div className="hidden lg:block">
-        <a href="https://github.com/ElenaVorobjeva/text-game" target="_blank">
-          <GitHubLogo className="fill-grey-blue hover:fill-light-blue" />
+        <a
+          href="https://github.com/ElenaVorobjeva/text-game"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Проект на GitHub"
+          aria-label="Проект на GitHub"
+        >
+          <GitHubLogo
+            aria-hidden="true"
+            className="fill-grey-blue hover:fill-light-blue"
+          />
         </a>
       </div>
     </header>

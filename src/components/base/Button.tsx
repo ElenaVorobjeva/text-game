@@ -52,7 +52,7 @@ export default function Button({
   const buttonStyles = `${variantsMap[variant][color]} ${sizeMap[size]} ${widthMap[width]} cursor-pointer transition duration-150 will-change-transform`;
 
   return (
-    <button className={buttonStyles} onClick={onClick}>
+    <button type="button" className={buttonStyles} onClick={onClick}>
       {children}
     </button>
   );
