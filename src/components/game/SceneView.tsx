@@ -20,7 +20,7 @@ export function SceneView({ image, title, text }: Props) {
           {title}
         </h2>
 
-        <p className="leading-free text-light-blue text-[0.9375rem]">{text}</p>
+        <p className="leading-free text-light-blue text-base">{text}</p>
       </div>
     </>
   );

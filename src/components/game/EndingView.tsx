@@ -29,7 +29,7 @@ export function EndingView({
         Концовка: {title}
       </h2>
 
-      <p className="leading-free text-grey-blue max-w-[37.5rem] text-[0.9375rem]">
+      <p className="leading-free text-grey-blue max-w-[37.5rem] text-base">
         {text}
       </p>
 

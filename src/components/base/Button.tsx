@@ -33,8 +33,8 @@ export function Button({
   };
 
   const sizeMap = {
-    sm: "px-[1.375rem] py-[0.8125rem] text-[0.9375rem]",
-    md: "px-[1.875rem] py-3.5 text-[0.9375rem] font-semibold",
+    sm: "px-[1.375rem] py-[0.8125rem] text-base",
+    md: "px-[1.875rem] py-3.5 text-base font-semibold",
     lg: "px-8 py-4 text-xs font-semibold",
   };
 

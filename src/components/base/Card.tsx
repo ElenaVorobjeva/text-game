@@ -41,7 +41,7 @@ export function Card({ type, id, title, image, disabled, onClick }: Props) {
         />
       )}
 
-      <span className="text-grey-blue mt-3 max-w-70 text-[0.9375rem] leading-normal sm:max-w-45">
+      <span className="text-grey-blue mt-3 max-w-70 text-base leading-normal sm:max-w-45">
         {text}
       </span>
     </button>

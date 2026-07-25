@@ -15,7 +15,7 @@ export function StatsBar({ gap = "sm" }: Props) {
 
   return (
     <div
-      className={`flex flex-wrap justify-center lg:justify-between ${gapMap[gap]} text-grey-blue text-[0.9375rem]`}
+      className={`flex flex-wrap justify-center lg:justify-between ${gapMap[gap]} text-grey-blue text-base`}
     >
       <span className="whitespace-nowrap">
         Забота: <b>{stats.care}</b>

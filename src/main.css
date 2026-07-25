@@ -16,6 +16,8 @@
 
   --color-grey-160: rgba(255, 255, 255, 0.16);
 
+  --text-2xs: 0.8125rem;
+  --text-base: 0.9375rem;
   --text-xs: 1rem;
   --text-sm: 1.125rem;
   --text-md: 1.875rem;

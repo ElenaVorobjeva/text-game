@@ -30,7 +30,7 @@ export class ErrorBoundary extends Component<Props, State> {
             Что-то пошло не так
           </h1>
 
-          <p className="leading-free text-grey-blue max-w-[37.5rem] text-[0.9375rem]">
+          <p className="leading-free text-grey-blue max-w-[37.5rem] text-base">
             Игра не смогла продолжиться. Обычно достаточно перезагрузить
             страницу — прогресс сохранится.
           </p>

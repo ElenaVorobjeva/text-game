@@ -35,7 +35,7 @@ export function EndingDetailPage() {
         Концовка: {ending.title}
       </h1>
 
-      <p className="leading-free text-grey-blue max-w-[37.5rem] text-[0.9375rem]">
+      <p className="leading-free text-grey-blue max-w-[37.5rem] text-base">
         {ending.text}
       </p>
 

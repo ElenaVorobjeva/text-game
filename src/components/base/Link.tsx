@@ -19,8 +19,8 @@ export function Link({
     "-mx-2.5 -my-1.5 cursor-pointer rounded-sm px-2.5 py-1.5 font-medium transition duration-150";
 
   const sizeMap = {
-    sm: "text-[0.8125rem]",
-    md: "text-[0.9375rem]",
+    sm: "text-2xs",
+    md: "text-base",
     lg: "text-xs",
   };
 
