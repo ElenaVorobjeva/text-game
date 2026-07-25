@@ -34,7 +34,7 @@ export function GamePage() {
   return (
     <div
       key={scene.id}
-      className="animate-fade-up flex grow flex-col items-center justify-center gap-4 px-6 py-5"
+      className="animate-fade-up flex grow flex-col items-center justify-center gap-6 px-6 py-5"
     >
       {/* Статы видны только во время игры, над сценой. */}
       <StatsBar />
