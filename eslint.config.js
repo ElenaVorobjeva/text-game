@@ -38,15 +38,28 @@ export default defineConfig([
       // Компоненты и функции объявляются через `function`, а не `const … = () =>`.
       // Стрелки в аргументах (колбэки, useCallback) правило не трогает.
       "func-style": ["error", "declaration", { allowArrowFunctions: false }],
-
-      // Только именованные экспорты: default позволяет импортировать компонент
-      // под произвольным именем и ломает автоимпорт. Скоуп — src, потому что
-      // vite.config.ts и postcss.config.js без default-экспорта не работают.
+      "@typescript-eslint/consistent-type-definitions": ["error", "type"],
       "no-restricted-syntax": [
         "error",
+        // Только именованные экспорты: default позволяет импортировать компонент
+        // под произвольным именем и ломает автоимпорт. Скоуп — src, потому что
+        // vite.config.ts и postcss.config.js без default-экспорта не работают.
         {
           selector: "ExportDefaultDeclaration",
           message: "Только именованный экспорт: export function Foo() {}",
+        },
+        {
+          // ESLint не знает про «компоненты», поэтому правило структурное:
+          // объектный тип прямо в параметре запрещён у любой функции.
+          selector:
+            ":function > :matches(ObjectPattern, Identifier) > TSTypeAnnotation > TSTypeLiteral",
+          message:
+            "Тип пропсов выносится в отдельный `type Props` над компонентом",
+        },
+        {
+          selector: 'TSQualifiedName[left.name="React"]',
+          message:
+            'Импортируй тип напрямую из "react": import type { ReactNode } from "react"',
         },
       ],
     },

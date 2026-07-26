@@ -1,6 +1,8 @@
+import type { ReactNode } from "react";
+
 type Props = {
   classes?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export function Main({ classes, children }: Props) {

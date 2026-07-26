@@ -1,10 +1,12 @@
+import type { ReactNode } from "react";
+
 type Props = {
   variant?: "filled" | "bordered" | "outlined";
   size?: "sm" | "md" | "lg";
   color?: "white" | "gray";
   width?: "auto" | "full" | "grow" | "fullOnMobile";
   onClick: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export function Button({

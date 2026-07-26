@@ -1,6 +1,8 @@
+import type { ElementType, ReactNode } from "react";
+
 type Props = {
-  children: React.ReactNode;
-  as?: React.ElementType;
+  children: ReactNode;
+  as?: ElementType;
   classes?: string;
 };
 export function Heading({ children, as: Tag = "h1", classes }: Props) {

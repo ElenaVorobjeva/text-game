@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import {
   addCompletedEnding,
   loadUserProfile,
@@ -6,7 +12,11 @@ import {
 } from "../user/userProfile";
 import { UserContext } from "./userContext";
 
-export function UserProvider({ children }: { children: React.ReactNode }) {
+type Props = {
+  children: ReactNode;
+};
+
+export function UserProvider({ children }: Props) {
   // Ленивый инициализатор: чтение localStorage не должно идти в теле рендера.
   const [completedEndings, setCompletedEndings] = useState(
     () => loadUserProfile().completedEndings,

@@ -1,10 +1,12 @@
+import type { ReactNode } from "react";
+
 type Props = {
   type?: "button" | "link";
   href?: string;
   size?: "sm" | "md" | "lg";
   color?: "white" | "gray";
   onClick?: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export function Link({
