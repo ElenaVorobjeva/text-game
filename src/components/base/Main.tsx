@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { cn } from "../../utils/cn";
 
 type Props = {
   className?: string;
@@ -6,8 +7,14 @@ type Props = {
 };
 
 export function Main({ className = "", children }: Props) {
-  const mainStyles =
-    "flex grow animate-fade-up flex-col items-center justify-center p-6 text-center sm:p-10";
-
-  return <main className={`${mainStyles} ${className}`}>{children}</main>;
+  return (
+    <main
+      className={cn(
+        "animate-fade-up flex grow flex-col items-center justify-center p-6 text-center sm:p-10",
+        className,
+      )}
+    >
+      {children}
+    </main>
+  );
 }

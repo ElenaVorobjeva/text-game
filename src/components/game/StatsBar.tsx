@@ -1,4 +1,5 @@
 import { useGame } from "../../state/useGame";
+import { cn } from "../../utils/cn";
 
 type Props = {
   gap?: "sm" | "lg";
@@ -15,7 +16,10 @@ export function StatsBar({ gap = "sm" }: Props) {
 
   return (
     <div
-      className={`flex flex-wrap justify-center lg:justify-between ${gapMap[gap]} text-grey-blue text-base`}
+      className={cn(
+        "text-grey-blue flex flex-wrap justify-center text-base lg:justify-between",
+        gapMap[gap],
+      )}
     >
       <span className="whitespace-nowrap">
         Забота: <b>{stats.care}</b>

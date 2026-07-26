@@ -1,3 +1,4 @@
+import { cn } from "../../utils/cn";
 import { ImagePlaceholder } from "./ImagePlaceholder";
 
 type Props = {
@@ -49,7 +50,7 @@ export function Card({
           />
         ) : (
           <img
-            className={`${IMAGE_CLASSES} bg-stone-100`}
+            className={cn(IMAGE_CLASSES, "bg-stone-100")}
             src={image}
             alt={title}
           />

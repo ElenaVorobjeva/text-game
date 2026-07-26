@@ -1,4 +1,5 @@
 import type { ElementType, ReactNode } from "react";
+import { cn } from "../../utils/cn";
 
 type Props = {
   children: ReactNode;
@@ -7,7 +8,7 @@ type Props = {
 };
 export function Title({ children, as: Tag = "h1", className = "" }: Props) {
   return (
-    <Tag className={`text-light-blue text-lg font-bold ${className}`}>
+    <Tag className={cn("text-light-blue text-lg font-bold", className)}>
       {children}
     </Tag>
   );

@@ -61,6 +61,11 @@ export default defineConfig([
           message:
             'Импортируй тип напрямую из "react": import type { ReactNode } from "react"',
         },
+        {
+          selector:
+            'JSXAttribute[name.name="className"] > JSXExpressionContainer > TemplateLiteral',
+          message: "Используй функцию cn() для склеивания классов",
+        },
       ],
     },
   },

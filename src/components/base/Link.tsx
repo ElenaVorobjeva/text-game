@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { cn } from "../../utils/cn";
 
 type Props = {
   type?: "button" | "link";
@@ -9,6 +10,17 @@ type Props = {
   children: ReactNode;
 };
 
+const SIZES = {
+  sm: "text-2xs",
+  md: "text-base",
+  lg: "text-xs",
+};
+
+const COLORS = {
+  white: "text-grey hover:bg-grey-60 hover:text-light-blue",
+  gray: "text-grey-blue hover:bg-grey-60 hover:text-grey",
+};
+
 export function Link({
   type = "link",
   href,
@@ -17,21 +29,11 @@ export function Link({
   onClick,
   children,
 }: Props) {
-  const baseStyles =
-    "-mx-2.5 -my-1.5 cursor-pointer rounded-sm px-2.5 py-1.5 font-medium transition duration-150";
-
-  const sizeMap = {
-    sm: "text-2xs",
-    md: "text-base",
-    lg: "text-xs",
-  };
-
-  const colorMap = {
-    white: "text-grey hover:bg-grey-60 hover:text-light-blue",
-    gray: "text-grey-blue hover:bg-grey-60 hover:text-grey",
-  };
-
-  const linkStyles = `${baseStyles} ${sizeMap[size]} ${colorMap[color]}`;
+  const linkStyles = cn(
+    "-mx-2.5 -my-1.5 cursor-pointer rounded-sm px-2.5 py-1.5 font-medium transition duration-150",
+    SIZES[size],
+    COLORS[color],
+  );
 
   if (type === "button") {
     return (
