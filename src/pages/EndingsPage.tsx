@@ -16,7 +16,7 @@ export function EndingsPage() {
   const endings = gameData.scenes.filter(({ isEnding }) => isEnding);
 
   return (
-    <Main classes="gap-9">
+    <Main className="gap-9">
       <Title>Концовки</Title>
 
       <CardGrid>

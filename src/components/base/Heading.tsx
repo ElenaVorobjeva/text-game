@@ -3,12 +3,12 @@ import type { ElementType, ReactNode } from "react";
 type Props = {
   children: ReactNode;
   as?: ElementType;
-  classes?: string;
+  className?: string;
 };
-export function Heading({ children, as: Tag = "h1", classes }: Props) {
+export function Heading({ children, as: Tag = "h1", className = "" }: Props) {
   return (
     <Tag
-      className={`font-heading text-light-blue text-xl leading-tight ${classes}`}
+      className={`font-heading text-light-blue text-xl leading-tight ${className}`}
     >
       {children}
     </Tag>

@@ -3,11 +3,11 @@ import type { ElementType, ReactNode } from "react";
 type Props = {
   children: ReactNode;
   as?: ElementType;
-  classes?: string;
+  className?: string;
 };
-export function Title({ children, as: Tag = "h1", classes }: Props) {
+export function Title({ children, as: Tag = "h1", className = "" }: Props) {
   return (
-    <Tag className={`text-light-blue text-lg font-bold ${classes}`}>
+    <Tag className={`text-light-blue text-lg font-bold ${className}`}>
       {children}
     </Tag>
   );

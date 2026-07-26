@@ -17,7 +17,7 @@ export function ChapterSelectPage() {
   const chapters = gameData.chapters;
 
   return (
-    <Main classes="gap-9">
+    <Main className="gap-9">
       <Title>Выбор главы</Title>
 
       <CardGrid>

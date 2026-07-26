@@ -10,9 +10,9 @@ export function MainMenuPage() {
   const navigate = useNavigate();
 
   return (
-    <Main classes="gap-11">
+    <Main className="gap-11">
       <div>
-        <Heading classes="md:text-2xl">Тихий хороший день</Heading>
+        <Heading className="md:text-2xl">Тихий хороший день</Heading>
 
         <p className="leading-free text-grey-blue mx-auto mt-5 max-w-[40rem] text-sm">
           Небольшая текстовая игра о мягком ритме жизни, простых решениях и
