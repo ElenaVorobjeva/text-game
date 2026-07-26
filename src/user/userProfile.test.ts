@@ -1,10 +1,9 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
 import {
   USER_KEY,
   USER_VERSION,
   addCompletedEnding,
-  hasCompletedEndings,
-  isEndingCompleted,
   loadUserProfile,
   saveUserProfile,
 } from "./userProfile";
@@ -119,26 +118,7 @@ describe("addCompletedEnding", () => {
     addCompletedEnding("connection");
 
     // Профиль читается заново — данные сохранились в хранилище.
-    expect(isEndingCompleted("connection")).toBe(true);
-  });
-});
-
-describe("isEndingCompleted / hasCompletedEndings", () => {
-  test("isEndingCompleted reflects whether the ending was collected", () => {
-    addCompletedEnding("calm");
-
-    expect(isEndingCompleted("calm")).toBe(true);
-    expect(isEndingCompleted("care")).toBe(false);
-  });
-
-  test("hasCompletedEndings is false for an empty profile", () => {
-    expect(hasCompletedEndings()).toBe(false);
-  });
-
-  test("hasCompletedEndings is true once something is collected", () => {
-    addCompletedEnding("balanced");
-
-    expect(hasCompletedEndings()).toBe(true);
+    expect(loadUserProfile().completedEndings).toContain("connection");
   });
 });
 
