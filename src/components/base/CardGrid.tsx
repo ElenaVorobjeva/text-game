@@ -6,7 +6,7 @@ type Props = {
 
 export function CardGrid({ children }: Props) {
   return (
-    <div className="flex max-w-[56.25rem] flex-wrap justify-center gap-7">
+    <div className="max-w-grid flex flex-wrap justify-center gap-7">
       {children}
     </div>
   );

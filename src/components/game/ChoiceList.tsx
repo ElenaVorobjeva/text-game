@@ -12,7 +12,7 @@ export function ChoiceList({ choices, onChoose }: Props) {
   }
 
   return (
-    <div className="flex w-full max-w-[43.75rem] flex-col gap-2.5">
+    <div className="max-w-scene flex w-full flex-col gap-2.5">
       {choices.map((choice, index) => (
         <div
           key={choice.id}

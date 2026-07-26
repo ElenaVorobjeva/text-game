@@ -11,7 +11,7 @@ export function SceneView({ image, title, text }: Props) {
     <>
       {image && <Image src={image} alt={title} />}
 
-      <div className="flex max-w-[43.75rem] flex-col gap-2.5 text-center">
+      <div className="max-w-scene flex flex-col gap-2.5 text-center">
         <h2 className="font-title text-md text-light-blue font-semibold italic">
           {title}
         </h2>
