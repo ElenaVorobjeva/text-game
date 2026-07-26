@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+
 import { gameData } from "../engine/gameEngine";
 
 // Тесты на целостность контента, а не на код: ловят опечатки в gameData.json

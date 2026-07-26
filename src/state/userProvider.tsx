@@ -5,11 +5,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
+
 import {
   addCompletedEnding,
   loadUserProfile,
   USER_KEY,
 } from "../user/userProfile";
+
 import { UserContext } from "./userContext";
 
 type Props = {

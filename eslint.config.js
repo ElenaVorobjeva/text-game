@@ -1,5 +1,6 @@
 import js from "@eslint/js";
 import globals from "globals";
+import importX from "eslint-plugin-import-x";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
@@ -34,7 +35,26 @@ export default defineConfig([
   },
   {
     files: ["src/**/*.{ts,tsx}"],
+    plugins: { "import-x": importX },
     rules: {
+      // Порядок импортов: сначала внешние пакеты, потом свои модули, внутри
+      // группы — по алфавиту, между группами — пустая строка. Правило целиком
+      // автофиксится (`eslint --fix`), поэтому руками его соблюдать не нужно.
+      "import-x/order": [
+        "error",
+        {
+          groups: [
+            "builtin",
+            "external",
+            "internal",
+            "parent",
+            "sibling",
+            "index",
+          ],
+          "newlines-between": "always",
+          alphabetize: { order: "asc", caseInsensitive: true },
+        },
+      ],
       // Компоненты и функции объявляются через `function`, а не `const … = () =>`.
       // Стрелки в аргументах (колбэки, useCallback) правило не трогает.
       "func-style": ["error", "declaration", { allowArrowFunctions: false }],

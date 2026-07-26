@@ -1,12 +1,13 @@
 import { Navigate, useLocation, useNavigate, useParams } from "react-router";
-import { Main } from "../components/base/Main";
+
 import { Button } from "../components/base/Button";
-import { gameData } from "../engine/gameEngine";
-import { goBack } from "../utils/common";
-import { useUser } from "../state/useUser";
-import { Heading } from "../components/base/Heading";
 import { Description } from "../components/base/Description";
+import { Heading } from "../components/base/Heading";
 import { Image } from "../components/base/Image";
+import { Main } from "../components/base/Main";
+import { gameData } from "../engine/gameEngine";
+import { useUser } from "../state/useUser";
+import { goBack } from "../utils/common";
 
 export function EndingDetailPage() {
   const { isEndingCompleted } = useUser();

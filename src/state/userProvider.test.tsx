@@ -1,14 +1,16 @@
 // @vitest-environment jsdom
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
+
 import { App } from "../app/App";
+import { createInitialGameState, gameData } from "../engine/gameEngine";
+import { addCompletedEnding, USER_KEY } from "../user/userProfile";
+import { saveGame } from "../utils/saveLoad";
+
 import { GameProvider } from "./gameProvider";
 import { UserProvider } from "./userProvider";
-import { createInitialGameState, gameData } from "../engine/gameEngine";
-import { saveGame } from "../utils/saveLoad";
-import { addCompletedEnding, USER_KEY } from "../user/userProfile";
 
 // Профиль пользователя (собранные концовки) кэшируется в состоянии провайдера,
 // а не перечитывается с диска на каждый рендер. Эти тесты сторожат именно те

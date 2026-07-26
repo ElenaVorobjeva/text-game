@@ -1,5 +1,7 @@
 import { describe, expect, test } from "vitest";
+
 import type { GameStateData } from "../types/game";
+
 import { areConditionsMet, isConditionMet } from "./conditions";
 
 function makeState(overrides: Partial<GameStateData> = {}): GameStateData {

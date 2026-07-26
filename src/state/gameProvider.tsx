@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState, type ReactNode } from "react";
-import type { Chapter, Choice, GameStateData } from "../types/game";
+
 import {
   canEnterChapter,
   createInitialGameState,
@@ -8,7 +8,9 @@ import {
   getCurrentScene,
   makeChoice,
 } from "../engine/gameEngine";
+import type { Chapter, Choice, GameStateData } from "../types/game";
 import { loadGame, saveGame, clearSave } from "../utils/saveLoad";
+
 import { GameContext } from "./gameContext";
 
 type Props = {

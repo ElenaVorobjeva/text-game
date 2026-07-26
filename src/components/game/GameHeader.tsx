@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router";
-import { Link } from "../base/Link";
-import { useGame } from "../../state/useGame";
+
 import GitHubLogo from "../../assets/images/github-logo.svg?react";
-import { restartGame } from "../../utils/common";
+import { useGame } from "../../state/useGame";
 import { useUser } from "../../state/useUser";
+import { restartGame } from "../../utils/common";
+import { Link } from "../base/Link";
 
 // Общая шапка для всех экранов, кроме главного меню. Навигацию и сброс делает
 // сама через useNavigate/useGame — снаружи её подключают без пропсов. Статы

@@ -1,13 +1,15 @@
 // @vitest-environment jsdom
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
-import { App } from "./App";
-import { GameProvider } from "../state/gameProvider";
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
+
 import { createInitialGameState, getCurrentScene } from "../engine/gameEngine";
-import { saveGame } from "../utils/saveLoad";
+import { GameProvider } from "../state/gameProvider";
 import { UserProvider } from "../state/userProvider";
+import { saveGame } from "../utils/saveLoad";
+
+import { App } from "./App";
 
 // Тесты навигации: проверяют маршруты и переходы через реальный react-router
 // (MemoryRouter). Роутинг иначе покрыт только ручной проверкой.
