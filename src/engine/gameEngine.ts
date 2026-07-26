@@ -7,6 +7,7 @@ import type {
   GameStateData,
   Scene,
 } from "../types/game";
+
 import { areConditionsMet } from "./conditions";
 import { applyEffects } from "./effects";
 
@@ -25,6 +26,13 @@ export function snapshotOf(state: ChapterSnapshot): ChapterSnapshot {
     stats: { ...state.stats },
     inventory: [...state.inventory],
   };
+}
+
+// Добавляет элемент в список, не создавая дубля; порядок сохраняется.
+// Списки прогресса (посещённые сцены, открытые главы и концовки) пополняются
+// одинаково, и раньше каждый из них разворачивал Set вручную прямо в литерале.
+function withUnique<T>(list: T[], item: T): T[] {
+  return Array.from(new Set([...list, item]));
 }
 
 export function getSceneById(sceneId: string): Scene {
@@ -72,31 +80,18 @@ export function makeChoice(
   return {
     ...stateAfterEffects,
     currentSceneId: nextScene.id,
-    visitedScenes: Array.from(
-      new Set([...stateAfterEffects.visitedScenes, nextScene.id]),
-    ),
+    visitedScenes: withUnique(stateAfterEffects.visitedScenes, nextScene.id),
     unlockedChapters: isRealChapter
-      ? Array.from(
-          new Set([...stateAfterEffects.unlockedChapters, nextScene.chapter]),
-        )
+      ? withUnique(stateAfterEffects.unlockedChapters, nextScene.chapter)
       : stateAfterEffects.unlockedChapters,
     unlockedEndings:
       nextScene.isEnding && nextScene.endingType
-        ? Array.from(
-            new Set([
-              ...stateAfterEffects.unlockedEndings,
-              nextScene.endingType,
-            ]),
-          )
+        ? withUnique(stateAfterEffects.unlockedEndings, nextScene.endingType)
         : stateAfterEffects.unlockedEndings,
     gameStatistic: isEnteredNewChapter
       ? {
           ...stateAfterEffects.gameStatistic,
-          [nextScene.chapter]: {
-            flags: { ...stateAfterEffects.flags },
-            stats: { ...stateAfterEffects.stats },
-            inventory: [...stateAfterEffects.inventory],
-          },
+          [nextScene.chapter]: snapshotOf(stateAfterEffects),
         }
       : stateAfterEffects.gameStatistic,
   };

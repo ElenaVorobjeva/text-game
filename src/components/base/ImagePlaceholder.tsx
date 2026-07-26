@@ -10,7 +10,7 @@ type Props = {
 //
 // label обязателен: у svg с role="img" это единственное доступное имя, и без
 // него скринридер прочитает все закрытые карточки одинаково.
-export function ImagePlaceholder({ className, label }: Props) {
+export function ImagePlaceholder({ className = "", label }: Props) {
   return (
     <svg
       className={className}

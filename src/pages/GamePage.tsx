@@ -1,13 +1,14 @@
-import { useGame } from "../state/useGame";
-import { SceneView } from "../components/game/SceneView";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+
 import { ChoiceList } from "../components/game/ChoiceList";
 import { EndingView } from "../components/game/EndingView";
+import { SceneView } from "../components/game/SceneView";
 import { StatsBar } from "../components/game/StatsBar";
 import { getSceneImage } from "../engine/gameEngine";
-import { useNavigate } from "react-router";
-import { restartGame } from "../utils/common";
-import { useEffect } from "react";
+import { useGame } from "../state/useGame";
 import { useUser } from "../state/useUser";
+import { restartGame } from "../utils/common";
 
 export function GamePage() {
   const navigate = useNavigate();
@@ -19,9 +20,7 @@ export function GamePage() {
     if (scene.isEnding && scene.endingType) completeEnding(scene.endingType);
   }, [scene, completeEnding]);
 
-  const isEnding = Boolean(scene.isEnding);
-
-  if (isEnding) {
+  if (scene.isEnding) {
     return (
       <EndingView
         key={scene.id}

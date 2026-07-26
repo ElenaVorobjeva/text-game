@@ -1,5 +1,7 @@
 import { describe, expect, test } from "vitest";
+
 import type { Choice, GameStateData, Scene } from "../types/game";
+
 import {
   canEnterChapter,
   createInitialGameState,

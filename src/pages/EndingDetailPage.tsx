@@ -1,11 +1,15 @@
 import { Navigate, useLocation, useNavigate, useParams } from "react-router";
-import Main from "../components/base/Main";
-import Button from "../components/base/Button";
-import { gameData } from "../engine/gameEngine";
-import { goBack } from "../utils/common";
-import { useUser } from "../state/useUser";
 
-export const EndingDetailPage = () => {
+import { Button } from "../components/base/Button";
+import { Description } from "../components/base/Description";
+import { Heading } from "../components/base/Heading";
+import { Image } from "../components/base/Image";
+import { Main } from "../components/base/Main";
+import { gameData } from "../engine/gameEngine";
+import { useUser } from "../state/useUser";
+import { goBack } from "../utils/common";
+
+export function EndingDetailPage() {
   const { isEndingCompleted } = useUser();
   const { endingType } = useParams();
   const navigate = useNavigate();
@@ -22,22 +26,12 @@ export const EndingDetailPage = () => {
   }
 
   return (
-    <Main classes="gap-5.5">
-      {ending.image && (
-        <img
-          className="block h-[min(22vh,11.25rem)] w-full max-w-[51.25rem] rounded-sm object-cover"
-          src={ending.image}
-          alt={ending.title}
-        />
-      )}
+    <Main className="gap-5.5">
+      {ending.image && <Image src={ending.image} alt={ending.title} />}
 
-      <h1 className="font-heading text-light-blue text-xl leading-tight">
-        Концовка: {ending.title}
-      </h1>
+      <Heading>Концовка: {ending.title}</Heading>
 
-      <p className="leading-free text-grey-blue max-w-[37.5rem] text-[0.9375rem]">
-        {ending.text}
-      </p>
+      <Description>{ending.text}</Description>
 
       {/* 
         onClick:
@@ -53,4 +47,4 @@ export const EndingDetailPage = () => {
       </Button>
     </Main>
   );
-};
+}

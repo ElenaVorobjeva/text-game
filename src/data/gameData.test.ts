@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+
 import { gameData } from "../engine/gameEngine";
 
 // Тесты на целостность контента, а не на код: ловят опечатки в gameData.json
@@ -136,7 +137,9 @@ describe("endings", () => {
 describe("images", () => {
   // Путь /public/images/… работает в dev и отдаёт 404 в проде:
   // public/ копируется в корень dist/, а не остаётся отдельной папкой.
-  const isPublicPath = (path: string) => path.startsWith("/images/");
+  function isPublicPath(path: string) {
+    return path.startsWith("/images/");
+  }
 
   test("chapter images point at /images/", () => {
     const broken = chapters

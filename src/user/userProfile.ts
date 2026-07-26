@@ -24,6 +24,17 @@ function createEmptyProfile(): UserProfile {
   return { version: USER_VERSION, completedEndings: [] };
 }
 
+// Профиль непригоден: отдаём пустой, но причину пишем в консоль — так же, как
+// discardSave в saveLoad. Потеря собранных концовок не должна происходить
+// молча, иначе такие случаи невозможно разбирать по жалобам.
+// В отличие от сохранения, хранилище здесь не чистится: испорченный профиль
+// остаётся на диске и будет перезаписан только при явной записи.
+function discardProfile(reason: string): UserProfile {
+  console.warn(`Профиль отброшен: ${reason}`);
+
+  return createEmptyProfile();
+}
+
 export function loadUserProfile(): UserProfile {
   const raw = localStorage.getItem(USER_KEY);
 
@@ -33,9 +44,9 @@ export function loadUserProfile(): UserProfile {
     const saved = JSON.parse(raw) as Partial<UserProfile>;
 
     // Профиль из более новой сборки: формат нам неизвестен, не рискуем его
-    // читать — начинаем с чистого (перезапишем только при явной записи).
+    // читать — начинаем с чистого.
     if (typeof saved.version === "number" && saved.version > USER_VERSION) {
-      return createEmptyProfile();
+      return discardProfile(`формат версии ${saved.version} новее текущего`);
     }
 
     return {
@@ -51,7 +62,7 @@ export function loadUserProfile(): UserProfile {
     };
   } catch {
     // Битый JSON невосстановим — отдаём пустой профиль, но не роняем страницу.
-    return createEmptyProfile();
+    return discardProfile("не удалось разобрать JSON");
   }
 }
 
@@ -77,12 +88,4 @@ export function addCompletedEnding(endingType: string): UserProfile {
   saveUserProfile(next);
 
   return next;
-}
-
-export function isEndingCompleted(endingType: string): boolean {
-  return loadUserProfile().completedEndings.includes(endingType);
-}
-
-export function hasCompletedEndings(): boolean {
-  return loadUserProfile().completedEndings.length > 0;
 }

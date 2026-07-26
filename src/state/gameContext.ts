@@ -1,6 +1,7 @@
 import { createContext } from "react";
-import type { Chapter, Choice, GameStateData } from "../types/game";
+
 import type { getCurrentScene } from "../engine/gameEngine";
+import type { Chapter, Choice, GameStateData } from "../types/game";
 
 export type GameContextValue = {
   gameState: GameStateData;

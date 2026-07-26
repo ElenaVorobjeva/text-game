@@ -1,13 +1,14 @@
-import { MainMenuPage } from "../pages/MainMenuPage";
-import { GamePage } from "../pages/GamePage";
-import { ChapterSelectPage } from "../pages/ChapterSelectPage";
 import { Navigate, Route, Routes, useLocation } from "react-router";
-import { useGame } from "../state/useGame";
-import { EndingsPage } from "../pages/EndingsPage";
-import { EndingDetailPage } from "../pages/EndingDetailPage";
-import { GameHeader } from "../components/game/GameHeader";
 
-export default function App() {
+import { GameHeader } from "../components/game/GameHeader";
+import { ChapterSelectPage } from "../pages/ChapterSelectPage";
+import { EndingDetailPage } from "../pages/EndingDetailPage";
+import { EndingsPage } from "../pages/EndingsPage";
+import { GamePage } from "../pages/GamePage";
+import { MainMenuPage } from "../pages/MainMenuPage";
+import { useGame } from "../state/useGame";
+
+export function App() {
   const { hasSave } = useGame();
   const location = useLocation();
   const layoutStyles =

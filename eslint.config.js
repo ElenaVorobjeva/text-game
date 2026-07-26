@@ -1,5 +1,6 @@
 import js from "@eslint/js";
 import globals from "globals";
+import importX from "eslint-plugin-import-x";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
@@ -30,6 +31,62 @@ export default defineConfig([
       // пропускает. На неполных зависимостях уже дважды ловились настоящие баги
       // (замороженный isEndingCompleted, протухший hasSave), поэтому ошибка.
       "react-hooks/exhaustive-deps": "error",
+    },
+  },
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    plugins: { "import-x": importX },
+    rules: {
+      // Порядок импортов: сначала внешние пакеты, потом свои модули, внутри
+      // группы — по алфавиту, между группами — пустая строка. Правило целиком
+      // автофиксится (`eslint --fix`), поэтому руками его соблюдать не нужно.
+      "import-x/order": [
+        "error",
+        {
+          groups: [
+            "builtin",
+            "external",
+            "internal",
+            "parent",
+            "sibling",
+            "index",
+          ],
+          "newlines-between": "always",
+          alphabetize: { order: "asc", caseInsensitive: true },
+        },
+      ],
+      // Компоненты и функции объявляются через `function`, а не `const … = () =>`.
+      // Стрелки в аргументах (колбэки, useCallback) правило не трогает.
+      "func-style": ["error", "declaration", { allowArrowFunctions: false }],
+      "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+      "no-restricted-syntax": [
+        "error",
+        // Только именованные экспорты: default позволяет импортировать компонент
+        // под произвольным именем и ломает автоимпорт. Скоуп — src, потому что
+        // vite.config.ts и postcss.config.js без default-экспорта не работают.
+        {
+          selector: "ExportDefaultDeclaration",
+          message: "Только именованный экспорт: export function Foo() {}",
+        },
+        {
+          // ESLint не знает про «компоненты», поэтому правило структурное:
+          // объектный тип прямо в параметре запрещён у любой функции.
+          selector:
+            ":function > :matches(ObjectPattern, Identifier) > TSTypeAnnotation > TSTypeLiteral",
+          message:
+            "Тип пропсов выносится в отдельный `type Props` над компонентом",
+        },
+        {
+          selector: 'TSQualifiedName[left.name="React"]',
+          message:
+            'Импортируй тип напрямую из "react": import type { ReactNode } from "react"',
+        },
+        {
+          selector:
+            'JSXAttribute[name.name="className"] > JSXExpressionContainer > TemplateLiteral',
+          message: "Используй функцию cn() для склеивания классов",
+        },
+      ],
     },
   },
 ]);

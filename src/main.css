@@ -16,12 +16,24 @@
 
   --color-grey-160: rgba(255, 255, 255, 0.16);
 
+  --text-2xs: 0.8125rem;
+  --text-base: 0.9375rem;
   --text-xs: 1rem;
   --text-sm: 1.125rem;
   --text-md: 1.875rem;
   --text-lg: 2rem;
   --text-xl: 3.25rem;
   --text-2xl: 5.25rem;
+
+  /* Ширины блоков контента. Значения из макета, названия — по роли: раньше
+     они были разбросаны по компонентам как max-w-[37.5rem] и рядом друг с
+     другом не сравнивались. Имена не пересекаются со стоковыми (max-w-prose
+     и max-w-sm остаются тайлвиндовскими). */
+  --container-text: 37.5rem;
+  --container-intro: 40rem;
+  --container-scene: 43.75rem;
+  --container-banner: 51.25rem;
+  --container-grid: 56.25rem;
 
   --leading-tight: 1.15;
   --leading-normal: 1.4;

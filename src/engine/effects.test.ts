@@ -1,5 +1,7 @@
 import { describe, expect, test } from "vitest";
+
 import type { GameStateData } from "../types/game";
+
 import { applyEffect, applyEffects } from "./effects";
 
 function makeState(overrides: Partial<GameStateData> = {}): GameStateData {
