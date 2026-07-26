@@ -1,15 +1,20 @@
 import { cn } from "../../utils/cn";
+
 import { ImagePlaceholder } from "./ImagePlaceholder";
 
-type Props = {
-  type: "chapter" | "ending";
-  id: string | number;
+type BaseProps = {
   index: number;
   title: string;
   image: string | undefined;
   disabled: boolean;
   onClick: () => void;
 };
+
+// id нужен только карточке главы — он попадает в подпись «Глава 2: …».
+// У концовки подпись это само название, номер ей не нужен, поэтому раньше
+// в id прилетал строковый id сцены и тип расширялся до string | number.
+type Props = BaseProps &
+  ({ type: "chapter"; id: number } | { type: "ending"; id?: never });
 
 const IMAGE_CLASSES =
   "border-grey-160 aspect-square w-70 max-w-full rounded-lg border object-cover sm:w-45";
@@ -23,15 +28,15 @@ export function Card({
   disabled,
   onClick,
 }: Props) {
-  const text =
-    type === "chapter"
-      ? `${disabled ? "???" : `Глава ${id}: ${title}`}`
-      : disabled
-        ? "???"
-        : title;
+  // Закрытая карточка не раскрывает ни номер главы, ни название концовки.
+  const label = disabled
+    ? "???"
+    : type === "chapter"
+      ? `Глава ${id}: ${title}`
+      : title;
+
   return (
     <div
-      key={id}
       className="animate-fade-up"
       style={{ animationDelay: `${0.05 + index * 0.07}s` }}
     >
@@ -57,7 +62,7 @@ export function Card({
         )}
 
         <span className="text-grey-blue mt-3 max-w-70 text-base leading-normal sm:max-w-45">
-          {text}
+          {label}
         </span>
       </button>
     </div>

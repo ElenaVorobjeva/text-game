@@ -1,14 +1,21 @@
 import type { ReactNode } from "react";
+
 import { cn } from "../../utils/cn";
 
-type Props = {
-  type?: "button" | "link";
-  href?: string;
+type BaseProps = {
   size?: "sm" | "md" | "lg";
   color?: "white" | "gray";
-  onClick?: () => void;
   children: ReactNode;
 };
+
+// Дискриминированный union, а не набор опциональных пропов: ссылке обязателен
+// href, кнопке — onClick. Раньше опциональны были оба при любом type, и
+// <Link type="button"> без onClick спокойно компилировался в мёртвую кнопку.
+type Props = BaseProps &
+  (
+    | { type?: "link"; href: string; onClick?: () => void }
+    | { type: "button"; href?: never; onClick: () => void }
+  );
 
 const SIZES = {
   sm: "text-2xs",
