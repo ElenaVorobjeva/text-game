@@ -4,6 +4,9 @@ import { Button } from "../components/base/Button";
 import { gameData } from "../engine/gameEngine";
 import { goBack } from "../utils/common";
 import { useUser } from "../state/useUser";
+import { Heading } from "../components/base/Heading";
+import { Description } from "../components/base/Description";
+import { Image } from "../components/base/Image";
 
 export function EndingDetailPage() {
   const { isEndingCompleted } = useUser();
@@ -23,21 +26,11 @@ export function EndingDetailPage() {
 
   return (
     <Main classes="gap-5.5">
-      {ending.image && (
-        <img
-          className="block h-[min(22vh,11.25rem)] w-full max-w-[51.25rem] rounded-sm object-cover"
-          src={ending.image}
-          alt={ending.title}
-        />
-      )}
+      {ending.image && <Image src={ending.image} alt={ending.title} />}
 
-      <h1 className="font-heading text-light-blue text-xl leading-tight">
-        Концовка: {ending.title}
-      </h1>
+      <Heading>Концовка: {ending.title}</Heading>
 
-      <p className="leading-free text-grey-blue max-w-[37.5rem] text-base">
-        {ending.text}
-      </p>
+      <Description>{ending.text}</Description>
 
       {/* 
         onClick:

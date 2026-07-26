@@ -5,6 +5,8 @@ import { useLocation, useNavigate } from "react-router";
 import { Card } from "../components/base/Card";
 import { goBack } from "../utils/common";
 import { useUser } from "../state/useUser";
+import { CardGrid } from "../components/base/CardGrid";
+import { Title } from "../components/base/Title";
 
 export function EndingsPage() {
   const { completedEndings } = useUser();
@@ -15,10 +17,12 @@ export function EndingsPage() {
 
   return (
     <Main classes="gap-9">
-      <h1 className="text-light-blue text-lg font-bold">Концовки</h1>
+      <Title>Концовки</Title>
 
-      <div className="flex max-w-[56.25rem] flex-wrap justify-center gap-7">
-        {endings.map(({ id, title, image, endingType }) => {
+      <CardGrid>
+        {endings.map((endingData, index) => {
+          const { id, title, image, endingType } = endingData;
+
           const isAvailable =
             !!endingType && completedEndings.includes(endingType);
 
@@ -26,6 +30,7 @@ export function EndingsPage() {
             <Card
               key={id}
               type="ending"
+              index={index}
               id={id}
               title={title}
               image={image}
@@ -34,7 +39,7 @@ export function EndingsPage() {
             />
           );
         })}
-      </div>
+      </CardGrid>
 
       <Button
         width="fullOnMobile"

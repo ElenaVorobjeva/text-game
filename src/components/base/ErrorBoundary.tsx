@@ -1,6 +1,9 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { clearSave } from "../../utils/saveLoad";
 import { Button } from "./Button";
+import { Heading } from "./Heading";
+import { Description } from "./Description";
+import { Row } from "./Row";
 
 type Props = { children: ReactNode };
 type State = { hasError: boolean };
@@ -26,18 +29,16 @@ export class ErrorBoundary extends Component<Props, State> {
     return (
       <div className="font-text text-light-blue flex min-h-screen flex-col bg-black">
         <main className="flex grow flex-col items-center justify-center gap-5.5 p-6 text-center">
-          <h1 className="font-heading text-light-blue text-xl leading-tight">
-            Что-то пошло не так
-          </h1>
+          <Heading>Что-то пошло не так</Heading>
 
-          <p className="leading-free text-grey-blue max-w-[37.5rem] text-base">
+          <Description>
             Игра не смогла продолжиться. Обычно достаточно перезагрузить
             страницу — прогресс сохранится.
-          </p>
+          </Description>
 
           {/* Перезагрузка идёт первой: упасть мог любой компонент, и стирать
               из-за этого прогресс незачем. Сброс — второй, явно опасный шаг. */}
-          <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center">
+          <Row>
             <Button
               size="lg"
               width="fullOnMobile"
@@ -57,7 +58,7 @@ export class ErrorBoundary extends Component<Props, State> {
             >
               Начать заново и стереть сохранение
             </Button>
-          </div>
+          </Row>
         </main>
       </div>
     );

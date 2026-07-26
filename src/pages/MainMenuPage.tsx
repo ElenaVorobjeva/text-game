@@ -2,6 +2,8 @@ import { useNavigate } from "react-router";
 import { Button } from "../components/base/Button";
 import { Main } from "../components/base/Main";
 import { useGame } from "../state/useGame";
+import { Heading } from "../components/base/Heading";
+import { Row } from "../components/base/Row";
 
 export function MainMenuPage() {
   const { hasSave, startNewGame, resetGame, continueGame } = useGame();
@@ -10,9 +12,7 @@ export function MainMenuPage() {
   return (
     <Main classes="gap-11">
       <div>
-        <h1 className="font-heading text-light-blue text-xl leading-tight md:text-2xl">
-          Тихий хороший день
-        </h1>
+        <Heading classes="md:text-2xl">Тихий хороший день</Heading>
 
         <p className="leading-free text-grey-blue mx-auto mt-5 max-w-[40rem] text-sm">
           Небольшая текстовая игра о мягком ритме жизни, простых решениях и
@@ -20,7 +20,7 @@ export function MainMenuPage() {
         </p>
       </div>
 
-      <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center">
+      <Row>
         {!hasSave && (
           <Button
             size="lg"
@@ -70,7 +70,7 @@ export function MainMenuPage() {
             </Button>
           </>
         )}
-      </div>
+      </Row>
     </Main>
   );
 }
