@@ -12,7 +12,7 @@ import { restartGame } from "../utils/common";
 
 export function GamePage() {
   const navigate = useNavigate();
-  const { scene, choices, choose, resetGame } = useGame();
+  const { scene, resetGame } = useGame();
   const { completeEnding } = useUser();
   const image = getSceneImage(scene);
 
@@ -43,7 +43,7 @@ export function GamePage() {
 
       <SceneView image={image} title={scene.title} text={scene.text} />
 
-      <ChoiceList choices={choices} onChoose={choose} />
+      <ChoiceList />
     </div>
   );
 }

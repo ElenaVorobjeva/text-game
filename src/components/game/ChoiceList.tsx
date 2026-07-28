@@ -2,45 +2,50 @@ import { useNavigate } from "react-router";
 
 import { getChapterById } from "../../engine/gameEngine";
 import { useGame } from "../../state/useGame";
-import type { Choice } from "../../types/game";
 import { Button } from "../base/Button";
 import { Row } from "../base/Row";
 
-type Props = {
-  choices: Choice[];
-  onChoose: (choice: Choice) => void;
-};
-
-export function ChoiceList({ choices, onChoose }: Props) {
+export function ChoiceList() {
   const navigate = useNavigate();
-  const { chooseChapter, startNewGame, resetGame, scene } = useGame();
+  const {
+    canEnterChapter,
+    chooseChapter,
+    startNewGame,
+    resetGame,
+    choose,
+    scene,
+    choices,
+  } = useGame();
 
   if (choices.length === 0) {
+    const currentChapterId = scene.chapter;
+    const currentChapter = getChapterById(currentChapterId);
+    const currentChapterIsAvailable = canEnterChapter(currentChapterId);
+
     return (
-      <div className="border-grey-blue flex flex-col gap-5 rounded-lg border border-solid p-7">
+      <div className="border-grey-blue flex flex-col gap-5 rounded-lg border p-7">
         <p className="text-grey-blue text-base">
-          Доступных действий сейчас нет. Попробуйте пройти какие-то главы или
-          всю игру заново
+          Доступных действий сейчас нет. Попробуйте пройти другие главы или всю
+          игру заново.
         </p>
         <Row>
-          <Button
-            size="xs"
-            width="fullOnMobile"
-            onClick={() => {
-              const currentChapter = getChapterById(scene.chapter);
-              if (chooseChapter(currentChapter)) navigate("/game");
-            }}
-          >
-            Начать главу сначала
-          </Button>
-
+          {currentChapterIsAvailable && (
+            <Button
+              size="sm"
+              width="fullOnMobile"
+              onClick={() => {
+                chooseChapter(currentChapter);
+              }}
+            >
+              Начать главу сначала
+            </Button>
+          )}
           <Button
             size="sm"
             width="fullOnMobile"
             onClick={() => {
               resetGame();
               startNewGame();
-              navigate("/game");
             }}
           >
             Начать игру сначала
@@ -72,7 +77,7 @@ export function ChoiceList({ choices, onChoose }: Props) {
             variant="bordered"
             size="sm"
             width="full"
-            onClick={() => onChoose(choice)}
+            onClick={() => choose(choice)}
           >
             {choice.text}
           </Button>
