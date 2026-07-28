@@ -4,6 +4,7 @@ import { getChapterById } from "../../engine/gameEngine";
 import { useGame } from "../../state/useGame";
 import { Button } from "../base/Button";
 import { Row } from "../base/Row";
+import { startGame } from "../../utils/common";
 
 export function ChoiceList() {
   const navigate = useNavigate();
@@ -44,8 +45,7 @@ export function ChoiceList() {
             size="sm"
             width="fullOnMobile"
             onClick={() => {
-              resetGame();
-              startNewGame();
+              startGame(startNewGame, navigate);
             }}
           >
             Начать игру сначала
