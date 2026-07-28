@@ -8,7 +8,7 @@ import { useGame } from "../state/useGame";
 import { startGame } from "../utils/common";
 
 export function MainMenuPage() {
-  const { hasSave, startNewGame, resetGame, continueGame } = useGame();
+  const { hasSave, startNewGame, continueGame } = useGame();
   const navigate = useNavigate();
 
   return (
