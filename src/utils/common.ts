@@ -16,3 +16,11 @@ export function restartGame(resetGame: () => void, navigate: NavigateFunction) {
   resetGame();
   navigate("/");
 }
+
+export function startGame(
+  startNewGame: () => void,
+  navigate: NavigateFunction,
+) {
+  startNewGame();
+  navigate("/game", { replace: true });
+}

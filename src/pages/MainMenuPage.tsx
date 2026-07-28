@@ -5,9 +5,10 @@ import { Heading } from "../components/base/Heading";
 import { Main } from "../components/base/Main";
 import { Row } from "../components/base/Row";
 import { useGame } from "../state/useGame";
+import { startGame } from "../utils/common";
 
 export function MainMenuPage() {
-  const { hasSave, startNewGame, resetGame, continueGame } = useGame();
+  const { hasSave, startNewGame, continueGame } = useGame();
   const navigate = useNavigate();
 
   return (
@@ -27,8 +28,7 @@ export function MainMenuPage() {
             size="lg"
             width="fullOnMobile"
             onClick={() => {
-              startNewGame();
-              navigate("/game");
+              startGame(startNewGame, navigate);
             }}
           >
             Старт
@@ -52,9 +52,7 @@ export function MainMenuPage() {
               size="lg"
               width="fullOnMobile"
               onClick={() => {
-                resetGame();
-                startNewGame();
-                navigate("/game");
+                startGame(startNewGame, navigate);
               }}
             >
               Начать сначала
