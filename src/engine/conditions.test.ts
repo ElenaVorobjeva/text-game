@@ -11,8 +11,6 @@ function makeState(overrides: Partial<GameStateData> = {}): GameStateData {
     stats: { care: 0, connection: 0, calm: 0 },
     inventory: [],
     visitedScenes: ["chapter1_scene1"],
-    unlockedChapters: [1],
-    unlockedEndings: [],
     gameStatistic: {},
     ...overrides,
   };

@@ -25,9 +25,8 @@ export function ChapterSelectPage() {
         {chapters.map((chapterData, index) => {
           const { id, title, image } = chapterData;
 
-          // Доступность считается по наличию снимка, а не по unlockedChapters:
-          // у сохранений, мигрированных со старого формата, главы отмечены
-          // открытыми, но снимков для них нет — перейти туда всё равно нельзя.
+          // Доступность считается по наличию снимка главы (gameStatistic):
+          // нет снимка — в главу ещё не входили, перейти туда нельзя.
           const isAvailable = canEnterChapter(id);
 
           return (

@@ -22,8 +22,6 @@ function makeState(overrides: Partial<GameStateData> = {}): GameStateData {
     stats: { care: 0, connection: 0, calm: 0 },
     inventory: [],
     visitedScenes: ["chapter1_scene1"],
-    unlockedChapters: [1],
-    unlockedEndings: [],
     gameStatistic: {},
     ...overrides,
   };
@@ -157,51 +155,6 @@ describe("makeChoice", () => {
     ).toHaveLength(1);
   });
 
-  test("unlocks the chapter the new scene belongs to", () => {
-    const state = makeState();
-
-    const result = makeChoice(
-      makeChoiceData({ nextSceneId: "chapter2_scene1" }),
-      state,
-    );
-
-    expect(result.unlockedChapters).toEqual([1, 2]);
-  });
-
-  test("does not unlock a chapter twice", () => {
-    const state = makeState({ unlockedChapters: [1, 2] });
-
-    const result = makeChoice(
-      makeChoiceData({ nextSceneId: "chapter2_scene1" }),
-      state,
-    );
-
-    expect(result.unlockedChapters).toEqual([1, 2]);
-  });
-
-  test("does not add chapter 0 when moving to an ending", () => {
-    const state = makeState();
-
-    const result = makeChoice(
-      makeChoiceData({ nextSceneId: "ending_calm" }),
-      state,
-    );
-
-    // У концовок chapter === 0, это не настоящая глава
-    expect(result.unlockedChapters).toEqual([1]);
-  });
-
-  test("unlocks the ending when moving to an ending scene", () => {
-    const state = makeState();
-
-    const result = makeChoice(
-      makeChoiceData({ nextSceneId: "ending_calm" }),
-      state,
-    );
-
-    expect(result.unlockedEndings).toContain("calm");
-  });
-
   test("throws when the choice points at a scene that does not exist", () => {
     const state = makeState();
 
@@ -223,7 +176,6 @@ describe("makeChoice", () => {
 
     expect(state.currentSceneId).toBe("chapter1_scene1");
     expect(state.visitedScenes).toEqual(["chapter1_scene1"]);
-    expect(state.unlockedChapters).toEqual([1]);
     expect(state.stats.calm).toBe(0);
   });
 });
@@ -348,13 +300,6 @@ describe("createInitialGameState", () => {
     ]);
   });
 
-  test("opens only the first chapter and no endings", () => {
-    const state = createInitialGameState();
-
-    expect(state.unlockedChapters).toEqual([1]);
-    expect(state.unlockedEndings).toEqual([]);
-  });
-
   test("seeds a snapshot for the first chapter so it can be replayed", () => {
     const state = createInitialGameState();
 
@@ -394,8 +339,6 @@ describe("enterChapter", () => {
       flags: { rested_by_stream: true },
       stats: { care: 4, connection: 4, calm: 4 },
       inventory: ["red_apple"],
-      unlockedChapters: [1, 2, 3],
-      unlockedEndings: ["calm"],
       gameStatistic: {
         2: {
           flags: { helped_neighbor: true },
@@ -420,15 +363,6 @@ describe("enterChapter", () => {
     expect(result?.inventory).toEqual(["fresh_pie"]);
   });
 
-  test("keeps unlocked chapters and collected endings", () => {
-    const result = enterChapter(chapterTwo, stateWithSnapshots());
-
-    // Переигрывание не отбирает прогресс — иначе охота за концовками
-    // превращалась бы в наказание.
-    expect(result?.unlockedChapters).toEqual([1, 2, 3]);
-    expect(result?.unlockedEndings).toEqual(["calm"]);
-  });
-
   test("keeps every snapshot so the player can jump again", () => {
     const state = stateWithSnapshots();
 
@@ -438,12 +372,8 @@ describe("enterChapter", () => {
   });
 
   test("returns null for a chapter without a snapshot", () => {
-    // Так выглядит сохранение, мигрированное со старого формата: глава
-    // отмечена открытой, но снимка для неё нет.
-    const state = makeState({
-      unlockedChapters: [1, 2, 3],
-      gameStatistic: {},
-    });
+    // Снимка для главы нет — значит, в неё ещё не входили, перейти нельзя.
+    const state = makeState({ gameStatistic: {} });
 
     expect(enterChapter(chapterTwo, state)).toBeNull();
   });
@@ -484,8 +414,8 @@ describe("canEnterChapter", () => {
     expect(canEnterChapter(1, state)).toBe(true);
   });
 
-  test("is false when the chapter has no snapshot, even if it is unlocked", () => {
-    const state = makeState({ unlockedChapters: [1, 2], gameStatistic: {} });
+  test("is false when the chapter has no snapshot", () => {
+    const state = makeState({ gameStatistic: {} });
 
     expect(canEnterChapter(2, state)).toBe(false);
   });

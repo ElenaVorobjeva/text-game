@@ -20,8 +20,6 @@ export type GameStateData = {
   stats: GameStats;
   inventory: string[];
   visitedScenes: string[];
-  unlockedChapters: number[];
-  unlockedEndings: string[];
   gameStatistic: Record<number, ChapterSnapshot>;
 };
 

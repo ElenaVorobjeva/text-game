@@ -81,13 +81,6 @@ export function makeChoice(
     ...stateAfterEffects,
     currentSceneId: nextScene.id,
     visitedScenes: withUnique(stateAfterEffects.visitedScenes, nextScene.id),
-    unlockedChapters: isRealChapter
-      ? withUnique(stateAfterEffects.unlockedChapters, nextScene.chapter)
-      : stateAfterEffects.unlockedChapters,
-    unlockedEndings:
-      nextScene.isEnding && nextScene.endingType
-        ? withUnique(stateAfterEffects.unlockedEndings, nextScene.endingType)
-        : stateAfterEffects.unlockedEndings,
     gameStatistic: isEnteredNewChapter
       ? {
           ...stateAfterEffects.gameStatistic,
@@ -102,8 +95,6 @@ export function createInitialGameState(): GameStateData {
     currentSceneId: gameData.meta.startSceneId,
     ...snapshotOf(gameData.initialState),
     visitedScenes: [gameData.meta.startSceneId],
-    unlockedChapters: [FIRST_CHAPTER],
-    unlockedEndings: [],
     // Второй вызов snapshotOf намеренный: снимок первой главы должен быть
     // независимой копией, а не теми же объектами, что в живом состоянии.
     gameStatistic: { [FIRST_CHAPTER]: snapshotOf(gameData.initialState) },
