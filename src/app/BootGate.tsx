@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 
 import { Loader } from "../components/base/Loader";
-import { fetchUserData, type UserData } from "../user/userProfile";
+import { fetchUserData, type UserData } from "../user/userStorage";
 
 type Props = {
   children: (data: UserData) => ReactNode;

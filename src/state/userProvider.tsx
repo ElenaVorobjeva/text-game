@@ -11,7 +11,7 @@ import {
   loadUser,
   USER_KEY,
   type UserData,
-} from "../user/userProfile";
+} from "../user/userStorage";
 
 import { UserContext } from "./userContext";
 

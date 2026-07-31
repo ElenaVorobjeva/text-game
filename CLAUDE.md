@@ -173,18 +173,18 @@ localStorage. Провайдер отдаёт наружу `gameId` активн
 навигировать только при `true`, иначе состояние не изменилось, а переход бы случился.
 
 **Всё пользовательское — один объект в localStorage** под ключом `quiet-good-life-user`
-([src/user/userProfile.ts](src/user/userProfile.ts)): `games: Record<gameId, { completedEndings,
+([src/user/userStorage.ts](src/user/userStorage.ts)): `games: Record<gameId, { completedEndings,
 progress }>`. Под мультиигры и концовки, и сохранения разложены по `gameId`. Версий и миграций
 нет намеренно — игра ещё не вышла к людям; при смене формы старые данные просто отбрасываются.
 
 Слои над этим объектом разделены по знанию об игре:
 
-- **`userProfile` — game-agnostic хранилище.** Держит прогресс как непрозрачный `GameStateData`,
+- **`userStorage` — game-agnostic хранилище.** Держит прогресс как непрозрачный `GameStateData`,
   движок не импортирует. Профиль через `useUser()`; API разрезан по `gameId` (`completeEnding(gameId,
 type)` и пр.), сам id провайдеру даёт `useGame()`. **Единственный источник правды о собранных
   концовках — провайдер**; производные вроде `isEndingCompleted` в модуле не дублируются.
 - **`saveLoad` — надстройка, знающая движок.** Валидирует загруженный прогресс против контента
-  (`sceneExists`, добор недостающих полей) и пишет/читает его через `userProfile`. `clearSave(gameId)`
+  (`sceneExists`, добор недостающих полей) и пишет/читает его через `userStorage`. `clearSave(gameId)`
   стирает прогресс одной игры; `clearAllSaves` — всех (нужно `ErrorBoundary`, который активной игры
   не знает), не трогая концовки.
 

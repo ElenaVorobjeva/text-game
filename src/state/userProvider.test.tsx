@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 import { App } from "../app/App";
 import { createInitialGameState, gameData } from "../engine/gameEngine";
-import { addCompletedEnding, loadUser, USER_KEY } from "../user/userProfile";
+import { addCompletedEnding, loadUser, USER_KEY } from "../user/userStorage";
 import { saveGame } from "../utils/saveLoad";
 
 import { GameProvider } from "./gameProvider";

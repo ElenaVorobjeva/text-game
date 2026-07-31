@@ -2,7 +2,7 @@
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { SERVER_LATENCY_MS } from "../user/userProfile";
+import { SERVER_LATENCY_MS } from "../user/userStorage";
 
 import { BootGate } from "./BootGate";
 

@@ -11,7 +11,7 @@ import {
 } from "../engine/gameEngine";
 import { GameProvider } from "../state/gameProvider";
 import { UserProvider } from "../state/userProvider";
-import { loadUser } from "../user/userProfile";
+import { loadUser } from "../user/userStorage";
 import { saveGame } from "../utils/saveLoad";
 
 import { App } from "./App";

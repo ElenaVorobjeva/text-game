@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import type { GameStateData } from "../types/game";
-import { loadUser, USER_KEY, type UserData } from "../user/userProfile";
+import { loadUser, USER_KEY, type UserData } from "../user/userStorage";
 
 import { clearAllSaves, clearSave, loadGame, saveGame } from "./saveLoad";
 

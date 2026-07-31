@@ -14,7 +14,7 @@ import {
   readProgress,
   saveUser,
   writeProgress,
-} from "./userProfile";
+} from "./userStorage";
 
 // Как и saveLoad, тесты не поднимают jsdom: localStorage подменяется заглушкой
 // в памяти.

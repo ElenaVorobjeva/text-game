@@ -10,7 +10,7 @@ import {
   makeChoice,
 } from "../engine/gameEngine";
 import type { Chapter, Choice, GameStateData } from "../types/game";
-import { loadUser, type UserData } from "../user/userProfile";
+import { loadUser, type UserData } from "../user/userStorage";
 import { loadGame, saveGame, clearSave } from "../utils/saveLoad";
 
 import { GameContext } from "./gameContext";
