@@ -22,7 +22,7 @@ describe("BootGate", () => {
     render(<BootGate>{() => <div>игра</div>}</BootGate>);
 
     // До истечения задержки — полоса загрузки, детей ещё нет.
-    expect(screen.getByRole("progressbar")).toBeTruthy();
+    expect(screen.getByRole("status")).toBeTruthy();
     expect(screen.queryByText("игра")).toBeNull();
 
     // Прокручиваем «загрузку» до конца.
@@ -30,7 +30,7 @@ describe("BootGate", () => {
       await vi.advanceTimersByTimeAsync(SERVER_LATENCY_MS);
     });
 
+    expect(screen.queryByRole("status")).toBeNull();
     expect(screen.getByText("игра")).toBeTruthy();
-    expect(screen.queryByRole("progressbar")).toBeNull();
   });
 });
