@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 import { App } from "../app/App";
 import { createInitialGameState, gameData } from "../engine/gameEngine";
-import { addCompletedEnding, USER_KEY } from "../user/userProfile";
+import { addCompletedEnding, loadUser, USER_KEY } from "../user/userProfile";
 import { saveGame } from "../utils/saveLoad";
 
 import { GameProvider } from "./gameProvider";
@@ -48,10 +48,11 @@ const ENDINGS_LIST_HEADING = "Концовки";
 const ENDINGS_MENU_ITEM = "Концовки";
 
 function renderAt(path: string) {
+  const data = loadUser();
   return render(
     <MemoryRouter initialEntries={[path]}>
-      <UserProvider>
-        <GameProvider>
+      <UserProvider initialData={data}>
+        <GameProvider initialData={data}>
           <App />
         </GameProvider>
       </UserProvider>

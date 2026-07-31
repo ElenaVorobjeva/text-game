@@ -12,6 +12,7 @@
 import type { GameStateData } from "../types/game";
 
 export const USER_KEY = "quiet-good-life-user";
+export const SERVER_LATENCY_MS = 3000;
 
 export type UserGameData = {
   /** endingType концовок, открытых пользователем в этой игре. */
@@ -90,6 +91,14 @@ export function loadUser(): UserData {
     // Битый JSON невосстановим — отдаём пустые данные, но не роняем страницу.
     return discardUser("не удалось разобрать JSON");
   }
+}
+
+// Имитация запроса к серверу
+// При появлении бэкенда, тут будет реальный запрос
+export function fetchUserData(): Promise<UserData> {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(loadUser()), SERVER_LATENCY_MS);
+  });
 }
 
 export function saveUser(data: UserData): void {

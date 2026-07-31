@@ -11,6 +11,7 @@ import {
 } from "../engine/gameEngine";
 import { GameProvider } from "../state/gameProvider";
 import { UserProvider } from "../state/userProvider";
+import { loadUser } from "../user/userProfile";
 import { saveGame } from "../utils/saveLoad";
 
 import { App } from "./App";
@@ -36,10 +37,11 @@ const BUTTON = {
 } as const;
 
 function renderAt(path: string, history: string[] = [path]) {
+  const data = loadUser();
   return render(
     <MemoryRouter initialEntries={history} initialIndex={history.length - 1}>
-      <UserProvider>
-        <GameProvider>
+      <UserProvider initialData={data}>
+        <GameProvider initialData={data}>
           <App />
         </GameProvider>
       </UserProvider>

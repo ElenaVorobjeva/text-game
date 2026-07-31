@@ -17,11 +17,13 @@ createRoot(document.getElementById("root")!).render(
     <ErrorBoundary>
       <HashRouter>
         <BootGate>
-          <UserProvider>
-            <GameProvider>
-              <App />
-            </GameProvider>
-          </UserProvider>
+          {(data) => (
+            <UserProvider initialData={data}>
+              <GameProvider initialData={data}>
+                <App />
+              </GameProvider>
+            </UserProvider>
+          )}
         </BootGate>
       </HashRouter>
     </ErrorBoundary>

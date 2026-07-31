@@ -6,19 +6,22 @@ import {
   type ReactNode,
 } from "react";
 
-import { addCompletedEnding, loadUser, USER_KEY } from "../user/userProfile";
+import {
+  addCompletedEnding,
+  loadUser,
+  USER_KEY,
+  type UserData,
+} from "../user/userProfile";
 
 import { UserContext } from "./userContext";
 
 type Props = {
+  initialData: UserData;
   children: ReactNode;
 };
 
-export function UserProvider({ children }: Props) {
-  // Ленивый инициализатор: чтение localStorage не должно идти в теле рендера.
-  // Держим весь games-срез — источник правды о собранных концовках. Прогресс
-  // в этом же срезе провайдер не читает: им ведает GameProvider.
-  const [games, setGames] = useState(() => loadUser().games);
+export function UserProvider({ initialData, children }: Props) {
+  const [games, setGames] = useState(() => initialData.games);
 
   // Профиль кэшируется в состоянии, поэтому запись из соседней вкладки сама
   // сюда не долетит. Событие storage приходит только в остальные вкладки (не в

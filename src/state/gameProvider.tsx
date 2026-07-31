@@ -10,6 +10,7 @@ import {
   makeChoice,
 } from "../engine/gameEngine";
 import type { Chapter, Choice, GameStateData } from "../types/game";
+import { loadUser, type UserData } from "../user/userProfile";
 import { loadGame, saveGame, clearSave } from "../utils/saveLoad";
 
 import { GameContext } from "./gameContext";
@@ -19,18 +20,18 @@ import { GameContext } from "./gameContext";
 const gameId = gameData.meta.id;
 
 type Props = {
+  initialData: UserData;
   children: ReactNode;
 };
 
-export function GameProvider({ children }: Props) {
-  // Ленивые инициализаторы: loadGame читает localStorage и может его очистить,
-  // а побочным эффектам не место в теле рендера — React волен вызывать его
-  // повторно (в StrictMode так и происходит).
+export function GameProvider({ initialData, children }: Props) {
   const [gameState, setGameState] = useState<GameStateData>(
-    () => loadGame(gameId) ?? createInitialGameState(),
+    () => loadGame(initialData, gameId) ?? createInitialGameState(),
   );
 
-  const [hasSave, setHasSave] = useState(() => Boolean(loadGame(gameId)));
+  const [hasSave, setHasSave] = useState(() =>
+    Boolean(loadGame(initialData, gameId)),
+  );
 
   const scene = useMemo(() => getCurrentScene(gameState), [gameState]);
 
@@ -48,7 +49,7 @@ export function GameProvider({ children }: Props) {
   }, []);
 
   const continueGame = useCallback(() => {
-    const saved = loadGame(gameId);
+    const saved = loadGame(loadUser(), gameId);
     if (!saved) return false;
 
     setGameState(saved);

@@ -3,10 +3,12 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import type { GameStateData } from "../types/game";
 
 import {
+  SERVER_LATENCY_MS,
   USER_KEY,
   addCompletedEnding,
   clearAllProgress,
   clearProgress,
+  fetchUserData,
   getCompletedEndings,
   loadUser,
   readProgress,
@@ -180,5 +182,32 @@ describe("clearAllProgress", () => {
     expect(readProgress(data, GAME)).toBeNull();
     expect(readProgress(data, OTHER)).toBeNull();
     expect(getCompletedEndings(data, GAME)).toEqual(["calm"]);
+  });
+});
+
+describe("fetchUserData", () => {
+  // «Сервер» подделан таймаутом — здесь фейковое время, чтобы не ждать вживую.
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  test("resolves with the stored data after the server latency", async () => {
+    addCompletedEnding(GAME, "calm");
+
+    const request = fetchUserData();
+    await vi.advanceTimersByTimeAsync(SERVER_LATENCY_MS);
+
+    expect(getCompletedEndings(await request, GAME)).toEqual(["calm"]);
+  });
+
+  test("resolves with empty data when nothing is stored", async () => {
+    const request = fetchUserData();
+    await vi.advanceTimersByTimeAsync(SERVER_LATENCY_MS);
+
+    expect(await request).toEqual({ games: {} });
   });
 });

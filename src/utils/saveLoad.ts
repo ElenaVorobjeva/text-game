@@ -3,9 +3,9 @@ import type { GameStateData } from "../types/game";
 import {
   clearAllProgress,
   clearProgress,
-  loadUser,
   readProgress,
   writeProgress,
+  type UserData,
 } from "../user/userProfile";
 
 // Сохранения игры живут внутри единого объекта пользователя (см. userProfile).
@@ -26,9 +26,8 @@ function discardSave(gameId: string, reason: string): null {
   return null;
 }
 
-export function loadGame(gameId: string): GameStateData | null {
-  const saved = readProgress(loadUser(), gameId);
-
+export function loadGame(data: UserData, gameId: string): GameStateData | null {
+  const saved = readProgress(data, gameId);
   if (!saved) return null;
 
   // Недостающие поля берутся из начального состояния — так сохранения прошлых
