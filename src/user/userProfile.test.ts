@@ -1,11 +1,17 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+import type { GameStateData } from "../types/game";
+
 import {
   USER_KEY,
-  USER_VERSION,
   addCompletedEnding,
-  loadUserProfile,
-  saveUserProfile,
+  clearAllProgress,
+  clearProgress,
+  getCompletedEndings,
+  loadUser,
+  readProgress,
+  saveUser,
+  writeProgress,
 } from "./userProfile";
 
 // Как и saveLoad, тесты не поднимают jsdom: localStorage подменяется заглушкой
@@ -27,6 +33,13 @@ function createLocalStorageStub() {
   };
 }
 
+const GAME = "quiet_good_life";
+const OTHER = "another_game";
+
+// Минимальный прогресс: содержимое движку здесь неважно — хранилище держит его
+// как непрозрачный объект.
+const progress = { currentSceneId: "chapter2_scene1" } as GameStateData;
+
 beforeEach(() => {
   vi.stubGlobal("localStorage", createLocalStorageStub());
 });
@@ -35,99 +48,137 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe("loadUserProfile", () => {
-  test("returns an empty profile when nothing is stored", () => {
-    expect(loadUserProfile()).toEqual({
-      version: USER_VERSION,
-      completedEndings: [],
+describe("loadUser", () => {
+  test("returns empty data when nothing is stored", () => {
+    expect(loadUser()).toEqual({ games: {} });
+  });
+
+  test("reads stored data back", () => {
+    saveUser({
+      games: { [GAME]: { completedEndings: ["calm"], progress } },
     });
+
+    const data = loadUser();
+
+    expect(getCompletedEndings(data, GAME)).toEqual(["calm"]);
+    expect(readProgress(data, GAME)).toEqual(progress);
   });
 
-  test("reads a stored profile back", () => {
-    saveUserProfile({ version: USER_VERSION, completedEndings: ["calm"] });
-
-    expect(loadUserProfile().completedEndings).toEqual(["calm"]);
-  });
-
-  test("returns an empty profile on corrupted JSON instead of throwing", () => {
+  test("returns empty data on corrupted JSON instead of throwing", () => {
     localStorage.setItem(USER_KEY, "{ не JSON");
 
-    expect(loadUserProfile().completedEndings).toEqual([]);
-  });
-
-  test("fills in fields missing from an older profile", () => {
-    // Профиль формата, где ещё не было completedEndings.
-    localStorage.setItem(USER_KEY, JSON.stringify({ version: 1 }));
-
-    expect(loadUserProfile().completedEndings).toEqual([]);
-  });
-
-  test("ignores a profile written by a newer build", () => {
-    localStorage.setItem(
-      USER_KEY,
-      JSON.stringify({ version: USER_VERSION + 1, completedEndings: ["calm"] }),
-    );
-
-    expect(loadUserProfile().completedEndings).toEqual([]);
+    expect(loadUser()).toEqual({ games: {} });
   });
 
   test("drops non-string entries from a tampered completedEndings", () => {
     localStorage.setItem(
       USER_KEY,
       JSON.stringify({
-        version: USER_VERSION,
-        completedEndings: ["calm", 42, null, "care"],
+        games: { [GAME]: { completedEndings: ["calm", 42, null, "care"] } },
       }),
     );
 
-    expect(loadUserProfile().completedEndings).toEqual(["calm", "care"]);
+    expect(getCompletedEndings(loadUser(), GAME)).toEqual(["calm", "care"]);
   });
 
-  test("recovers when completedEndings is not an array", () => {
+  test("recovers when a game's completedEndings is not an array", () => {
     localStorage.setItem(
       USER_KEY,
-      JSON.stringify({ version: USER_VERSION, completedEndings: "calm" }),
+      JSON.stringify({ games: { [GAME]: { completedEndings: "calm" } } }),
     );
 
-    expect(loadUserProfile().completedEndings).toEqual([]);
+    expect(getCompletedEndings(loadUser(), GAME)).toEqual([]);
+  });
+
+  test("treats a non-object progress as no save", () => {
+    localStorage.setItem(
+      USER_KEY,
+      JSON.stringify({ games: { [GAME]: { progress: "broken" } } }),
+    );
+
+    expect(readProgress(loadUser(), GAME)).toBeNull();
+  });
+});
+
+describe("getCompletedEndings / readProgress", () => {
+  test("return empty defaults for an unknown game", () => {
+    expect(getCompletedEndings(loadUser(), OTHER)).toEqual([]);
+    expect(readProgress(loadUser(), OTHER)).toBeNull();
   });
 });
 
 describe("addCompletedEnding", () => {
   test("records a newly completed ending", () => {
-    addCompletedEnding("calm");
+    addCompletedEnding(GAME, "calm");
 
-    expect(loadUserProfile().completedEndings).toEqual(["calm"]);
+    expect(getCompletedEndings(loadUser(), GAME)).toEqual(["calm"]);
   });
 
   test("accumulates several endings in order", () => {
-    addCompletedEnding("calm");
-    addCompletedEnding("care");
+    addCompletedEnding(GAME, "calm");
+    addCompletedEnding(GAME, "care");
 
-    expect(loadUserProfile().completedEndings).toEqual(["calm", "care"]);
+    expect(getCompletedEndings(loadUser(), GAME)).toEqual(["calm", "care"]);
   });
 
   test("is idempotent: repeating an ending does not duplicate it", () => {
-    addCompletedEnding("calm");
-    addCompletedEnding("calm");
+    addCompletedEnding(GAME, "calm");
+    addCompletedEnding(GAME, "calm");
 
-    expect(loadUserProfile().completedEndings).toEqual(["calm"]);
+    expect(getCompletedEndings(loadUser(), GAME)).toEqual(["calm"]);
   });
 
-  test("persists across a fresh load", () => {
-    addCompletedEnding("connection");
+  test("keeps each game's endings separate", () => {
+    addCompletedEnding(GAME, "calm");
+    addCompletedEnding(OTHER, "care");
 
-    // Профиль читается заново — данные сохранились в хранилище.
-    expect(loadUserProfile().completedEndings).toContain("connection");
+    const data = loadUser();
+
+    expect(getCompletedEndings(data, GAME)).toEqual(["calm"]);
+    expect(getCompletedEndings(data, OTHER)).toEqual(["care"]);
+  });
+
+  test("does not disturb a saved progress in the same game", () => {
+    writeProgress(GAME, progress);
+
+    addCompletedEnding(GAME, "calm");
+
+    expect(readProgress(loadUser(), GAME)).toEqual(progress);
   });
 });
 
-describe("saveUserProfile", () => {
-  test("always stamps the current version", () => {
-    saveUserProfile({ version: 999, completedEndings: [] });
+describe("writeProgress / clearProgress", () => {
+  test("stores and reads a game's progress", () => {
+    writeProgress(GAME, progress);
 
-    const raw = localStorage.getItem(USER_KEY) ?? "";
+    expect(readProgress(loadUser(), GAME)).toEqual(progress);
+  });
 
-    expect(JSON.parse(raw).version).toBe(USER_VERSION);
+  test("clearing a game's progress leaves its endings intact", () => {
+    addCompletedEnding(GAME, "calm");
+    writeProgress(GAME, progress);
+
+    clearProgress(GAME);
+
+    const data = loadUser();
+
+    expect(readProgress(data, GAME)).toBeNull();
+    expect(getCompletedEndings(data, GAME)).toEqual(["calm"]);
+  });
+});
+
+describe("clearAllProgress", () => {
+  test("wipes progress of every game but keeps endings", () => {
+    addCompletedEnding(GAME, "calm");
+    writeProgress(GAME, progress);
+    writeProgress(OTHER, progress);
+
+    clearAllProgress();
+
+    const data = loadUser();
+
+    expect(readProgress(data, GAME)).toBeNull();
+    expect(readProgress(data, OTHER)).toBeNull();
+    expect(getCompletedEndings(data, GAME)).toEqual(["calm"]);
   });
 });

@@ -25,6 +25,7 @@ const chapterScene = gameData.scenes.find((scene) => !scene.isEnding)!;
 // именно ветку choices.length === 0.
 function makeGame(overrides: Partial<GameContextValue> = {}): GameContextValue {
   return {
+    gameId: gameData.meta.id,
     gameState: {} as GameContextValue["gameState"],
     scene: chapterScene,
     choices: [],

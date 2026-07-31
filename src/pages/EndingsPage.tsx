@@ -6,11 +6,13 @@ import { CardGrid } from "../components/base/CardGrid";
 import { Main } from "../components/base/Main";
 import { Title } from "../components/base/Title";
 import { gameData } from "../engine/gameEngine";
+import { useGame } from "../state/useGame";
 import { useUser } from "../state/useUser";
 import { goBack } from "../utils/common";
 
 export function EndingsPage() {
-  const { completedEndings } = useUser();
+  const { gameId } = useGame();
+  const { isEndingCompleted } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,7 +27,7 @@ export function EndingsPage() {
           const { id, title, image, endingType } = endingData;
 
           const isAvailable = Boolean(
-            endingType && completedEndings.includes(endingType),
+            endingType && isEndingCompleted(gameId, endingType),
           );
 
           return (

@@ -6,11 +6,7 @@ import {
   type ReactNode,
 } from "react";
 
-import {
-  addCompletedEnding,
-  loadUserProfile,
-  USER_KEY,
-} from "../user/userProfile";
+import { addCompletedEnding, loadUser, USER_KEY } from "../user/userProfile";
 
 import { UserContext } from "./userContext";
 
@@ -20,9 +16,9 @@ type Props = {
 
 export function UserProvider({ children }: Props) {
   // Ленивый инициализатор: чтение localStorage не должно идти в теле рендера.
-  const [completedEndings, setCompletedEndings] = useState(
-    () => loadUserProfile().completedEndings,
-  );
+  // Держим весь games-срез — источник правды о собранных концовках. Прогресс
+  // в этом же срезе провайдер не читает: им ведает GameProvider.
+  const [games, setGames] = useState(() => loadUser().games);
 
   // Профиль кэшируется в состоянии, поэтому запись из соседней вкладки сама
   // сюда не долетит. Событие storage приходит только в остальные вкладки (не в
@@ -32,7 +28,7 @@ export function UserProvider({ children }: Props) {
       // key === null — сработал clear(), затронуты все ключи
       if (event.key !== null && event.key !== USER_KEY) return;
 
-      setCompletedEndings(loadUserProfile().completedEndings);
+      setGames(loadUser().games);
     }
 
     window.addEventListener("storage", syncFromStorage);
@@ -40,27 +36,41 @@ export function UserProvider({ children }: Props) {
     return () => window.removeEventListener("storage", syncFromStorage);
   }, []);
 
-  const hasCompletedEndings = completedEndings.length > 0;
-
-  const isEndingCompleted = useCallback(
-    (type: string) => completedEndings.includes(type),
-    [completedEndings],
+  const getCompletedEndings = useCallback(
+    (gameId: string) => games[gameId]?.completedEndings ?? [],
+    [games],
   );
 
-  const completeEnding = useCallback((type: string) => {
-    const next = addCompletedEnding(type);
+  const hasCompletedEndings = useCallback(
+    (gameId: string) => getCompletedEndings(gameId).length > 0,
+    [getCompletedEndings],
+  );
 
-    setCompletedEndings(next.completedEndings);
+  const isEndingCompleted = useCallback(
+    (gameId: string, endingType: string) =>
+      getCompletedEndings(gameId).includes(endingType),
+    [getCompletedEndings],
+  );
+
+  const completeEnding = useCallback((gameId: string, endingType: string) => {
+    const next = addCompletedEnding(gameId, endingType);
+
+    setGames(next.games);
   }, []);
 
   const value = useMemo(
     () => ({
-      completedEndings,
+      getCompletedEndings,
       hasCompletedEndings,
       isEndingCompleted,
       completeEnding,
     }),
-    [completedEndings, hasCompletedEndings, isEndingCompleted, completeEnding],
+    [
+      getCompletedEndings,
+      hasCompletedEndings,
+      isEndingCompleted,
+      completeEnding,
+    ],
   );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

@@ -4,7 +4,11 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-import { createInitialGameState, getCurrentScene } from "../engine/gameEngine";
+import {
+  createInitialGameState,
+  gameData,
+  getCurrentScene,
+} from "../engine/gameEngine";
 import { GameProvider } from "../state/gameProvider";
 import { UserProvider } from "../state/userProvider";
 import { saveGame } from "../utils/saveLoad";
@@ -81,7 +85,7 @@ describe("routing: /game guard", () => {
   });
 
   test("/game with a save shows the game", () => {
-    saveGame(createInitialGameState());
+    saveGame(gameData.meta.id, createInitialGameState());
 
     renderAt("/game");
 
@@ -100,7 +104,7 @@ describe("routing: navigation from the menu", () => {
   });
 
   test("Выбрать главу opens the chapter select screen", async () => {
-    saveGame(createInitialGameState());
+    saveGame(gameData.meta.id, createInitialGameState());
     const user = userEvent.setup();
     renderAt("/");
 
@@ -116,7 +120,7 @@ describe("routing: navigation from the menu", () => {
 
 describe("routing: back button on the chapter screen", () => {
   test("goes back through history when there is somewhere to return to", async () => {
-    saveGame(createInitialGameState());
+    saveGame(gameData.meta.id, createInitialGameState());
     const user = userEvent.setup();
     // Пришли на экран глав из игры — в истории есть предыдущая запись.
     renderAt("/chapters", ["/game", "/chapters"]);

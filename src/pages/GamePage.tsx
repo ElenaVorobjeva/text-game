@@ -12,13 +12,14 @@ import { restartGame } from "../utils/common";
 
 export function GamePage() {
   const navigate = useNavigate();
-  const { scene, resetGame } = useGame();
+  const { scene, resetGame, gameId } = useGame();
   const { completeEnding } = useUser();
   const image = getSceneImage(scene);
 
   useEffect(() => {
-    if (scene.isEnding && scene.endingType) completeEnding(scene.endingType);
-  }, [scene, completeEnding]);
+    if (scene.isEnding && scene.endingType)
+      completeEnding(gameId, scene.endingType);
+  }, [scene, completeEnding, gameId]);
 
   if (scene.isEnding) {
     return (

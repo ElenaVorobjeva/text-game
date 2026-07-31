@@ -1,91 +1,166 @@
-// Данные пользователя — слой, живущий отдельно от состояния игры. Сейчас это
-// собранные концовки; сюда же позже лягут имя, настройки, достижения.
+// Данные пользователя — единый объект в localStorage: под ним и собранные
+// концовки, и сохранённые прогрессы игр, в разрезе по gameId. Пока игра не
+// вышла к людям, версий и миграций тут нет — при изменении формы старые данные
+// просто отбрасываются (см. политику отказа ниже).
 //
 // Хранилище изолировано за этими функциями: остальной код не знает, что внутри
 // localStorage. Когда появится регистрация и БД, меняется только реализация
-// здесь — сигнатуры остаются синхронными (данные локальны и мгновенны).
-//
-// Профиль намеренно не зависит от игрового движка: это данные пользователя,
-// а не игры, и переезд в БД не должен тянуть за собой игровую логику.
+// здесь. Прогресс лежит как непрозрачный GameStateData — эта модель намеренно
+// не зависит от игрового движка; осмысленную проверку сохранения (существует ли
+// сцена) делает saveLoad поверх движка.
+
+import type { GameStateData } from "../types/game";
 
 export const USER_KEY = "quiet-good-life-user";
 
-// Версия формата профиля. Повышать при изменении формы или смысла полей —
-// тогда старые профили можно распознать и преобразовать.
-export const USER_VERSION = 1;
-
-export type UserProfile = {
-  version: number;
-  /** endingType концовок, которые пользователь открыл за всё время. */
+export type UserGameData = {
+  /** endingType концовок, открытых пользователем в этой игре. */
   completedEndings: string[];
+  /** Сохранённый прогресс игры; null — сохранения нет. */
+  progress: GameStateData | null;
 };
 
-function createEmptyProfile(): UserProfile {
-  return { version: USER_VERSION, completedEndings: [] };
+export type UserData = {
+  /** Данные по играм: ключ — GameData.meta.id. */
+  games: Record<string, UserGameData>;
+};
+
+function createEmptyUser(): UserData {
+  return { games: {} };
 }
 
-// Профиль непригоден: отдаём пустой, но причину пишем в консоль — так же, как
-// discardSave в saveLoad. Потеря собранных концовок не должна происходить
-// молча, иначе такие случаи невозможно разбирать по жалобам.
-// В отличие от сохранения, хранилище здесь не чистится: испорченный профиль
-// остаётся на диске и будет перезаписан только при явной записи.
-function discardProfile(reason: string): UserProfile {
-  console.warn(`Профиль отброшен: ${reason}`);
-
-  return createEmptyProfile();
+function emptyGameData(): UserGameData {
+  return { completedEndings: [], progress: null };
 }
 
-export function loadUserProfile(): UserProfile {
+// Данные непригодны: отдаём пустые, но причину пишем в консоль. Потеря прогресса
+// и собранных концовок не должна происходить молча, иначе такие случаи
+// невозможно разбирать по жалобам.
+function discardUser(reason: string): UserData {
+  console.warn(`Данные пользователя отброшены: ${reason}`);
+
+  return createEmptyUser();
+}
+
+// Защита от порчи: completedEndings обязан быть массивом строк.
+function sanitizeEndings(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((entry): entry is string => typeof entry === "string")
+    : [];
+}
+
+// Прогресс хранится как есть, если это объект: глубокую проверку (та ли форма,
+// существует ли сцена) делает saveLoad — здесь нет доступа к игровой модели.
+function sanitizeProgress(value: unknown): GameStateData | null {
+  return typeof value === "object" && value !== null
+    ? (value as GameStateData)
+    : null;
+}
+
+function sanitizeGames(value: unknown): Record<string, UserGameData> {
+  if (typeof value !== "object" || value === null) return {};
+
+  const games: Record<string, UserGameData> = {};
+
+  for (const [gameId, raw] of Object.entries(value)) {
+    const game = (typeof raw === "object" && raw !== null ? raw : {}) as {
+      completedEndings?: unknown;
+      progress?: unknown;
+    };
+
+    games[gameId] = {
+      completedEndings: sanitizeEndings(game.completedEndings),
+      progress: sanitizeProgress(game.progress),
+    };
+  }
+
+  return games;
+}
+
+export function loadUser(): UserData {
   const raw = localStorage.getItem(USER_KEY);
 
-  if (!raw) return createEmptyProfile();
+  if (!raw) return createEmptyUser();
 
   try {
-    const saved = JSON.parse(raw) as Partial<UserProfile>;
+    const saved = JSON.parse(raw) as { games?: unknown };
 
-    // Профиль из более новой сборки: формат нам неизвестен, не рискуем его
-    // читать — начинаем с чистого.
-    if (typeof saved.version === "number" && saved.version > USER_VERSION) {
-      return discardProfile(`формат версии ${saved.version} новее текущего`);
-    }
-
-    return {
-      ...createEmptyProfile(),
-      ...saved,
-      version: USER_VERSION,
-      // Защита от порчи: completedEndings обязан быть массивом строк.
-      completedEndings: Array.isArray(saved.completedEndings)
-        ? saved.completedEndings.filter(
-            (e): e is string => typeof e === "string",
-          )
-        : [],
-    };
+    return { games: sanitizeGames(saved.games) };
   } catch {
-    // Битый JSON невосстановим — отдаём пустой профиль, но не роняем страницу.
-    return discardProfile("не удалось разобрать JSON");
+    // Битый JSON невосстановим — отдаём пустые данные, но не роняем страницу.
+    return discardUser("не удалось разобрать JSON");
   }
 }
 
-export function saveUserProfile(profile: UserProfile): void {
-  const payload: UserProfile = { ...profile, version: USER_VERSION };
+export function saveUser(data: UserData): void {
+  localStorage.setItem(USER_KEY, JSON.stringify(data));
+}
 
-  localStorage.setItem(USER_KEY, JSON.stringify(payload));
+function gameOf(data: UserData, gameId: string): UserGameData {
+  return data.games[gameId] ?? emptyGameData();
+}
+
+// Точечная запись одной игры: читаем свежий объект, меняем срез игры и пишем
+// обратно. Свежее чтение обязательно — соседний провайдер (концовки/прогресс)
+// мог обновить другой срез того же объекта, и кэш перезаписал бы его.
+function writeGame(gameId: string, patch: Partial<UserGameData>): UserData {
+  const data = loadUser();
+  const next: UserData = {
+    ...data,
+    games: { ...data.games, [gameId]: { ...gameOf(data, gameId), ...patch } },
+  };
+  saveUser(next);
+
+  return next;
+}
+
+/** Концовки, открытые в указанной игре. Для незнакомой игры — пустой список. */
+export function getCompletedEndings(data: UserData, gameId: string): string[] {
+  return gameOf(data, gameId).completedEndings;
 }
 
 /**
- * Отмечает концовку как открытую. Идемпотентно: повтор не создаёт дубля.
- * Возвращает обновлённый профиль.
+ * Отмечает концовку игры как открытую. Идемпотентно: повтор не создаёт дубля.
+ * Возвращает обновлённые данные пользователя.
  */
-export function addCompletedEnding(endingType: string): UserProfile {
-  const profile = loadUserProfile();
+export function addCompletedEnding(
+  gameId: string,
+  endingType: string,
+): UserData {
+  const data = loadUser();
+  const current = getCompletedEndings(data, gameId);
 
-  if (profile.completedEndings.includes(endingType)) return profile;
+  if (current.includes(endingType)) return data;
 
-  const next: UserProfile = {
-    ...profile,
-    completedEndings: [...profile.completedEndings, endingType],
-  };
-  saveUserProfile(next);
+  return writeGame(gameId, { completedEndings: [...current, endingType] });
+}
 
-  return next;
+/** Сохранённый прогресс игры или null. */
+export function readProgress(
+  data: UserData,
+  gameId: string,
+): GameStateData | null {
+  return gameOf(data, gameId).progress;
+}
+
+export function writeProgress(gameId: string, progress: GameStateData): void {
+  writeGame(gameId, { progress });
+}
+
+export function clearProgress(gameId: string): void {
+  writeGame(gameId, { progress: null });
+}
+
+// Стирает прогресс во всех играх, не трогая собранные концовки. Нужно
+// аварийному экрану (ErrorBoundary): он не знает активной игры, а его задача —
+// убрать сохранение, из-за которого рендер падает, не отбирая прочий прогресс.
+export function clearAllProgress(): void {
+  const data = loadUser();
+  const games: Record<string, UserGameData> = {};
+
+  for (const [gameId, game] of Object.entries(data.games)) {
+    games[gameId] = { ...game, progress: null };
+  }
+
+  saveUser({ ...data, games });
 }

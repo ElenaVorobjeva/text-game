@@ -11,7 +11,7 @@ import { Link } from "../base/Link";
 // здесь не живут: они видны только во время игры, над сценой (см. GamePage).
 export function GameHeader() {
   const navigate = useNavigate();
-  const { resetGame } = useGame();
+  const { resetGame, gameId } = useGame();
   const { hasCompletedEndings } = useUser();
 
   return (
@@ -30,7 +30,7 @@ export function GameHeader() {
         >
           Начать заново
         </Link>
-        {hasCompletedEndings && (
+        {hasCompletedEndings(gameId) && (
           <Link type="button" color="gray" onClick={() => navigate("/endings")}>
             Концовки
           </Link>

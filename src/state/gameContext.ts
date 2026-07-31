@@ -4,6 +4,9 @@ import type { getCurrentScene } from "../engine/gameEngine";
 import type { Chapter, Choice, GameStateData } from "../types/game";
 
 export type GameContextValue = {
+  /** id активной игры (GameData.meta.id). Пока игра одна, но профиль и
+   *  сохранения уже адресуются по нему — точка, которая станет динамической. */
+  gameId: string;
   gameState: GameStateData;
   scene: ReturnType<typeof getCurrentScene>;
   choices: Choice[];

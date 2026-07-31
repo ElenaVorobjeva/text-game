@@ -1,6 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
-import { clearSave } from "../../utils/saveLoad";
+import { clearAllSaves } from "../../utils/saveLoad";
 
 import { Button } from "./Button";
 import { Description } from "./Description";
@@ -55,7 +55,7 @@ export class ErrorBoundary extends Component<Props, State> {
               size="sm"
               width="fullOnMobile"
               onClick={() => {
-                clearSave();
+                clearAllSaves();
                 window.location.reload();
               }}
             >
