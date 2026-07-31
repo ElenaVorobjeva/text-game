@@ -10,7 +10,7 @@ const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {
       leading: ["leading-free"],
-      animate: ["animate-fade-up", "animate-scale-in"],
+      animate: ["animate-fade-up", "animate-scale-in", "animate-ripple"],
     },
   },
 });

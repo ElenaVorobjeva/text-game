@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { HashRouter } from "react-router";
 
 import { App } from "./app/App.tsx";
+import { BootGate } from "./app/BootGate.tsx";
 import { ErrorBoundary } from "./components/base/ErrorBoundary.tsx";
 import { GameProvider } from "./state/gameProvider.tsx";
 import { UserProvider } from "./state/userProvider.tsx";
@@ -15,11 +16,15 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary>
       <HashRouter>
-        <UserProvider>
-          <GameProvider>
-            <App />
-          </GameProvider>
-        </UserProvider>
+        <BootGate>
+          {(data) => (
+            <UserProvider initialData={data}>
+              <GameProvider initialData={data}>
+                <App />
+              </GameProvider>
+            </UserProvider>
+          )}
+        </BootGate>
       </HashRouter>
     </ErrorBoundary>
   </StrictMode>,

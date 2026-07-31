@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 import { App } from "../app/App";
 import { createInitialGameState, gameData } from "../engine/gameEngine";
-import { addCompletedEnding, USER_KEY } from "../user/userProfile";
+import { addCompletedEnding, loadUser, USER_KEY } from "../user/userStorage";
 import { saveGame } from "../utils/saveLoad";
 
 import { GameProvider } from "./gameProvider";
@@ -48,10 +48,11 @@ const ENDINGS_LIST_HEADING = "Концовки";
 const ENDINGS_MENU_ITEM = "Концовки";
 
 function renderAt(path: string) {
+  const data = loadUser();
   return render(
     <MemoryRouter initialEntries={[path]}>
-      <UserProvider>
-        <GameProvider>
+      <UserProvider initialData={data}>
+        <GameProvider initialData={data}>
           <App />
         </GameProvider>
       </UserProvider>
@@ -61,7 +62,10 @@ function renderAt(path: string) {
 
 // Сохранение на шаг до концовки: дальше один клик по безусловному варианту.
 function saveBeforeEnding() {
-  saveGame({ ...createInitialGameState(), currentSceneId: finalScene.id });
+  saveGame(gameData.meta.id, {
+    ...createInitialGameState(),
+    currentSceneId: finalScene.id,
+  });
 }
 
 beforeEach(() => {
@@ -116,7 +120,7 @@ describe("endings completed during the session", () => {
 
 describe("endings from previous sessions", () => {
   test("an ending saved earlier is available right after mount", async () => {
-    addCompletedEnding(endingType);
+    addCompletedEnding(gameData.meta.id, endingType);
 
     renderAt(`/endings/${endingType}`);
 
@@ -144,7 +148,7 @@ describe("profile written by another tab", () => {
 
     // Соседняя вкладка дописала концовку. Событие storage шлём руками: браузер
     // рассылает его только в другие вкладки, а jsdom — вообще не рассылает.
-    addCompletedEnding(endingType);
+    addCompletedEnding(gameData.meta.id, endingType);
     act(() => {
       window.dispatchEvent(new StorageEvent("storage", { key: USER_KEY }));
     });
@@ -157,7 +161,7 @@ describe("profile written by another tab", () => {
   test("an unrelated storage key is ignored", async () => {
     renderAt("/chapters");
 
-    addCompletedEnding(endingType);
+    addCompletedEnding(gameData.meta.id, endingType);
     act(() => {
       window.dispatchEvent(
         new StorageEvent("storage", { key: "unrelated-key" }),
