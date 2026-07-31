@@ -16,7 +16,7 @@ const ring =
 export function Loader() {
   return (
     <div
-      role="progressbar"
+      role="status"
       aria-label="Загрузка"
       className="flex min-h-screen flex-col items-center justify-center gap-6 bg-black px-6"
     >
