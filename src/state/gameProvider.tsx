@@ -23,11 +23,12 @@ export function GameProvider({ initialData, gameData, children }: Props) {
   const gameId = gameData.meta.id;
 
   const [gameState, setGameState] = useState<GameStateData>(
-    () => loadGame(initialData, gameId) ?? engine.createInitialGameState(),
+    () =>
+      loadGame(engine, initialData, gameId) ?? engine.createInitialGameState(),
   );
 
   const [hasSave, setHasSave] = useState(() =>
-    Boolean(loadGame(initialData, gameId)),
+    Boolean(loadGame(engine, initialData, gameId)),
   );
 
   const scene = useMemo(
@@ -50,14 +51,14 @@ export function GameProvider({ initialData, gameData, children }: Props) {
   }, [engine, gameId]);
 
   const continueGame = useCallback(() => {
-    const saved = loadGame(loadUser(), gameId);
+    const saved = loadGame(engine, loadUser(), gameId);
     if (!saved) return false;
 
     setGameState(saved);
     setHasSave(true);
 
     return true;
-  }, [gameId]);
+  }, [engine, gameId]);
 
   const resetGame = useCallback(() => {
     clearSave(gameId);

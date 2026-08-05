@@ -1,4 +1,4 @@
-import { createInitialGameState, sceneExists } from "../engine/gameEngine";
+import type { GameEngine } from "../engine/gameEngine";
 import type { GameStateData } from "../types/game";
 import {
   clearAllProgress,
@@ -26,17 +26,21 @@ function discardSave(gameId: string, reason: string): null {
   return null;
 }
 
-export function loadGame(data: UserData, gameId: string): GameStateData | null {
+export function loadGame(
+  engine: GameEngine,
+  data: UserData,
+  gameId: string,
+): GameStateData | null {
   const saved = readProgress(data, gameId);
   if (!saved) return null;
 
   // Недостающие поля берутся из начального состояния — так сохранения прошлых
   // сборок продолжают работать после добавления новых полей.
-  const state: GameStateData = { ...createInitialGameState(), ...saved };
+  const state: GameStateData = { ...engine.createInitialGameState(), ...saved };
 
   // Сцена могла исчезнуть из gameData.json, пока писался контент. Без этой
   // проверки getSceneById бросит исключение прямо в рендере — белый экран.
-  if (!sceneExists(state.currentSceneId)) {
+  if (!engine.sceneExists(state.currentSceneId)) {
     return discardSave(
       gameId,
       `сцена ${state.currentSceneId} больше не существует`,
