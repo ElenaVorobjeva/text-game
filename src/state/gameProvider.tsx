@@ -2,38 +2,40 @@ import { useCallback, useMemo, useState, type ReactNode } from "react";
 
 import {
   canEnterChapter,
-  createInitialGameState,
+  createGameEngine,
   enterChapter,
-  gameData,
   getAvailableChoices,
-  getCurrentScene,
-  makeChoice,
 } from "../engine/gameEngine";
-import type { Chapter, Choice, GameStateData } from "../types/game";
+import type { Chapter, Choice, GameData, GameStateData } from "../types/game";
 import { loadUser, type UserData } from "../user/userStorage";
 import { loadGame, saveGame, clearSave } from "../utils/saveLoad";
 
 import { GameContext } from "./gameContext";
 
-// id активной игры: пока игра одна, берётся из контента. Позже здесь будет
-// id выбранной игры. Модульная константа — стабильна, не нужна в зависимостях.
-const gameId = gameData.meta.id;
-
 type Props = {
   initialData: UserData;
+  gameData: GameData;
   children: ReactNode;
 };
 
-export function GameProvider({ initialData, children }: Props) {
+export function GameProvider({ initialData, gameData, children }: Props) {
+  const engine = useMemo(() => createGameEngine(gameData), [gameData]);
+  const gameId = gameData.meta.id;
+
   const [gameState, setGameState] = useState<GameStateData>(
-    () => loadGame(initialData, gameId) ?? createInitialGameState(),
+    () =>
+      loadGame(engine, initialData, gameId) ?? engine.createInitialGameState(),
   );
 
   const [hasSave, setHasSave] = useState(() =>
-    Boolean(loadGame(initialData, gameId)),
+    Boolean(loadGame(engine, initialData, gameId)),
   );
 
-  const scene = useMemo(() => getCurrentScene(gameState), [gameState]);
+  const scene = useMemo(
+    () => engine.getCurrentScene(gameState),
+    [engine, gameState],
+  );
+  const image = useMemo(() => engine.getSceneImage(scene), [engine, scene]);
 
   const choices = useMemo(
     () => getAvailableChoices(scene, gameState),
@@ -41,41 +43,41 @@ export function GameProvider({ initialData, children }: Props) {
   );
 
   const startNewGame = useCallback(() => {
-    const initialState = createInitialGameState();
+    const initialState = engine.createInitialGameState();
 
     saveGame(gameId, initialState);
     setGameState(initialState);
     setHasSave(true);
-  }, []);
+  }, [engine, gameId]);
 
   const continueGame = useCallback(() => {
-    const saved = loadGame(loadUser(), gameId);
+    const saved = loadGame(engine, loadUser(), gameId);
     if (!saved) return false;
 
     setGameState(saved);
     setHasSave(true);
 
     return true;
-  }, []);
+  }, [engine, gameId]);
 
   const resetGame = useCallback(() => {
     clearSave(gameId);
 
-    const initialState = createInitialGameState();
+    const initialState = engine.createInitialGameState();
 
     setGameState(initialState);
     setHasSave(false);
-  }, []);
+  }, [engine, gameId]);
 
   const choose = useCallback(
     (choice: Choice) => {
-      const nextState = makeChoice(choice, gameState);
+      const nextState = engine.makeChoice(choice, gameState);
 
       saveGame(gameId, nextState);
       setGameState(nextState);
       setHasSave(true);
     },
-    [gameState],
+    [engine, gameId, gameState],
   );
 
   const chooseChapter = useCallback(
@@ -89,7 +91,7 @@ export function GameProvider({ initialData, children }: Props) {
 
       return true;
     },
-    [gameState],
+    [gameId, gameState],
   );
 
   // Локальное имя, чтобы не затенять одноимённую функцию движка: наружу она
@@ -102,6 +104,8 @@ export function GameProvider({ initialData, children }: Props) {
   const value = useMemo(
     () => ({
       gameId,
+      gameData,
+      image,
       gameState,
       scene,
       choices,
@@ -114,6 +118,9 @@ export function GameProvider({ initialData, children }: Props) {
       canEnterChapter: checkCanEnterChapter,
     }),
     [
+      gameData,
+      gameId,
+      image,
       gameState,
       scene,
       choices,

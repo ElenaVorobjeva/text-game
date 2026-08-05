@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import type { GameStateData } from "../types/game";
+import { createGameEngine, gameData } from "../engine/gameEngine";
+import type { GameData, GameStateData } from "../types/game";
 import { loadUser, USER_KEY, type UserData } from "../user/userStorage";
 
 import { clearAllSaves, clearSave, loadGame, saveGame } from "./saveLoad";
@@ -27,6 +28,37 @@ function createLocalStorageStub() {
 // Две игры: проверяем, что сохранения не перетекают между ними.
 const GAME = "quiet_good_life";
 const OTHER = "another_game";
+
+// Движок вшитой игры — им валидируется загрузка в большинстве тестов.
+const engine = createGameEngine(gameData);
+
+// Вторая игра со своей сценой — для проверки, что loadGame валидирует по
+// переданному движку, а не по вшитому.
+const otherGame: GameData = {
+  meta: {
+    id: "other_game",
+    title: "Другая игра",
+    version: "1",
+    startSceneId: "other_start",
+  },
+  initialState: {
+    flags: {},
+    stats: { care: 0, connection: 0, calm: 0 },
+    inventory: [],
+    visitedScenes: [],
+  },
+  chapters: [{ id: 1, title: "Глава", image: "", startScene: "other_start" }],
+  scenes: [
+    {
+      id: "other_start",
+      chapter: 1,
+      step: 1,
+      title: "Старт другой игры",
+      text: "…",
+      choices: [],
+    },
+  ],
+};
 
 function makeState(overrides: Partial<GameStateData> = {}): GameStateData {
   return {
@@ -64,7 +96,7 @@ describe("saveGame / loadGame", () => {
 
     saveGame(GAME, state);
 
-    expect(loadGame(loadUser(), GAME)).toEqual(state);
+    expect(loadGame(engine, loadUser(), GAME)).toEqual(state);
   });
 
   test("stores the progress inside the user object", () => {
@@ -77,15 +109,21 @@ describe("saveGame / loadGame", () => {
     saveGame(GAME, makeState({ currentSceneId: "chapter1_scene1" }));
     saveGame(GAME, makeState({ currentSceneId: "chapter3_scene1" }));
 
-    expect(loadGame(loadUser(), GAME)?.currentSceneId).toBe("chapter3_scene1");
+    expect(loadGame(engine, loadUser(), GAME)?.currentSceneId).toBe(
+      "chapter3_scene1",
+    );
   });
 
   test("keeps each game's save separate", () => {
     saveGame(GAME, makeState({ currentSceneId: "chapter1_scene1" }));
     saveGame(OTHER, makeState({ currentSceneId: "chapter3_scene1" }));
 
-    expect(loadGame(loadUser(), GAME)?.currentSceneId).toBe("chapter1_scene1");
-    expect(loadGame(loadUser(), OTHER)?.currentSceneId).toBe("chapter3_scene1");
+    expect(loadGame(engine, loadUser(), GAME)?.currentSceneId).toBe(
+      "chapter1_scene1",
+    );
+    expect(loadGame(engine, loadUser(), OTHER)?.currentSceneId).toBe(
+      "chapter3_scene1",
+    );
   });
 
   test("a save does not touch a sibling game's completed endings", () => {
@@ -101,13 +139,13 @@ describe("saveGame / loadGame", () => {
 
 describe("loadGame", () => {
   test("returns null when there is no save", () => {
-    expect(loadGame(loadUser(), GAME)).toBeNull();
+    expect(loadGame(engine, loadUser(), GAME)).toBeNull();
   });
 
   test("returns null on corrupted storage instead of throwing", () => {
     localStorage.setItem(USER_KEY, "{ это не JSON");
 
-    expect(loadGame(loadUser(), GAME)).toBeNull();
+    expect(loadGame(engine, loadUser(), GAME)).toBeNull();
   });
 
   test("fills in fields missing from an older save", () => {
@@ -127,7 +165,7 @@ describe("loadGame", () => {
       },
     });
 
-    const loaded = loadGame(loadUser(), GAME);
+    const loaded = loadGame(engine, loadUser(), GAME);
 
     expect(loaded?.gameStatistic).toBeDefined();
     expect(loaded?.stats).toEqual({ care: 1, connection: 1, calm: 1 });
@@ -140,13 +178,13 @@ describe("loadGame: content drift", () => {
     // Без этой проверки getSceneById падает прямо в рендере — белый экран.
     saveGame(GAME, makeState({ currentSceneId: "chapter1_scene_removed" }));
 
-    expect(loadGame(loadUser(), GAME)).toBeNull();
+    expect(loadGame(engine, loadUser(), GAME)).toBeNull();
   });
 
   test("drops such a save so the next load starts clean", () => {
     saveGame(GAME, makeState({ currentSceneId: "chapter1_scene_removed" }));
 
-    loadGame(loadUser(), GAME);
+    loadGame(engine, loadUser(), GAME);
 
     expect(readUser().games[GAME].progress).toBeNull();
   });
@@ -154,7 +192,22 @@ describe("loadGame: content drift", () => {
   test("keeps a save whose scene still exists", () => {
     saveGame(GAME, makeState({ currentSceneId: "chapter3_scene1" }));
 
-    expect(loadGame(loadUser(), GAME)?.currentSceneId).toBe("chapter3_scene1");
+    expect(loadGame(engine, loadUser(), GAME)?.currentSceneId).toBe(
+      "chapter3_scene1",
+    );
+  });
+});
+
+describe("loadGame: validates against the passed engine", () => {
+  test("accepts a scene that exists in the given game but not the bundled one", () => {
+    const other = createGameEngine(otherGame);
+    saveGame(GAME, makeState({ currentSceneId: "other_start" }));
+
+    // Вшитый движок такой сцены не знает и отбросил бы сохранение (null);
+    // движок otherGame её знает — сохранение принимается.
+    expect(loadGame(other, loadUser(), GAME)?.currentSceneId).toBe(
+      "other_start",
+    );
   });
 });
 
@@ -164,7 +217,7 @@ describe("clearSave", () => {
 
     clearSave(GAME);
 
-    expect(loadGame(loadUser(), GAME)).toBeNull();
+    expect(loadGame(engine, loadUser(), GAME)).toBeNull();
   });
 
   test("is safe to call when there is nothing saved", () => {
@@ -182,8 +235,8 @@ describe("clearAllSaves", () => {
 
     clearAllSaves();
 
-    expect(loadGame(loadUser(), GAME)).toBeNull();
-    expect(loadGame(loadUser(), OTHER)).toBeNull();
+    expect(loadGame(engine, loadUser(), GAME)).toBeNull();
+    expect(loadGame(engine, loadUser(), OTHER)).toBeNull();
     expect(readUser().games[GAME].completedEndings).toEqual(["calm"]);
   });
 });

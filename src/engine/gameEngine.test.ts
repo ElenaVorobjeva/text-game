@@ -1,9 +1,10 @@
 import { describe, expect, test } from "vitest";
 
-import type { Choice, GameStateData, Scene } from "../types/game";
+import type { Choice, GameData, GameStateData, Scene } from "../types/game";
 
 import {
   canEnterChapter,
+  createGameEngine,
   createInitialGameState,
   enterChapter,
   gameData,
@@ -432,5 +433,69 @@ describe("getSceneImage", () => {
     const ending = getSceneById("ending_calm");
 
     expect(getSceneImage(ending)).toBe(ending.image);
+  });
+});
+
+// Минимальная вторая игра: движку важна структура, а не содержание. Нужна,
+// чтобы проверить, что движок привязан к переданным data, а не к базовой игре.
+const otherGame: GameData = {
+  meta: {
+    id: "other_game",
+    title: "Другая игра",
+    version: "1",
+    startSceneId: "other_start",
+  },
+  initialState: {
+    flags: {},
+    stats: { care: 5, connection: 5, calm: 5 },
+    inventory: ["other_item"],
+    visitedScenes: [],
+  },
+  chapters: [
+    {
+      id: 1,
+      title: "Другая глава",
+      image: "/images/other/ch1.png",
+      startScene: "other_start",
+    },
+  ],
+  scenes: [
+    {
+      id: "other_start",
+      chapter: 1,
+      step: 1,
+      title: "Старт другой игры",
+      text: "…",
+      choices: [],
+    },
+  ],
+};
+
+describe("createGameEngine", () => {
+  test("binds each engine to its own data, not to the bundled game", () => {
+    const other = createGameEngine(otherGame);
+    const base = createGameEngine(gameData);
+
+    // Движок другой игры знает её сцену и не знает сцен базовой…
+    expect(other.sceneExists("other_start")).toBe(true);
+    expect(other.sceneExists(gameData.meta.startSceneId)).toBe(false);
+
+    // …и наоборот. На версии, где тела читали синглтон, это падало.
+    expect(base.sceneExists("other_start")).toBe(false);
+    expect(base.sceneExists(gameData.meta.startSceneId)).toBe(true);
+  });
+
+  test("createInitialGameState starts at the engine's own start scene", () => {
+    const state = createGameEngine(otherGame).createInitialGameState();
+
+    expect(state.currentSceneId).toBe("other_start");
+    expect(state.stats).toEqual(otherGame.initialState.stats);
+  });
+
+  test("exposes its own chapters", () => {
+    const other = createGameEngine(otherGame);
+
+    expect(other.getChapterById(1).startScene).toBe("other_start");
+    expect(() => other.getChapterById(99)).toThrow();
   });
 });

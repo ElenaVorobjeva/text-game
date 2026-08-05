@@ -5,13 +5,12 @@ import { Description } from "../components/base/Description";
 import { Heading } from "../components/base/Heading";
 import { Image } from "../components/base/Image";
 import { Main } from "../components/base/Main";
-import { gameData } from "../engine/gameEngine";
 import { useGame } from "../state/useGame";
 import { useUser } from "../state/useUser";
 import { goBack } from "../utils/common";
 
 export function EndingDetailPage() {
-  const { gameId } = useGame();
+  const { gameId, gameData } = useGame();
   const { isEndingCompleted } = useUser();
   const { endingType } = useParams();
   const navigate = useNavigate();

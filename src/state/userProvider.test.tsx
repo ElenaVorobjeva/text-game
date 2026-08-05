@@ -52,7 +52,7 @@ function renderAt(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <UserProvider initialData={data}>
-        <GameProvider initialData={data}>
+        <GameProvider initialData={data} gameData={gameData}>
           <App />
         </GameProvider>
       </UserProvider>

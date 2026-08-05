@@ -5,16 +5,14 @@ import { ChoiceList } from "../components/game/ChoiceList";
 import { EndingView } from "../components/game/EndingView";
 import { SceneView } from "../components/game/SceneView";
 import { StatsBar } from "../components/game/StatsBar";
-import { getSceneImage } from "../engine/gameEngine";
 import { useGame } from "../state/useGame";
 import { useUser } from "../state/useUser";
 import { restartGame } from "../utils/common";
 
 export function GamePage() {
   const navigate = useNavigate();
-  const { scene, resetGame, gameId } = useGame();
+  const { scene, resetGame, gameId, image } = useGame();
   const { completeEnding } = useUser();
-  const image = getSceneImage(scene);
 
   useEffect(() => {
     if (scene.isEnding && scene.endingType)

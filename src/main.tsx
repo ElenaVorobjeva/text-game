@@ -5,6 +5,7 @@ import { HashRouter } from "react-router";
 import { App } from "./app/App.tsx";
 import { BootGate } from "./app/BootGate.tsx";
 import { ErrorBoundary } from "./components/base/ErrorBoundary.tsx";
+import { gameData } from "./engine/gameEngine.ts";
 import { GameProvider } from "./state/gameProvider.tsx";
 import { UserProvider } from "./state/userProvider.tsx";
 
@@ -19,7 +20,7 @@ createRoot(document.getElementById("root")!).render(
         <BootGate>
           {(data) => (
             <UserProvider initialData={data}>
-              <GameProvider initialData={data}>
+              <GameProvider initialData={data} gameData={gameData}>
                 <App />
               </GameProvider>
             </UserProvider>
