@@ -5,7 +5,6 @@ import { Card } from "../components/base/Card";
 import { CardGrid } from "../components/base/CardGrid";
 import { Main } from "../components/base/Main";
 import { Title } from "../components/base/Title";
-import { gameData } from "../engine/gameEngine";
 import { useGame } from "../state/useGame";
 import { goBack } from "../utils/common";
 
@@ -13,7 +12,7 @@ export function ChapterSelectPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { chooseChapter, canEnterChapter } = useGame();
+  const { chooseChapter, canEnterChapter, gameData } = useGame();
 
   const chapters = gameData.chapters;
 

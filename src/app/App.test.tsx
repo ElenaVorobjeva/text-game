@@ -41,7 +41,7 @@ function renderAt(path: string, history: string[] = [path]) {
   return render(
     <MemoryRouter initialEntries={history} initialIndex={history.length - 1}>
       <UserProvider initialData={data}>
-        <GameProvider initialData={data}>
+        <GameProvider initialData={data} gameData={gameData}>
           <App />
         </GameProvider>
       </UserProvider>
