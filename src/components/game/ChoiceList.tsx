@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router";
 
-import { getChapterById } from "../../engine/gameEngine";
 import { useGame } from "../../state/useGame";
 import { gamePath, startGame } from "../../utils/common";
 import { Button } from "../base/Button";
@@ -20,7 +19,6 @@ export function ChoiceList() {
 
   if (choices.length === 0) {
     const currentChapterId = scene.chapter;
-    const currentChapter = getChapterById(currentChapterId);
     const currentChapterIsAvailable = canEnterChapter(currentChapterId);
 
     return (
@@ -35,7 +33,7 @@ export function ChoiceList() {
               size="sm"
               width="fullOnMobile"
               onClick={() => {
-                chooseChapter(currentChapter);
+                chooseChapter(currentChapterId);
               }}
             >
               Начать главу сначала

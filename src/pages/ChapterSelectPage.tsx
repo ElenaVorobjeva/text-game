@@ -38,8 +38,7 @@ export function ChapterSelectPage() {
               image={image}
               disabled={!isAvailable}
               onClick={() => {
-                if (chooseChapter(chapterData))
-                  navigate(gamePath(gameId, "game"));
+                if (chooseChapter(id)) navigate(gamePath(gameId, "game"));
               }}
             />
           );

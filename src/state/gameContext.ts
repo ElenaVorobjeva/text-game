@@ -1,7 +1,7 @@
 import { createContext } from "react";
 
 import type { getCurrentScene } from "../engine/gameEngine";
-import type { Chapter, Choice, GameData, GameStateData } from "../types/game";
+import type { Choice, GameData, GameStateData } from "../types/game";
 
 export type GameContextValue = {
   /** id активной игры (GameData.meta.id). Пока игра одна, но профиль и
@@ -17,8 +17,8 @@ export type GameContextValue = {
   continueGame: () => boolean;
   resetGame: () => void;
   choose: (choice: Choice) => void;
-  /** Возвращает false, если в главу нельзя перейти — тогда экран менять не нужно. */
-  chooseChapter: (chapter: Chapter) => boolean;
+  /** Принимает id главы; false — если в главу нельзя перейти (экран менять не нужно). */
+  chooseChapter: (chapterId: number) => boolean;
   canEnterChapter: (chapterId: number) => boolean;
 };
 
