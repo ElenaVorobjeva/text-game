@@ -18,3 +18,5 @@ export const DEFAULT_GAME_ID = quietGoodLife.meta.id;
 export function getGameData(gameId: string): GameData | undefined {
   return games[gameId];
 }
+
+export const gameList = Object.values(games);

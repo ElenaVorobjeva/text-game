@@ -29,6 +29,8 @@ export type GameData = {
     title: string;
     version: string;
     startSceneId: string;
+    cover: string;
+    description: string;
   };
   initialState: InitialGameState;
   chapters: Chapter[];

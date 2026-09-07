@@ -1,7 +1,6 @@
 import { Navigate, Route, Routes } from "react-router";
 
-import { DEFAULT_GAME_ID } from "../data/games";
-import { gamePath } from "../utils/common";
+import { GameCatalogPage } from "../pages/GameCatalogPage";
 
 import { GameShell } from "./GameShell";
 
@@ -12,12 +11,7 @@ export function App() {
   return (
     <div className={layoutStyles}>
       <Routes>
-        {/* Пока нет каталога — корень ведёт на игру по умолчанию. В 4c это
-            заменит экран выбора игры. */}
-        <Route
-          path="/"
-          element={<Navigate to={gamePath(DEFAULT_GAME_ID)} replace />}
-        />
+        <Route path="/" element={<GameCatalogPage />} />
         <Route path="/:gameId/*" element={<GameShell />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

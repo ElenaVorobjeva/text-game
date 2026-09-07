@@ -444,6 +444,8 @@ const otherGame: GameData = {
     title: "Другая игра",
     version: "1",
     startSceneId: "other_start",
+    cover: "",
+    description: "",
   },
   initialState: {
     flags: {},

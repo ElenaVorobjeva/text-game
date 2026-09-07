@@ -25,6 +25,7 @@ const GAME_ID = gameData.meta.id;
 // он. Один экран — одно значение, все проверки ссылаются сюда.
 const SCREEN = {
   menu: "Тихий хороший день", // заголовок меню — есть при любом состоянии
+  catalog: "Выбор игры", // заголовок каталога игр
   chapters: "Выбор главы", // заголовок экрана выбора глав
   // Маркер игры берётся из данных, а не хардкодится: title стартовой сцены
   // живёт в gameData.json, и это его единственный источник правды.
@@ -56,23 +57,38 @@ beforeEach(() => {
 // дерево между тестами сама. localStorage чистит beforeEach.
 afterEach(cleanup);
 
-describe("routing: direct entry", () => {
-  test("/ redirects to the default game's menu", () => {
+describe("routing: game catalog", () => {
+  test("/ shows the game catalog", () => {
     renderAt("/");
 
-    expect(screen.getByRole("heading", { name: SCREEN.menu })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: SCREEN.catalog })).toBeTruthy();
   });
 
+  test("choosing a game opens its menu", async () => {
+    const user = userEvent.setup();
+    renderAt("/");
+
+    await user.click(
+      screen.getByRole("button", { name: new RegExp(gameData.meta.title) }),
+    );
+
+    expect(
+      await screen.findByRole("heading", { name: SCREEN.menu }),
+    ).toBeTruthy();
+  });
+
+  test("an unknown game id redirects to the catalog", () => {
+    renderAt("/nonexistent");
+
+    expect(screen.getByRole("heading", { name: SCREEN.catalog })).toBeTruthy();
+  });
+});
+
+describe("routing: direct entry", () => {
   test("/:gameId/chapters shows the chapter select screen", () => {
     renderAt(`/${GAME_ID}/chapters`);
 
     expect(screen.getByRole("heading", { name: SCREEN.chapters })).toBeTruthy();
-  });
-
-  test("an unknown game id redirects to the main menu", () => {
-    renderAt("/nonexistent");
-
-    expect(screen.getByRole("heading", { name: SCREEN.menu })).toBeTruthy();
   });
 });
 
@@ -97,7 +113,7 @@ describe("routing: game screen guard", () => {
 describe("routing: navigation from the menu", () => {
   test("Старт begins the game and moves to the game screen", async () => {
     const user = userEvent.setup();
-    renderAt("/");
+    renderAt(`/${GAME_ID}`);
 
     await user.click(screen.getByRole("button", { name: BUTTON.start }));
 
@@ -107,7 +123,7 @@ describe("routing: navigation from the menu", () => {
   test("Выбрать главу opens the chapter select screen", async () => {
     saveGame(GAME_ID, createInitialGameState());
     const user = userEvent.setup();
-    renderAt("/");
+    renderAt(`/${GAME_ID}`);
 
     await user.click(
       screen.getByRole("button", { name: BUTTON.chooseChapter }),

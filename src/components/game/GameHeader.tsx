@@ -24,6 +24,9 @@ export function GameHeader() {
         >
           Меню
         </Link>
+        <Link type="button" color="gray" onClick={() => navigate("/")}>
+          К играм
+        </Link>
         <Link
           type="button"
           color="gray"

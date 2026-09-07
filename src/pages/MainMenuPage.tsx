@@ -8,17 +8,16 @@ import { useGame } from "../state/useGame";
 import { gamePath, startGame } from "../utils/common";
 
 export function MainMenuPage() {
-  const { hasSave, startNewGame, continueGame, gameId } = useGame();
+  const { hasSave, startNewGame, continueGame, gameId, gameData } = useGame();
   const navigate = useNavigate();
 
   return (
     <Main className="gap-11">
       <div>
-        <Heading className="md:text-2xl">Тихий хороший день</Heading>
+        <Heading className="md:text-2xl">{gameData.meta.title}</Heading>
 
         <p className="leading-free text-grey-blue max-w-intro mx-auto mt-5 text-sm">
-          Небольшая текстовая игра о мягком ритме жизни, простых решениях и
-          спокойном дне.
+          {gameData.meta.description}
         </p>
       </div>
 
