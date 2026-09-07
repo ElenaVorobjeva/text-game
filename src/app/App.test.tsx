@@ -82,6 +82,17 @@ describe("routing: game catalog", () => {
 
     expect(screen.getByRole("heading", { name: SCREEN.catalog })).toBeTruthy();
   });
+
+  test("the game menu links back to the catalog", async () => {
+    const user = userEvent.setup();
+    renderAt(`/${GAME_ID}`);
+
+    await user.click(screen.getByRole("button", { name: "К играм" }));
+
+    expect(
+      await screen.findByRole("heading", { name: SCREEN.catalog }),
+    ).toBeTruthy();
+  });
 });
 
 describe("routing: direct entry", () => {

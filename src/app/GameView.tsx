@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useLocation } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 
 import { GameHeader } from "../components/game/GameHeader";
 import { ChapterSelectPage } from "../pages/ChapterSelectPage";
@@ -13,15 +13,12 @@ import { gamePath } from "../utils/common";
 // (см. GameShell), поэтому берёт gameId/hasSave из useGame.
 export function GameView() {
   const { gameId, hasSave } = useGame();
-  const location = useLocation();
   const menuPath = gamePath(gameId);
 
-  // Шапка везде, кроме меню игры.
-  const showHeader = location.pathname !== menuPath;
-
+  // Шапка на всех экранах игры; на меню она свёрнута до «К играм» (см. GameHeader).
   return (
     <>
-      {showHeader && <GameHeader />}
+      <GameHeader />
 
       <Routes>
         <Route index element={<MainMenuPage />} />
