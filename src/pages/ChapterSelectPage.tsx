@@ -6,13 +6,13 @@ import { CardGrid } from "../components/base/CardGrid";
 import { Main } from "../components/base/Main";
 import { Title } from "../components/base/Title";
 import { useGame } from "../state/useGame";
-import { goBack } from "../utils/common";
+import { gamePath, goBack } from "../utils/common";
 
 export function ChapterSelectPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { chooseChapter, canEnterChapter, gameData } = useGame();
+  const { chooseChapter, canEnterChapter, gameData, gameId } = useGame();
 
   const chapters = gameData.chapters;
 
@@ -38,7 +38,8 @@ export function ChapterSelectPage() {
               image={image}
               disabled={!isAvailable}
               onClick={() => {
-                if (chooseChapter(chapterData)) navigate("/game");
+                if (chooseChapter(chapterData))
+                  navigate(gamePath(gameId, "game"));
               }}
             />
           );
@@ -47,7 +48,7 @@ export function ChapterSelectPage() {
 
       <Button
         width="fullOnMobile"
-        onClick={() => goBack(navigate, location, "/")}
+        onClick={() => goBack(navigate, location, gamePath(gameId))}
       >
         Назад
       </Button>

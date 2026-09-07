@@ -9,7 +9,6 @@ import { createInitialGameState, gameData } from "../engine/gameEngine";
 import { addCompletedEnding, loadUser, USER_KEY } from "../user/userStorage";
 import { saveGame } from "../utils/saveLoad";
 
-import { GameProvider } from "./gameProvider";
 import { UserProvider } from "./userProvider";
 
 // Профиль пользователя (собранные концовки) кэшируется в состоянии провайдера,
@@ -39,6 +38,7 @@ const ending = gameData.scenes.find(
 )!;
 
 const endingType = ending.endingType!;
+const GAME_ID = gameData.meta.id;
 
 // Заголовок страницы концовки: «Концовка:» — это подпись из UI, в данных её нет.
 const ENDING_HEADING = `Концовка: ${ending.title}`;
@@ -48,13 +48,10 @@ const ENDINGS_LIST_HEADING = "Концовки";
 const ENDINGS_MENU_ITEM = "Концовки";
 
 function renderAt(path: string) {
-  const data = loadUser();
   return render(
     <MemoryRouter initialEntries={[path]}>
-      <UserProvider initialData={data}>
-        <GameProvider initialData={data} gameData={gameData}>
-          <App />
-        </GameProvider>
+      <UserProvider initialData={loadUser()}>
+        <App />
       </UserProvider>
     </MemoryRouter>,
   );
@@ -78,7 +75,7 @@ describe("endings completed during the session", () => {
   test("the endings menu item appears without a reload", async () => {
     const user = userEvent.setup();
     saveBeforeEnding();
-    renderAt("/game");
+    renderAt(`/${GAME_ID}/game`);
 
     expect(
       screen.queryByRole("button", { name: ENDINGS_MENU_ITEM }),
@@ -94,7 +91,7 @@ describe("endings completed during the session", () => {
   test("the ending opens from the list instead of redirecting back", async () => {
     const user = userEvent.setup();
     saveBeforeEnding();
-    renderAt("/game");
+    renderAt(`/${GAME_ID}/game`);
 
     await user.click(screen.getByRole("button", { name: finalChoice.text }));
     await user.click(
@@ -122,7 +119,7 @@ describe("endings from previous sessions", () => {
   test("an ending saved earlier is available right after mount", async () => {
     addCompletedEnding(gameData.meta.id, endingType);
 
-    renderAt(`/endings/${endingType}`);
+    renderAt(`/${GAME_ID}/endings/${endingType}`);
 
     expect(
       await screen.findByRole("heading", { name: ENDING_HEADING }),
@@ -130,7 +127,7 @@ describe("endings from previous sessions", () => {
   });
 
   test("an ending that was never completed redirects to the list", async () => {
-    renderAt(`/endings/${endingType}`);
+    renderAt(`/${GAME_ID}/endings/${endingType}`);
 
     expect(
       await screen.findByRole("heading", { name: ENDINGS_LIST_HEADING }),
@@ -140,7 +137,7 @@ describe("endings from previous sessions", () => {
 
 describe("profile written by another tab", () => {
   test("the storage event brings the change into this tab", async () => {
-    renderAt("/chapters");
+    renderAt(`/${GAME_ID}/chapters`);
 
     expect(
       screen.queryByRole("button", { name: ENDINGS_MENU_ITEM }),
@@ -159,7 +156,7 @@ describe("profile written by another tab", () => {
   });
 
   test("an unrelated storage key is ignored", async () => {
-    renderAt("/chapters");
+    renderAt(`/${GAME_ID}/chapters`);
 
     addCompletedEnding(gameData.meta.id, endingType);
     act(() => {

@@ -129,6 +129,8 @@ describe("ChoiceList with no available actions", () => {
       screen.getByRole("button", { name: "Выбрать другую главу" }),
     );
 
-    expect(screen.getByTestId("path").textContent).toBe("/chapters");
+    expect(screen.getByTestId("path").textContent).toBe(
+      `/${gameData.meta.id}/chapters`,
+    );
   });
 });

@@ -7,7 +7,7 @@ import { Image } from "../components/base/Image";
 import { Main } from "../components/base/Main";
 import { useGame } from "../state/useGame";
 import { useUser } from "../state/useUser";
-import { goBack } from "../utils/common";
+import { gamePath, goBack } from "../utils/common";
 
 export function EndingDetailPage() {
   const { gameId, gameData } = useGame();
@@ -23,7 +23,7 @@ export function EndingDetailPage() {
   // Нет такой концовки или она ещё не открыта — не показываем: защита от
   // спойлера и от прямого захода по ссылке. Уводим на список.
   if (!ending || !endingType || !isEndingCompleted(gameId, endingType)) {
-    return <Navigate to="/endings" replace />;
+    return <Navigate to={gamePath(gameId, "endings")} replace />;
   }
 
   return (
@@ -42,7 +42,7 @@ export function EndingDetailPage() {
       */}
       <Button
         width="fullOnMobile"
-        onClick={() => goBack(navigate, location, "/endings")}
+        onClick={() => goBack(navigate, location, gamePath(gameId, "endings"))}
       >
         Назад
       </Button>

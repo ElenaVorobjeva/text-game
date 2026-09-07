@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import GitHubLogo from "../../assets/images/github-logo.svg?react";
 import { useGame } from "../../state/useGame";
 import { useUser } from "../../state/useUser";
-import { restartGame } from "../../utils/common";
+import { gamePath, restartGame } from "../../utils/common";
 import { Link } from "../base/Link";
 
 // Общая шапка для всех экранов, кроме главного меню. Навигацию и сброс делает
@@ -17,21 +17,33 @@ export function GameHeader() {
   return (
     <header className="border-grey-60 flex flex-none flex-wrap justify-between gap-x-7 gap-y-2 border-b px-6 py-3.5 lg:px-10">
       <div className="flex flex-wrap justify-center gap-x-7 gap-y-2">
-        <Link type="button" color="gray" onClick={() => navigate("/")}>
+        <Link
+          type="button"
+          color="gray"
+          onClick={() => navigate(gamePath(gameId))}
+        >
           Меню
         </Link>
-        <Link type="button" color="gray" onClick={() => navigate("/chapters")}>
+        <Link
+          type="button"
+          color="gray"
+          onClick={() => navigate(gamePath(gameId, "chapters"))}
+        >
           Выбор главы
         </Link>
         <Link
           type="button"
           color="gray"
-          onClick={() => restartGame(resetGame, navigate)}
+          onClick={() => restartGame(resetGame, navigate, gameId)}
         >
           Начать заново
         </Link>
         {hasCompletedEndings(gameId) && (
-          <Link type="button" color="gray" onClick={() => navigate("/endings")}>
+          <Link
+            type="button"
+            color="gray"
+            onClick={() => navigate(gamePath(gameId, "endings"))}
+          >
             Концовки
           </Link>
         )}

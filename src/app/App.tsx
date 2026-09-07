@@ -1,35 +1,24 @@
-import { Navigate, Route, Routes, useLocation } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 
-import { GameHeader } from "../components/game/GameHeader";
-import { ChapterSelectPage } from "../pages/ChapterSelectPage";
-import { EndingDetailPage } from "../pages/EndingDetailPage";
-import { EndingsPage } from "../pages/EndingsPage";
-import { GamePage } from "../pages/GamePage";
-import { MainMenuPage } from "../pages/MainMenuPage";
-import { useGame } from "../state/useGame";
+import { DEFAULT_GAME_ID } from "../data/games";
+import { gamePath } from "../utils/common";
+
+import { GameShell } from "./GameShell";
 
 export function App() {
-  const { hasSave } = useGame();
-  const location = useLocation();
   const layoutStyles =
     "flex min-h-screen flex-col bg-black font-text text-light-blue";
 
-  // Шапка везде, кроме главного меню.
-  const showHeader = location.pathname !== "/";
-
   return (
     <div className={layoutStyles}>
-      {showHeader && <GameHeader />}
-
       <Routes>
-        <Route path="/" element={<MainMenuPage />} />
+        {/* Пока нет каталога — корень ведёт на игру по умолчанию. В 4c это
+            заменит экран выбора игры. */}
         <Route
-          path="/game"
-          element={hasSave ? <GamePage /> : <Navigate to="/" replace />}
+          path="/"
+          element={<Navigate to={gamePath(DEFAULT_GAME_ID)} replace />}
         />
-        <Route path="/chapters" element={<ChapterSelectPage />} />
-        <Route path="/endings" element={<EndingsPage />} />
-        <Route path="/endings/:endingType" element={<EndingDetailPage />} />
+        <Route path="/:gameId/*" element={<GameShell />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
