@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "id": "short_walk",
+    "title": "Короткая прогулка",
+    "version": "0.0.1",
+    "startSceneId": "sw_scene1",
+    "cover": "/images/chapter2.png",
+    "description": "Демо-заглушка второй игры: пара сцен и одна концовка."
+  },
+  "initialState": {
+    "flags": {},
+    "stats": { "care": 0, "connection": 0, "calm": 0 },
+    "inventory": [],
+    "visitedScenes": []
+  },
+  "chapters": [
+    {
+      "id": 1,
+      "title": "Прогулка",
+      "image": "/images/chapter2.png",
+      "startScene": "sw_scene1"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sw_scene1",
+      "chapter": 1,
+      "step": 1,
+      "title": "У порога",
+      "text": "Ты выходишь на улицу. Воздух прохладный, впереди тихая тропинка.",
+      "choices": [
+        {
+          "id": "sw_s1_c1",
+          "text": "Пойти по тропинке",
+          "nextSceneId": "sw_scene2",
+          "effects": [{ "type": "change_stat", "stat": "calm", "delta": 1 }]
+        }
+      ]
+    },
+    {
+      "id": "sw_scene2",
+      "chapter": 1,
+      "step": 2,
+      "title": "Скамейка",
+      "text": "Тропинка выводит к скамейке под деревом. Можно посидеть и выдохнуть.",
+      "choices": [
+        {
+          "id": "sw_s2_c1",
+          "text": "Присесть и отдохнуть",
+          "nextSceneId": "sw_ending_rest"
+        }
+      ]
+    },
+    {
+      "id": "sw_ending_rest",
+      "chapter": 0,
+      "step": 1,
+      "title": "Тихий отдых",
+      "text": "Ты сидишь, слушая листву. День удался.",
+      "image": "/images/ending_calm.png",
+      "isEnding": true,
+      "endingType": "rest",
+      "choices": []
+    }
+  ]
+}

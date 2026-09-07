@@ -1,13 +1,16 @@
 import type { GameData } from "../types/game";
 
 import rawQuietGoodLife from "./gameData.json";
+import rawShortWalk from "./shortWalk.json";
 
 const quietGoodLife = rawQuietGoodLife as GameData;
+const shortWalk = rawShortWalk as GameData;
 
-// Все игры проекта. Сейчас одна; сюда же лягут новые. Единственное место,
-// знающее, какие игры существуют, — под будущий каталог и ленивую загрузку.
+// Все игры проекта. Единственное место, знающее, какие игры существуют, —
+// под каталог и будущую ленивую загрузку.
 export const games: Record<string, GameData> = {
   [quietGoodLife.meta.id]: quietGoodLife,
+  [shortWalk.meta.id]: shortWalk,
 };
 
 // Игра по умолчанию: пока нет выбора игры, стартуем с неё (в 4b её задаст URL).
