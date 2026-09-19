@@ -1,10 +1,12 @@
 import { describe, expect, test } from "vitest";
 
-import { DEFAULT_GAME_ID, games, getGameData } from "./games";
+import { gameList, games, getGameData } from "./games";
 
 describe("games registry", () => {
-  test("the default game is registered under its own id", () => {
-    expect(getGameData(DEFAULT_GAME_ID)?.meta.id).toBe(DEFAULT_GAME_ID);
+  test("every registered game is found by its own id", () => {
+    for (const game of gameList) {
+      expect(getGameData(game.meta.id)).toBe(game);
+    }
   });
 
   test("returns undefined for an unknown game", () => {
