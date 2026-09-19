@@ -22,14 +22,20 @@ export function GameProvider({ initialData, gameData, children }: Props) {
   const engine = useMemo(() => createGameEngine(gameData), [gameData]);
   const gameId = gameData.meta.id;
 
-  const [gameState, setGameState] = useState<GameStateData>(
-    () =>
-      loadGame(engine, initialData, gameId) ?? engine.createInitialGameState(),
-  );
+  // Одна загрузка на оба значения: loadGame с побочным эффектом (сброс
+  // негодного сохранения) не должен вызываться дважды, а hasSave не должен
+  // жить отдельно от того, что реально загрузили.
+  const [initial] = useState(() => {
+    const saved = loadGame(engine, initialData, gameId);
 
-  const [hasSave, setHasSave] = useState(() =>
-    Boolean(loadGame(engine, initialData, gameId)),
-  );
+    return {
+      gameState: saved ?? engine.createInitialGameState(),
+      hasSave: saved !== null,
+    };
+  });
+
+  const [gameState, setGameState] = useState<GameStateData>(initial.gameState);
+  const [hasSave, setHasSave] = useState(initial.hasSave);
 
   const scene = useMemo(
     () => engine.getCurrentScene(gameState),
