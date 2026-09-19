@@ -14,6 +14,9 @@ export function GamePage() {
 
   useDocumentTitle(`${scene.title} — ${gameData.meta.title}`);
 
+  const chapter = gameData.chapters.find(({ id }) => id === scene.chapter);
+  const chapterLabel = chapter ? `Глава ${chapter.id}: ${chapter.title}` : "";
+
   if (scene.isEnding) {
     return (
       <EndingView
@@ -35,7 +38,12 @@ export function GamePage() {
       {/* Статы видны только во время игры, над сценой. */}
       <StatsBar />
 
-      <SceneView image={image} title={scene.title} text={scene.text} />
+      <SceneView
+        image={image}
+        imageAlt={chapterLabel}
+        title={scene.title}
+        text={scene.text}
+      />
 
       <ChoiceList />
     </div>

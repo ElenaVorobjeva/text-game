@@ -128,7 +128,11 @@ describe("screen changes are announced", () => {
 
     await user.click(screen.getByRole("button", { name: BUTTON.start }));
 
-    const title = await screen.findByRole("heading", { name: SCREEN.game });
+    // Заголовок сцены — единственный h1 экрана: на игровом экране его иначе нет.
+    const title = await screen.findByRole("heading", {
+      level: 1,
+      name: SCREEN.game,
+    });
     expect(document.activeElement).toBe(title);
     expect(document.title).toContain(SCREEN.game);
   });

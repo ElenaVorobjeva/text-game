@@ -34,7 +34,8 @@ export function EndingDetailPage() {
 
   return (
     <Main className="gap-5.5">
-      {ending.image && <Image src={ending.image} alt={ending.title} />}
+      {/* alt пустой: заголовок ниже уже называет концовку. */}
+      {ending.image && <Image src={ending.image} alt="" />}
 
       <Heading>Концовка: {ending.title}</Heading>
 
