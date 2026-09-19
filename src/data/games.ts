@@ -1,6 +1,6 @@
 import type { GameData } from "../types/game";
 
-import rawQuietGoodLife from "./gameData.json";
+import rawQuietGoodLife from "./quietGoodLife.json";
 import rawShortWalk from "./shortWalk.json";
 
 const quietGoodLife = rawQuietGoodLife as GameData;

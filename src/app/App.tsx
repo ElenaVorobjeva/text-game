@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from "react-router";
 
 import { GameCatalogPage } from "../pages/GameCatalogPage";
 
-import { GameShell } from "./GameShell";
+import { GameRoute } from "./GameRoute";
 
 export function App() {
   const layoutStyles =
@@ -12,7 +12,7 @@ export function App() {
     <div className={layoutStyles}>
       <Routes>
         <Route path="/" element={<GameCatalogPage />} />
-        <Route path="/:gameId/*" element={<GameShell />} />
+        <Route path="/:gameId/*" element={<GameRoute />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>

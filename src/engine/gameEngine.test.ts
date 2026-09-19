@@ -1,16 +1,8 @@
 import { describe, expect, test } from "vitest";
 
+import { engine, quietGoodLife } from "../test/fixtures";
 import type { Choice, GameData, GameStateData, Scene } from "../types/game";
 
-import {
-  createInitialGameState,
-  gameData,
-  getChapterById,
-  getCurrentScene,
-  getSceneById,
-  getSceneImage,
-  makeChoice,
-} from "./bundledEngine";
 import {
   canEnterChapter,
   createGameEngine,
@@ -41,11 +33,11 @@ function makeChoiceData(overrides: Partial<Choice> = {}): Choice {
 
 describe("getSceneById", () => {
   test("returns the scene with the requested id", () => {
-    expect(getSceneById("chapter1_scene1").id).toBe("chapter1_scene1");
+    expect(engine.getSceneById("chapter1_scene1").id).toBe("chapter1_scene1");
   });
 
   test("throws for an unknown scene id", () => {
-    expect(() => getSceneById("no_such_scene")).toThrow(
+    expect(() => engine.getSceneById("no_such_scene")).toThrow(
       "Scene not found: no_such_scene",
     );
   });
@@ -53,11 +45,11 @@ describe("getSceneById", () => {
 
 describe("getChapterById", () => {
   test("returns the chapter with the requested id", () => {
-    expect(getChapterById(1).id).toBe(1);
+    expect(engine.getChapterById(1).id).toBe(1);
   });
 
   test("throws for an unknown chapter id", () => {
-    expect(() => getChapterById(99)).toThrow("Chapter not found: 99");
+    expect(() => engine.getChapterById(99)).toThrow("Chapter not found: 99");
   });
 });
 
@@ -65,7 +57,7 @@ describe("getCurrentScene", () => {
   test("resolves the scene from currentSceneId", () => {
     const state = makeState({ currentSceneId: "chapter2_scene1" });
 
-    expect(getCurrentScene(state).id).toBe("chapter2_scene1");
+    expect(engine.getCurrentScene(state).id).toBe("chapter2_scene1");
   });
 });
 
@@ -111,7 +103,7 @@ describe("makeChoice", () => {
   test("moves the player to the scene the choice points at", () => {
     const state = makeState();
 
-    const result = makeChoice(
+    const result = engine.makeChoice(
       makeChoiceData({ nextSceneId: "chapter1_scene2" }),
       state,
     );
@@ -122,7 +114,7 @@ describe("makeChoice", () => {
   test("applies the effects of the choice", () => {
     const state = makeState();
 
-    const result = makeChoice(
+    const result = engine.makeChoice(
       makeChoiceData({
         effects: [{ type: "change_stat", stat: "calm", delta: 1 }],
       }),
@@ -135,7 +127,7 @@ describe("makeChoice", () => {
   test("records the new scene as visited", () => {
     const state = makeState();
 
-    const result = makeChoice(
+    const result = engine.makeChoice(
       makeChoiceData({ nextSceneId: "chapter1_scene2" }),
       state,
     );
@@ -148,7 +140,7 @@ describe("makeChoice", () => {
       visitedScenes: ["chapter1_scene1", "chapter1_scene2"],
     });
 
-    const result = makeChoice(
+    const result = engine.makeChoice(
       makeChoiceData({ nextSceneId: "chapter1_scene2" }),
       state,
     );
@@ -162,14 +154,17 @@ describe("makeChoice", () => {
     const state = makeState();
 
     expect(() =>
-      makeChoice(makeChoiceData({ nextSceneId: "no_such_scene" }), state),
+      engine.makeChoice(
+        makeChoiceData({ nextSceneId: "no_such_scene" }),
+        state,
+      ),
     ).toThrow("Scene not found: no_such_scene");
   });
 
   test("does not mutate the state it receives", () => {
     const state = makeState();
 
-    makeChoice(
+    engine.makeChoice(
       makeChoiceData({
         nextSceneId: "chapter2_scene1",
         effects: [{ type: "change_stat", stat: "calm", delta: 1 }],
@@ -187,7 +182,7 @@ describe("makeChoice: chapter snapshots", () => {
   test("stores a snapshot when the player enters a new chapter", () => {
     const state = makeState();
 
-    const result = makeChoice(
+    const result = engine.makeChoice(
       makeChoiceData({ nextSceneId: "chapter2_scene1" }),
       state,
     );
@@ -198,7 +193,7 @@ describe("makeChoice: chapter snapshots", () => {
   test("does not store a snapshot when moving within the same chapter", () => {
     const state = makeState();
 
-    const result = makeChoice(
+    const result = engine.makeChoice(
       makeChoiceData({ nextSceneId: "chapter1_scene2" }),
       state,
     );
@@ -209,7 +204,7 @@ describe("makeChoice: chapter snapshots", () => {
   test("does not store a snapshot under chapter 0 when reaching an ending", () => {
     const state = makeState();
 
-    const result = makeChoice(
+    const result = engine.makeChoice(
       makeChoiceData({ nextSceneId: "ending_calm" }),
       state,
     );
@@ -222,7 +217,7 @@ describe("makeChoice: chapter snapshots", () => {
 
     // Переходный выбор применяет эффекты до входа в главу — снимок должен
     // отражать состояние ПОСЛЕ них, иначе при возврате игрок их потеряет.
-    const result = makeChoice(
+    const result = engine.makeChoice(
       makeChoiceData({
         nextSceneId: "chapter2_scene1",
         effects: [
@@ -252,7 +247,7 @@ describe("makeChoice: chapter snapshots", () => {
       },
     });
 
-    const result = makeChoice(
+    const result = engine.makeChoice(
       makeChoiceData({ nextSceneId: "chapter2_scene1" }),
       state,
     );
@@ -268,7 +263,7 @@ describe("makeChoice: chapter snapshots", () => {
     };
     const state = makeState({ gameStatistic: { 1: chapterOne } });
 
-    const result = makeChoice(
+    const result = engine.makeChoice(
       makeChoiceData({ nextSceneId: "chapter2_scene1" }),
       state,
     );
@@ -279,7 +274,7 @@ describe("makeChoice: chapter snapshots", () => {
   test("the snapshot does not share objects with the live state", () => {
     const state = makeState();
 
-    const result = makeChoice(
+    const result = engine.makeChoice(
       makeChoiceData({ nextSceneId: "chapter2_scene1" }),
       state,
     );
@@ -292,19 +287,19 @@ describe("makeChoice: chapter snapshots", () => {
 
 describe("createInitialGameState", () => {
   test("starts at the scene declared in meta", () => {
-    expect(createInitialGameState().currentSceneId).toBe(
-      gameData.meta.startSceneId,
+    expect(engine.createInitialGameState().currentSceneId).toBe(
+      quietGoodLife.meta.startSceneId,
     );
   });
 
   test("marks the starting scene as visited", () => {
-    expect(createInitialGameState().visitedScenes).toEqual([
-      gameData.meta.startSceneId,
+    expect(engine.createInitialGameState().visitedScenes).toEqual([
+      quietGoodLife.meta.startSceneId,
     ]);
   });
 
   test("seeds a snapshot for the first chapter so it can be replayed", () => {
-    const state = createInitialGameState();
+    const state = engine.createInitialGameState();
 
     expect(state.gameStatistic[1]).toEqual({
       flags: state.flags,
@@ -314,7 +309,7 @@ describe("createInitialGameState", () => {
   });
 
   test("the first chapter snapshot does not share objects with the state", () => {
-    const state = createInitialGameState();
+    const state = engine.createInitialGameState();
 
     expect(state.gameStatistic[1]?.flags).not.toBe(state.flags);
     expect(state.gameStatistic[1]?.stats).not.toBe(state.stats);
@@ -322,10 +317,10 @@ describe("createInitialGameState", () => {
   });
 
   test("two calls return independent states", () => {
-    const first = createInitialGameState();
-    const second = createInitialGameState();
+    const first = engine.createInitialGameState();
+    const second = engine.createInitialGameState();
 
-    // Раньше поля возвращались ссылками на gameData.initialState,
+    // Раньше поля возвращались ссылками на quietGoodLife.initialState,
     // и все начальные состояния делили одни и те же объекты.
     expect(first.flags).not.toBe(second.flags);
     expect(first.stats).not.toBe(second.stats);
@@ -334,7 +329,7 @@ describe("createInitialGameState", () => {
 });
 
 describe("enterChapter", () => {
-  const chapterTwo = getChapterById(2);
+  const chapterTwo = engine.getChapterById(2);
 
   function stateWithSnapshots(): GameStateData {
     return makeState({
@@ -426,15 +421,17 @@ describe("canEnterChapter", () => {
 
 describe("getSceneImage", () => {
   test("takes the picture from the chapter for a regular scene", () => {
-    const scene = getSceneById("chapter1_scene1");
+    const scene = engine.getSceneById("chapter1_scene1");
 
-    expect(getSceneImage(scene)).toBe(getChapterById(scene.chapter).image);
+    expect(engine.getSceneImage(scene)).toBe(
+      engine.getChapterById(scene.chapter).image,
+    );
   });
 
   test("takes the picture from the scene itself for an ending", () => {
-    const ending = getSceneById("ending_calm");
+    const ending = engine.getSceneById("ending_calm");
 
-    expect(getSceneImage(ending)).toBe(ending.image);
+    expect(engine.getSceneImage(ending)).toBe(ending.image);
   });
 });
 
@@ -478,15 +475,15 @@ const otherGame: GameData = {
 describe("createGameEngine", () => {
   test("binds each engine to its own data, not to the bundled game", () => {
     const other = createGameEngine(otherGame);
-    const base = createGameEngine(gameData);
+    const base = createGameEngine(quietGoodLife);
 
     // Движок другой игры знает её сцену и не знает сцен базовой…
     expect(other.sceneExists("other_start")).toBe(true);
-    expect(other.sceneExists(gameData.meta.startSceneId)).toBe(false);
+    expect(other.sceneExists(quietGoodLife.meta.startSceneId)).toBe(false);
 
     // …и наоборот. На версии, где тела читали синглтон, это падало.
     expect(base.sceneExists("other_start")).toBe(false);
-    expect(base.sceneExists(gameData.meta.startSceneId)).toBe(true);
+    expect(base.sceneExists(quietGoodLife.meta.startSceneId)).toBe(true);
   });
 
   test("createInitialGameState starts at the engine's own start scene", () => {

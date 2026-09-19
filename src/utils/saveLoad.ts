@@ -4,17 +4,12 @@ import {
   clearAllProgress,
   clearProgress,
   readProgress,
-  writeProgress,
   type UserData,
 } from "../user/userStorage";
 
 // Сохранения игры живут внутри единого объекта пользователя (см. userStorage).
 // Здесь — игровая надстройка над ним: валидация загруженного прогресса против
 // текущего контента. Само хранилище игровой модели не знает.
-
-export function saveGame(gameId: string, state: GameStateData): void {
-  writeProgress(gameId, state);
-}
 
 // Сохранение непригодно: выбрасываем его и сообщаем загрузчику, что играть
 // придётся с начала. Причина уходит в консоль — потеря прогресса не должна
@@ -69,7 +64,7 @@ export function loadGame(
     return discardSave(gameId, "неверная форма сохранённого состояния");
   }
 
-  // Сцена могла исчезнуть из gameData.json, пока писался контент. Без этой
+  // Сцена могла исчезнуть из quietGoodLife.json, пока писался контент. Без этой
   // проверки getSceneById бросит исключение прямо в рендере — белый экран.
   if (!engine.sceneExists(state.currentSceneId)) {
     return discardSave(
@@ -79,10 +74,6 @@ export function loadGame(
   }
 
   return state;
-}
-
-export function clearSave(gameId: string): void {
-  clearProgress(gameId);
 }
 
 // Стирает сохранения всех игр (аварийное восстановление, см. clearAllProgress).
