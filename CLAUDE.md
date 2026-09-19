@@ -153,11 +153,11 @@ DOM-узел и анимация проигрывается только при 
 
 Маршрутизация на react-router (`HashRouter`) в [src/app/App.tsx](src/app/App.tsx):
 `/` — каталог игр ([GameCatalogPage](src/pages/GameCatalogPage.tsx)), `/:gameId/*` —
-оболочка выбранной игры ([GameShell](src/app/GameShell.tsx)), всё лишнее (`*`) редиректит
+оболочка выбранной игры ([GameRoute](src/app/GameRoute.tsx)), всё лишнее (`*`) редиректит
 на `/`. Общая обёртка страницы (фон, шрифт, `min-h-screen`) живёт в `App`; страницы её не
 дублируют.
 
-`GameShell` берёт `gameId` из URL, находит игру в реестре
+`GameRoute` берёт `gameId` из URL, находит игру в реестре
 ([src/data/games.ts](src/data/games.ts)) и монтирует её `GameProvider` с `key={gameId}`
 (смена игры = новое состояние); неизвестный `gameId` уводит на `/`. Внутри —
 [GameView](src/app/GameView.tsx): вложенные роуты экранов игры (`index` = меню, `game`,
@@ -177,7 +177,7 @@ DOM-узел и анимация проигрывается только при 
 `location.key === "default"`).
 
 Состояние игры — один контекст ([src/state/gameProvider.tsx](src/state/gameProvider.tsx)),
-доступ через хук `useGame()`. Провайдер монтируется на активную игру: `GameShell` передаёт
+доступ через хук `useGame()`. Провайдер монтируется на активную игру: `GameRoute` передаёт
 ему `gameData` из реестра, а движок строится из этих данных — `createGameEngine(gameData)`
 (см. ниже). `gameId` активной игры (`= gameData.meta.id`, родом из URL) отдаётся наружу —
 им адресуются сохранение и профиль. `loadGame`/`createInitialGameState` вызываются в

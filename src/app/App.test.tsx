@@ -16,7 +16,7 @@ import { saveGame } from "../utils/saveLoad";
 import { App } from "./App";
 
 // Тесты навигации: проверяют маршруты и переходы через реальный react-router
-// (MemoryRouter). GameProvider монтирует сам App (через GameShell), поэтому
+// (MemoryRouter). GameProvider монтирует сам App (через GameRoute), поэтому
 // разворачиваем только UserProvider.
 
 const GAME_ID = gameData.meta.id;

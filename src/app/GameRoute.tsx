@@ -7,7 +7,7 @@ import { GameView } from "./GameView";
 
 // Оболочка активной игры: берёт gameId из URL, находит игру в реестре и
 // монтирует её провайдер. Неизвестная игра — уводим на каталог.
-export function GameShell() {
+export function GameRoute() {
   const { gameId } = useParams();
   const gameData = gameId ? getGameData(gameId) : undefined;
 
