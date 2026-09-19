@@ -32,6 +32,9 @@ export function Card({
   disabled,
   onClick,
 }: Props) {
+  const closedLabel =
+    type === "chapter" ? "Глава закрыта" : "Концовка ещё не открыта";
+
   // Закрытая карточка не раскрывает ни номер главы, ни название концовки.
   const label = disabled
     ? "???"
@@ -48,26 +51,29 @@ export function Card({
         type="button"
         className="flex flex-col items-center transition duration-150 enabled:cursor-pointer enabled:hover:-translate-y-[3px]"
         disabled={disabled}
+        // Закрытая карточка: «???» на слух — набор знаков вопроса, поэтому
+        // имя задаём явно, а видимую подпись прячем от скринридера.
+        aria-label={disabled ? closedLabel : undefined}
         onClick={onClick}
       >
         {disabled || !image ? (
-          <ImagePlaceholder
-            className={IMAGE_CLASSES}
-            label={
-              type === "chapter" ? "Глава закрыта" : "Концовка ещё не открыта"
-            }
-          />
+          <ImagePlaceholder className={IMAGE_CLASSES} label={closedLabel} />
         ) : (
           <img
             className={cn(IMAGE_CLASSES, "bg-stone-100")}
             src={image}
-            alt={title}
+            // Название уже есть в подписи ниже — повторять его в alt значит
+            // заставить скринридер прочитать его дважды.
+            alt=""
             loading="lazy"
             decoding="async"
           />
         )}
 
-        <span className="text-grey-blue mt-3 max-w-70 text-base leading-normal sm:max-w-45">
+        <span
+          aria-hidden={disabled}
+          className="text-grey-blue mt-3 max-w-70 text-base leading-normal sm:max-w-45"
+        >
           {label}
         </span>
       </button>
