@@ -103,6 +103,15 @@ describe("routing: direct entry", () => {
   });
 });
 
+describe("routing: header on the menu", () => {
+  test("the header stays collapsed when the menu URL has a trailing slash", () => {
+    renderAt(`/${GAME_ID}/`);
+
+    expect(screen.getByRole("link", { name: "К играм" })).toBeTruthy();
+    expect(screen.queryByRole("link", { name: "Выбор главы" })).toBeNull();
+  });
+});
+
 describe("routing: game screen guard", () => {
   test("the game screen without a save redirects to the menu", () => {
     renderAt(`/${GAME_ID}/game`);

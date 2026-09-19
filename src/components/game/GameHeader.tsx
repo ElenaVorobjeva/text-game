@@ -1,4 +1,4 @@
-import { useLocation } from "react-router";
+import { useMatch } from "react-router";
 
 import GitHubLogo from "../../assets/images/github-logo.svg?react";
 import { useGameActions } from "../../hooks/useGameActions";
@@ -12,12 +12,12 @@ import { Link } from "../base/Link";
 // меню. Навигацию и сброс делает сама через useNavigate/useGame. Статы здесь
 // не живут: они видны только во время игры, над сценой (см. GamePage).
 export function GameHeader() {
-  const location = useLocation();
   const { gameId } = useGame();
   const { restart } = useGameActions();
   const { hasCompletedEndings } = useUser();
 
-  const isMenu = location.pathname === gamePath(gameId);
+  // useMatch, а не сравнение строк: адрес с завершающим слэшем — тот же экран меню.
+  const isMenu = useMatch({ path: gamePath(gameId), end: true }) !== null;
 
   return (
     <header className="border-grey-60 flex flex-none flex-wrap justify-between gap-x-7 gap-y-3 border-b px-6 py-3.5 lg:px-10">
