@@ -7,7 +7,7 @@ type Props = {
   children: (data: UserData) => ReactNode;
 };
 
-export function BootGate({ children }: Props) {
+export function ProfileGate({ children }: Props) {
   const [data, setData] = useState<UserData | null>(null);
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { SERVER_LATENCY_MS } from "../user/userStorage";
 
-import { BootGate } from "./BootGate";
+import { ProfileGate } from "./ProfileGate";
 
 // «Загрузка с сервера» подделана таймаутом, поэтому время в тесте — фейковое:
 // проверяем, что до срабатывания видна полоса, а после — дети.
@@ -17,9 +17,9 @@ afterEach(() => {
   cleanup();
 });
 
-describe("BootGate", () => {
+describe("ProfileGate", () => {
   test("shows the loader first and the children only after the delay", async () => {
-    render(<BootGate>{() => <div>игра</div>}</BootGate>);
+    render(<ProfileGate>{() => <div>игра</div>}</ProfileGate>);
 
     // До истечения задержки — полоса загрузки, детей ещё нет.
     expect(screen.getByRole("status")).toBeTruthy();
