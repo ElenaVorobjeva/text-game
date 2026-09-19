@@ -4,12 +4,15 @@ import { Button } from "../components/base/Button";
 import { Heading } from "../components/base/Heading";
 import { Main } from "../components/base/Main";
 import { Row } from "../components/base/Row";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useGame } from "../state/useGame";
 import { gamePath, startGame } from "../utils/common";
 
 export function MainMenuPage() {
   const { hasSave, startNewGame, continueGame, gameId, gameData } = useGame();
   const navigate = useNavigate();
+
+  useDocumentTitle(gameData.meta.title);
 
   return (
     <Main className="gap-11">

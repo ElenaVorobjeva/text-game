@@ -121,6 +121,19 @@ describe("routing: game screen guard", () => {
   });
 });
 
+describe("screen changes are announced", () => {
+  test("starting the game focuses the scene title and updates the tab title", async () => {
+    const user = userEvent.setup();
+    renderAt(`/${GAME_ID}`);
+
+    await user.click(screen.getByRole("button", { name: BUTTON.start }));
+
+    const title = await screen.findByRole("heading", { name: SCREEN.game });
+    expect(document.activeElement).toBe(title);
+    expect(document.title).toContain(SCREEN.game);
+  });
+});
+
 describe("routing: navigation from the menu", () => {
   test("Старт begins the game and moves to the game screen", async () => {
     const user = userEvent.setup();

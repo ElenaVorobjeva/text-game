@@ -5,6 +5,7 @@ import { Description } from "../components/base/Description";
 import { Heading } from "../components/base/Heading";
 import { Image } from "../components/base/Image";
 import { Main } from "../components/base/Main";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useGame } from "../state/useGame";
 import { useUser } from "../state/useUser";
 import { gamePath, goBack } from "../utils/common";
@@ -18,6 +19,11 @@ export function EndingDetailPage() {
 
   const ending = gameData.scenes.find(
     (scene) => scene.isEnding && scene.endingType === endingType,
+  );
+
+  // Хук стоит до раннего return: порядок хуков не должен зависеть от ветки.
+  useDocumentTitle(
+    ending ? `${ending.title} — ${gameData.meta.title}` : gameData.meta.title,
   );
 
   // Нет такой концовки или она ещё не открыта — не показываем: защита от

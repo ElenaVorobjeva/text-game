@@ -5,6 +5,7 @@ import { Card } from "../components/base/Card";
 import { CardGrid } from "../components/base/CardGrid";
 import { Main } from "../components/base/Main";
 import { Title } from "../components/base/Title";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useGame } from "../state/useGame";
 import { gamePath, goBack } from "../utils/common";
 
@@ -15,6 +16,8 @@ export function ChapterSelectPage() {
   const { chooseChapter, canEnterChapter, gameData, gameId } = useGame();
 
   const chapters = gameData.chapters;
+
+  useDocumentTitle(`Выбор главы — ${gameData.meta.title}`);
 
   return (
     <Main className="gap-9">

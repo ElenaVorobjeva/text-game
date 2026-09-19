@@ -5,9 +5,11 @@ import { CardGrid } from "../components/base/CardGrid";
 import { Main } from "../components/base/Main";
 import { Title } from "../components/base/Title";
 import { gameList } from "../data/games";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { gamePath } from "../utils/common";
 
 export function GameCatalogPage() {
+  useDocumentTitle("Выбор игры");
   const navigate = useNavigate();
 
   return (
