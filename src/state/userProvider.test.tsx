@@ -6,8 +6,12 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 import { App } from "../app/App";
 import { engine, quietGoodLife } from "../test/fixtures";
-import { addCompletedEnding, loadUser, USER_KEY } from "../user/userStorage";
-import { saveGame } from "../utils/saveLoad";
+import {
+  addCompletedEnding,
+  loadUser,
+  USER_KEY,
+  writeProgress,
+} from "../user/userStorage";
 
 import { UserProvider } from "./userProvider";
 
@@ -61,7 +65,7 @@ function renderAt(path: string) {
 
 // Сохранение на шаг до концовки: дальше один клик по безусловному варианту.
 function saveBeforeEnding() {
-  saveGame(quietGoodLife.meta.id, {
+  writeProgress(quietGoodLife.meta.id, {
     ...engine.createInitialGameState(),
     currentSceneId: finalScene.id,
   });

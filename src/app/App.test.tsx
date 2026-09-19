@@ -6,8 +6,7 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 import { UserProvider } from "../state/userProvider";
 import { engine, quietGoodLife } from "../test/fixtures";
-import { loadUser } from "../user/userStorage";
-import { saveGame } from "../utils/saveLoad";
+import { loadUser, writeProgress } from "../user/userStorage";
 
 import { App } from "./App";
 
@@ -120,7 +119,7 @@ describe("routing: game screen guard", () => {
   });
 
   test("the game screen with a save shows the game", () => {
-    saveGame(GAME_ID, engine.createInitialGameState());
+    writeProgress(GAME_ID, engine.createInitialGameState());
 
     renderAt(`/${GAME_ID}/game`);
 
@@ -156,7 +155,7 @@ describe("routing: navigation from the menu", () => {
   });
 
   test("Выбрать главу opens the chapter select screen", async () => {
-    saveGame(GAME_ID, engine.createInitialGameState());
+    writeProgress(GAME_ID, engine.createInitialGameState());
     const user = userEvent.setup();
     renderAt(`/${GAME_ID}`);
 
@@ -172,7 +171,7 @@ describe("routing: navigation from the menu", () => {
 
 describe("routing: back button on the chapter screen", () => {
   test("goes back through history when there is somewhere to return to", async () => {
-    saveGame(GAME_ID, engine.createInitialGameState());
+    writeProgress(GAME_ID, engine.createInitialGameState());
     const user = userEvent.setup();
     // Пришли на экран глав из игры — в истории есть предыдущая запись.
     renderAt(`/${GAME_ID}/chapters`, [
