@@ -20,7 +20,7 @@ type Props = {
 export function GameProvider({ gameData, children }: Props) {
   // Профиль и запись сохранений — у UserProvider: GameProvider не читает
   // localStorage сам.
-  const { data, saveProgress, clearProgress } = useUser();
+  const { data, saveProgress, clearProgress, completeEnding } = useUser();
   const engine = useMemo(() => createGameEngine(gameData), [gameData]);
   const gameId = gameData.meta.id;
 
@@ -84,8 +84,15 @@ export function GameProvider({ gameData, children }: Props) {
       saveProgress(gameId, nextState);
       setGameState(nextState);
       setHasSave(true);
+
+      // Правило домена: дошли до концовки — она открыта. Живёт здесь, а не в
+      // эффекте страницы, чтобы не зависеть от того, какой экран смонтирован.
+      const reached = engine.getCurrentScene(nextState);
+      if (reached.isEnding && reached.endingType) {
+        completeEnding(gameId, reached.endingType);
+      }
     },
-    [engine, gameId, gameState, saveProgress],
+    [engine, gameId, gameState, saveProgress, completeEnding],
   );
 
   const chooseChapter = useCallback(

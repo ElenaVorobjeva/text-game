@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
 import { ChoiceList } from "../components/game/ChoiceList";
@@ -7,20 +6,13 @@ import { SceneView } from "../components/game/SceneView";
 import { StatsBar } from "../components/game/StatsBar";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useGame } from "../state/useGame";
-import { useUser } from "../state/useUser";
 import { gamePath, restartGame } from "../utils/common";
 
 export function GamePage() {
   const navigate = useNavigate();
   const { scene, resetGame, gameId, gameData, image } = useGame();
-  const { completeEnding } = useUser();
 
   useDocumentTitle(`${scene.title} — ${gameData.meta.title}`);
-
-  useEffect(() => {
-    if (scene.isEnding && scene.endingType)
-      completeEnding(gameId, scene.endingType);
-  }, [scene, completeEnding, gameId]);
 
   if (scene.isEnding) {
     return (
