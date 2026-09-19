@@ -21,6 +21,34 @@ for (const game of gameList) {
     const sceneIds = new Set(scenes.map((scene) => scene.id));
     const chapterIds = new Set(chapters.map((chapter) => chapter.id));
 
+    // Опечатка в type раньше молча превращалась в «условие не выполнено» или
+    // «эффект без последствий»; теперь движок бросает исключение, а тест ловит
+    // это до игрока.
+    describe("conditions and effects", () => {
+      const CONDITION_TYPES = ["flag", "stat_gte", "has_item"];
+      const EFFECT_TYPES = [
+        "set_flag",
+        "change_stat",
+        "add_item",
+        "remove_item",
+      ];
+
+      test("every condition and effect has a known type", () => {
+        const unknown = scenes.flatMap((scene) =>
+          scene.choices.flatMap((choice) => [
+            ...(choice.conditions ?? [])
+              .filter((c) => !CONDITION_TYPES.includes(c.type))
+              .map((c) => `${choice.id}: condition ${c.type}`),
+            ...(choice.effects ?? [])
+              .filter((e) => !EFFECT_TYPES.includes(e.type))
+              .map((e) => `${choice.id}: effect ${e.type}`),
+          ]),
+        );
+
+        expect(unknown).toEqual([]);
+      });
+    });
+
     describe("scene links", () => {
       test("every choice points at a scene that exists", () => {
         const broken = scenes.flatMap((scene) =>

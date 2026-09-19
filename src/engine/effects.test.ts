@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import type { GameStateData } from "../types/game";
+import type { Effect, GameStateData } from "../types/game";
 
 import { applyEffect, applyEffects } from "./effects";
 
@@ -172,5 +172,19 @@ describe("applyEffects", () => {
     );
 
     expect(result.inventory).toEqual([]);
+  });
+});
+
+describe("applyEffect: unknown effect", () => {
+  test("throws instead of silently leaving the state unchanged", () => {
+    const state = {
+      flags: {},
+      stats: { care: 0, connection: 0, calm: 0 },
+      inventory: [],
+    } as unknown as GameStateData;
+
+    expect(() =>
+      applyEffect({ type: "set_flg" } as unknown as Effect, state),
+    ).toThrow();
   });
 });

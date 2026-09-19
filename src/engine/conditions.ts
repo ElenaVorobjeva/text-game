@@ -1,4 +1,5 @@
 import type { Condition, GameStateData } from "../types/game";
+import { assertNever } from "../utils/assertNever";
 
 export function isConditionMet(
   condition: Condition,
@@ -15,7 +16,7 @@ export function isConditionMet(
       return state.inventory.includes(condition.item);
 
     default:
-      return false;
+      return assertNever(condition);
   }
 }
 
