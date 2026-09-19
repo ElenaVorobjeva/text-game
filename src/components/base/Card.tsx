@@ -62,6 +62,8 @@ export function Card({
             className={cn(IMAGE_CLASSES, "bg-stone-100")}
             src={image}
             alt={title}
+            loading="lazy"
+            decoding="async"
           />
         )}
 
