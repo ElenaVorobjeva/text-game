@@ -40,7 +40,8 @@ export function UserProvider({ initialData, children }: Props) {
   }, []);
 
   const getCompletedEndings = useCallback(
-    (gameId: string) => games[gameId]?.completedEndings ?? [],
+    (gameId: string) =>
+      Object.hasOwn(games, gameId) ? games[gameId].completedEndings : [],
     [games],
   );
 

@@ -11,6 +11,13 @@ describe("games registry", () => {
     expect(getGameData("no_such_game")).toBeUndefined();
   });
 
+  test.each(["constructor", "__proto__", "toString", "hasOwnProperty"])(
+    "does not treat the inherited property %s as a game",
+    (id) => {
+      expect(getGameData(id)).toBeUndefined();
+    },
+  );
+
   // Страховка от опечатки при добавлении игры: ключ в реестре обязан совпадать
   // с meta.id — иначе поиск по gameId из URL промахнётся.
   test("every game is keyed by its own meta.id", () => {

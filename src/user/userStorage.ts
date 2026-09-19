@@ -64,6 +64,10 @@ function sanitizeGames(value: unknown): Record<string, UserGameData> {
   const games: Record<string, UserGameData> = {};
 
   for (const [gameId, raw] of Object.entries(value)) {
+    // Присваивание games["__proto__"] подменило бы прототип объекта, а не
+    // добавило запись.
+    if (gameId === "__proto__") continue;
+
     const game = (typeof raw === "object" && raw !== null ? raw : {}) as {
       completedEndings?: unknown;
       progress?: unknown;
@@ -106,7 +110,9 @@ export function saveUser(data: UserData): void {
 }
 
 function gameOf(data: UserData, gameId: string): UserGameData {
-  return data.games[gameId] ?? emptyGameData();
+  return Object.hasOwn(data.games, gameId)
+    ? data.games[gameId]
+    : emptyGameData();
 }
 
 // Точечная запись одной игры: читаем свежий объект, меняем срез игры и пишем

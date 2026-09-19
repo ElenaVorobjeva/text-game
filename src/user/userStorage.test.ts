@@ -102,6 +102,25 @@ describe("loadUser", () => {
   });
 });
 
+describe("prototype-like game ids", () => {
+  test("loadUser ignores a __proto__ entry instead of replacing the prototype", () => {
+    localStorage.setItem(
+      USER_KEY,
+      '{"games":{"__proto__":{"completedEndings":["x"],"progress":null}}}',
+    );
+
+    const user = loadUser();
+
+    expect(Object.getPrototypeOf(user.games)).toBe(Object.prototype);
+    expect(Object.keys(user.games)).toEqual([]);
+  });
+
+  test("an inherited property name is an unknown game, not its data", () => {
+    expect(getCompletedEndings({ games: {} }, "constructor")).toEqual([]);
+    expect(readProgress({ games: {} }, "toString")).toBeNull();
+  });
+});
+
 describe("getCompletedEndings / readProgress", () => {
   test("return empty defaults for an unknown game", () => {
     expect(getCompletedEndings(loadUser(), OTHER)).toEqual([]);
