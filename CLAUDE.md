@@ -160,7 +160,7 @@ DOM-узел и анимация проигрывается только при 
 `GameRoute` берёт `gameId` из URL, находит игру в реестре
 ([src/data/games.ts](src/data/games.ts)) и монтирует её `GameProvider` с `key={gameId}`
 (смена игры = новое состояние); неизвестный `gameId` уводит на `/`. Внутри —
-[GameView](src/app/GameView.tsx): вложенные роуты экранов игры (`index` = меню, `game`,
+[GameLayout](src/app/GameLayout.tsx): вложенные роуты экранов игры (`index` = меню, `game`,
 `chapters`, `endings`) и шапка (на меню игры свёрнута до ссылки «К играм»).
 
 `HashRouter`, а не `BrowserRouter`: игра — статика, а адреса вида `/#/game` работают на

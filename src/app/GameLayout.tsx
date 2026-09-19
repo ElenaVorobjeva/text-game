@@ -11,7 +11,7 @@ import { gamePath } from "../utils/common";
 
 // Раскладка одной игры: её экраны под /:gameId/*. Живёт внутри GameProvider
 // (см. GameRoute), поэтому берёт gameId/hasSave из useGame.
-export function GameView() {
+export function GameLayout() {
   const { gameId, hasSave } = useGame();
   const menuPath = gamePath(gameId);
 
