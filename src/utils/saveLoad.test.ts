@@ -174,6 +174,40 @@ describe("loadGame", () => {
   });
 });
 
+describe("loadGame: malformed progress", () => {
+  // Форма, при которой рендер или обработчик клика иначе бросили бы исключение.
+  const broken: Array<[string, Partial<Record<keyof GameStateData, unknown>>]> =
+    [
+      ["flags is null", { flags: null }],
+      ["stats is a string", { stats: "oops" }],
+      [
+        "a stat is not a number",
+        { stats: { care: "1", connection: 2, calm: 3 } },
+      ],
+      ["inventory is not an array", { inventory: {} }],
+      ["visitedScenes is not an array", { visitedScenes: "chapter1_scene1" }],
+      ["gameStatistic is not an object", { gameStatistic: [] }],
+      [
+        "a chapter snapshot has no inventory",
+        { gameStatistic: { 1: { flags: {}, stats: {} } } },
+      ],
+    ];
+
+  test.each(broken)("discards a save where %s", (_name, patch) => {
+    writeUser({
+      games: {
+        [GAME]: {
+          completedEndings: [],
+          progress: { ...makeState(), ...patch } as unknown as GameStateData,
+        },
+      },
+    });
+
+    expect(loadGame(engine, loadUser(), GAME)).toBeNull();
+    expect(readUser().games[GAME].progress).toBeNull();
+  });
+});
+
 describe("loadGame: content drift", () => {
   test("refuses a save pointing at a scene that no longer exists", () => {
     // Сцену переименовали в gameData.json, а сохранение осталось старым.

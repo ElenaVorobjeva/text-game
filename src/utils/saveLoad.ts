@@ -26,6 +26,33 @@ function discardSave(gameId: string, reason: string): null {
   return null;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isSnapshot(value: unknown): boolean {
+  return (
+    isRecord(value) &&
+    isRecord(value.flags) &&
+    isRecord(value.stats) &&
+    Object.values(value.stats).every((stat) => typeof stat === "number") &&
+    Array.isArray(value.inventory)
+  );
+}
+
+// Форма состояния: localStorage — недоверенный ввод, его правит кто угодно
+// (руками, расширения, старые сборки). Неверная форма иначе падает уже в
+// рендере или в обработчике клика, а перезагрузка не лечит: сохранение то же.
+function isValidState(state: GameStateData): boolean {
+  return (
+    typeof state.currentSceneId === "string" &&
+    isSnapshot(state) &&
+    Array.isArray(state.visitedScenes) &&
+    isRecord(state.gameStatistic) &&
+    Object.values(state.gameStatistic).every(isSnapshot)
+  );
+}
+
 export function loadGame(
   engine: GameEngine,
   data: UserData,
@@ -37,6 +64,10 @@ export function loadGame(
   // Недостающие поля берутся из начального состояния — так сохранения прошлых
   // сборок продолжают работать после добавления новых полей.
   const state: GameStateData = { ...engine.createInitialGameState(), ...saved };
+
+  if (!isValidState(state)) {
+    return discardSave(gameId, "неверная форма сохранённого состояния");
+  }
 
   // Сцена могла исчезнуть из gameData.json, пока писался контент. Без этой
   // проверки getSceneById бросит исключение прямо в рендере — белый экран.
