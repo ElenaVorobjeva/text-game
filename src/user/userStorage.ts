@@ -83,17 +83,19 @@ function sanitizeGames(value: unknown): Record<string, UserGameData> {
 }
 
 export function loadUser(): UserData {
-  const raw = localStorage.getItem(USER_KEY);
-
-  if (!raw) return createEmptyUser();
-
   try {
+    const raw = localStorage.getItem(USER_KEY);
+
+    if (!raw) return createEmptyUser();
+
     const saved = JSON.parse(raw) as { games?: unknown };
 
     return { games: sanitizeGames(saved.games) };
   } catch {
-    // Битый JSON невосстановим — отдаём пустые данные, но не роняем страницу.
-    return discardUser("не удалось разобрать JSON");
+    // Битый JSON невосстановим, а getItem бросает при заблокированном
+    // хранилище (Safari private, запрет cookies): отдаём пустые данные, но не
+    // роняем страницу и не оставляем BootGate навсегда на загрузке.
+    return discardUser("не удалось прочитать или разобрать данные");
   }
 }
 
@@ -106,7 +108,14 @@ export function fetchUserData(): Promise<UserData> {
 }
 
 export function saveUser(data: UserData): void {
-  localStorage.setItem(USER_KEY, JSON.stringify(data));
+  try {
+    localStorage.setItem(USER_KEY, JSON.stringify(data));
+  } catch (error) {
+    // Квота или закрытое хранилище: исключение в обработчике клика молча
+    // «съело» бы выбор игрока. Игра продолжается в памяти, прогресс не
+    // переживёт перезагрузку — об этом остаётся след в консоли.
+    console.warn("Не удалось сохранить данные пользователя:", error);
+  }
 }
 
 function gameOf(data: UserData, gameId: string): UserGameData {

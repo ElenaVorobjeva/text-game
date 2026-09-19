@@ -102,6 +102,43 @@ describe("loadUser", () => {
   });
 });
 
+describe("unavailable storage", () => {
+  const blocked = {
+    getItem: () => {
+      throw new DOMException("blocked", "SecurityError");
+    },
+    setItem: () => {
+      throw new DOMException("full", "QuotaExceededError");
+    },
+  };
+
+  beforeEach(() => {
+    vi.stubGlobal("localStorage", blocked);
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("loadUser returns an empty profile instead of throwing", () => {
+    expect(loadUser()).toEqual({ games: {} });
+  });
+
+  test("saveUser swallows a write failure", () => {
+    expect(() => saveUser({ games: {} })).not.toThrow();
+  });
+
+  test("fetchUserData still resolves", async () => {
+    vi.useFakeTimers();
+    const promise = fetchUserData();
+    await vi.advanceTimersByTimeAsync(SERVER_LATENCY_MS);
+
+    await expect(promise).resolves.toEqual({ games: {} });
+    vi.useRealTimers();
+  });
+});
+
 describe("prototype-like game ids", () => {
   test("loadUser ignores a __proto__ entry instead of replacing the prototype", () => {
     localStorage.setItem(
