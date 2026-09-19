@@ -1,10 +1,16 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Marck+Script&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
+/* Шрифты отдаются с того же хоста: запрос к fonts.googleapis.com выдавал IP
+   игрока третьей стороне и блокировал отрисовку CSS. Подмножества (латиница,
+   кириллица) подтягиваются по unicode-range только когда нужны. */
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/playfair-display";
+@import "@fontsource-variable/playfair-display/wght-italic.css";
+@import "@fontsource/marck-script";
 @import "tailwindcss";
 
 @theme {
   --font-heading: "Marck Script", cursive;
-  --font-title: "Playfair Display", serif;
-  --font-text: "Inter", sans-serif;
+  --font-title: "Playfair Display Variable", serif;
+  --font-text: "Inter Variable", sans-serif;
 
   --color-black: #080a14;
   --color-grey-60: rgba(255, 255, 255, 0.06);

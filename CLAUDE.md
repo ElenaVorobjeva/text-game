@@ -126,6 +126,9 @@ npm run test:run  # однократный прогон тестов
 
 Шрифты: `font-heading` (Marck Script, заголовки-надписи), `font-title` (Playfair Display,
 заголовки сцен), `font-text` (Inter, весь остальной текст).
+Шрифты самохостятся через пакеты `@fontsource*` (импорты в начале main.css), а не с Google
+Fonts. Имена семейств у вариативных шрифтов оканчиваются на `Variable`
+(`"Inter Variable"`) — при смене пакета проверять имя в `@theme` и в `ImagePlaceholder`.
 
 ### Анимации
 
