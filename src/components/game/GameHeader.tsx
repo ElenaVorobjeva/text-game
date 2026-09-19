@@ -20,30 +20,26 @@ export function GameHeader() {
 
   return (
     <header className="border-grey-60 flex flex-none flex-wrap justify-between gap-x-7 gap-y-2 border-b px-6 py-3.5 lg:px-10">
-      <div className="flex flex-wrap justify-center gap-x-7 gap-y-2">
+      <nav
+        aria-label="Навигация по игре"
+        className="flex flex-wrap justify-center gap-x-7 gap-y-2"
+      >
         {isMenu ? (
-          <Link type="button" color="gray" onClick={() => navigate("/")}>
+          <Link color="gray" href="/">
             К играм
           </Link>
         ) : (
           <>
-            <Link
-              type="button"
-              color="gray"
-              onClick={() => navigate(gamePath(gameId))}
-            >
+            <Link color="gray" href={gamePath(gameId)}>
               Меню
             </Link>
-            <Link type="button" color="gray" onClick={() => navigate("/")}>
+            <Link color="gray" href="/">
               К играм
             </Link>
-            <Link
-              type="button"
-              color="gray"
-              onClick={() => navigate(gamePath(gameId, "chapters"))}
-            >
+            <Link color="gray" href={gamePath(gameId, "chapters")}>
               Выбор главы
             </Link>
+            {/* Действие, а не переход, — поэтому кнопка. */}
             <Link
               type="button"
               color="gray"
@@ -52,17 +48,13 @@ export function GameHeader() {
               Начать заново
             </Link>
             {hasCompletedEndings(gameId) && (
-              <Link
-                type="button"
-                color="gray"
-                onClick={() => navigate(gamePath(gameId, "endings"))}
-              >
+              <Link color="gray" href={gamePath(gameId, "endings")}>
                 Концовки
               </Link>
             )}
           </>
         )}
-      </div>
+      </nav>
       <div className="hidden lg:block">
         <a
           href="https://github.com/ElenaVorobjeva/text-game"

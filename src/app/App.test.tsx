@@ -87,7 +87,7 @@ describe("routing: game catalog", () => {
     const user = userEvent.setup();
     renderAt(`/${GAME_ID}`);
 
-    await user.click(screen.getByRole("button", { name: "К играм" }));
+    await user.click(screen.getByRole("link", { name: "К играм" }));
 
     expect(
       await screen.findByRole("heading", { name: SCREEN.catalog }),
