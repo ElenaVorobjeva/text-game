@@ -35,11 +35,9 @@ export function ChapterSelectPage() {
             <Card
               key={id}
               index={index}
-              type="chapter"
-              id={id}
-              title={title}
+              label={`Глава ${id}: ${title}`}
               image={image}
-              disabled={!isAvailable}
+              closedLabel={isAvailable ? undefined : "Глава закрыта"}
               onClick={() => {
                 if (chooseChapter(id)) navigate(gamePath(gameId, "game"));
               }}

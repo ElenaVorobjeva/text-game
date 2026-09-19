@@ -35,11 +35,10 @@ export function EndingsPage() {
           return (
             <Card
               key={id}
-              type="ending"
               index={index}
-              title={title}
+              label={title}
               image={image}
-              disabled={!isAvailable}
+              closedLabel={isAvailable ? undefined : "Концовка ещё не открыта"}
               onClick={() =>
                 navigate(gamePath(gameId, `endings/${endingType}`))
               }

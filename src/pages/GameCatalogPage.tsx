@@ -20,11 +20,9 @@ export function GameCatalogPage() {
         {gameList.map((game, index) => (
           <Card
             key={game.meta.id}
-            type="game"
             index={index}
-            title={game.meta.title}
+            label={game.meta.title}
             image={game.meta.cover}
-            disabled={false}
             onClick={() => navigate(gamePath(game.meta.id))}
           />
         ))}
