@@ -7,7 +7,7 @@ import { Main } from "../components/base/Main";
 import { Title } from "../components/base/Title";
 import { useGame } from "../state/useGame";
 import { useUser } from "../state/useUser";
-import { goBack } from "../utils/common";
+import { gamePath, goBack } from "../utils/common";
 
 export function EndingsPage() {
   const { gameId, gameData } = useGame();
@@ -37,7 +37,9 @@ export function EndingsPage() {
               title={title}
               image={image}
               disabled={!isAvailable}
-              onClick={() => navigate(`/endings/${endingType}`)}
+              onClick={() =>
+                navigate(gamePath(gameId, `endings/${endingType}`))
+              }
             />
           );
         })}
@@ -45,7 +47,7 @@ export function EndingsPage() {
 
       <Button
         width="fullOnMobile"
-        onClick={() => goBack(navigate, location, "/")}
+        onClick={() => goBack(navigate, location, gamePath(gameId))}
       >
         Назад
       </Button>

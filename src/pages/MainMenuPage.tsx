@@ -5,20 +5,19 @@ import { Heading } from "../components/base/Heading";
 import { Main } from "../components/base/Main";
 import { Row } from "../components/base/Row";
 import { useGame } from "../state/useGame";
-import { startGame } from "../utils/common";
+import { gamePath, startGame } from "../utils/common";
 
 export function MainMenuPage() {
-  const { hasSave, startNewGame, continueGame } = useGame();
+  const { hasSave, startNewGame, continueGame, gameId, gameData } = useGame();
   const navigate = useNavigate();
 
   return (
     <Main className="gap-11">
       <div>
-        <Heading className="md:text-2xl">Тихий хороший день</Heading>
+        <Heading className="md:text-2xl">{gameData.meta.title}</Heading>
 
         <p className="leading-free text-grey-blue max-w-intro mx-auto mt-5 text-sm">
-          Небольшая текстовая игра о мягком ритме жизни, простых решениях и
-          спокойном дне.
+          {gameData.meta.description}
         </p>
       </div>
 
@@ -28,7 +27,7 @@ export function MainMenuPage() {
             size="lg"
             width="fullOnMobile"
             onClick={() => {
-              startGame(startNewGame, navigate);
+              startGame(startNewGame, navigate, gameId);
             }}
           >
             Старт
@@ -42,7 +41,7 @@ export function MainMenuPage() {
               width="fullOnMobile"
               onClick={() => {
                 const shouldNavigate = continueGame();
-                if (shouldNavigate) navigate("/game");
+                if (shouldNavigate) navigate(gamePath(gameId, "game"));
               }}
             >
               Продолжить
@@ -52,7 +51,7 @@ export function MainMenuPage() {
               size="lg"
               width="fullOnMobile"
               onClick={() => {
-                startGame(startNewGame, navigate);
+                startGame(startNewGame, navigate, gameId);
               }}
             >
               Начать сначала
@@ -62,7 +61,7 @@ export function MainMenuPage() {
               size="lg"
               width="fullOnMobile"
               onClick={() => {
-                navigate("/chapters");
+                navigate(gamePath(gameId, "chapters"));
               }}
             >
               Выбрать главу

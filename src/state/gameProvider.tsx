@@ -6,7 +6,7 @@ import {
   enterChapter,
   getAvailableChoices,
 } from "../engine/gameEngine";
-import type { Chapter, Choice, GameData, GameStateData } from "../types/game";
+import type { Choice, GameData, GameStateData } from "../types/game";
 import { loadUser, type UserData } from "../user/userStorage";
 import { loadGame, saveGame, clearSave } from "../utils/saveLoad";
 
@@ -81,8 +81,8 @@ export function GameProvider({ initialData, gameData, children }: Props) {
   );
 
   const chooseChapter = useCallback(
-    (chapter: Chapter): boolean => {
-      const next = enterChapter(chapter, gameState);
+    (chapterId: number): boolean => {
+      const next = enterChapter(engine.getChapterById(chapterId), gameState);
 
       if (!next) return false;
 
@@ -91,7 +91,7 @@ export function GameProvider({ initialData, gameData, children }: Props) {
 
       return true;
     },
-    [gameId, gameState],
+    [engine, gameId, gameState],
   );
 
   // Локальное имя, чтобы не затенять одноимённую функцию движка: наружу она

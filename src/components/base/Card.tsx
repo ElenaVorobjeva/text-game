@@ -14,7 +14,11 @@ type BaseProps = {
 // У концовки подпись это само название, номер ей не нужен, поэтому раньше
 // в id прилетал строковый id сцены и тип расширялся до string | number.
 type Props = BaseProps &
-  ({ type: "chapter"; id: number } | { type: "ending"; id?: never });
+  (
+    | { type: "chapter"; id: number }
+    | { type: "ending"; id?: never }
+    | { type: "game"; id?: never }
+  );
 
 const IMAGE_CLASSES =
   "border-grey-160 aspect-square w-70 max-w-full rounded-lg border object-cover sm:w-45";

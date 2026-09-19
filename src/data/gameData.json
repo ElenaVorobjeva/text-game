@@ -3,7 +3,9 @@
     "id": "quiet_good_life",
     "title": "Тихий хороший день",
     "version": "0.1.0",
-    "startSceneId": "chapter1_scene1"
+    "startSceneId": "chapter1_scene1",
+    "cover": "/images/cover.png",
+    "description": "Небольшая текстовая игра о мягком ритме жизни, простых решениях и спокойном дне."
   },
   "initialState": {
     "flags": {},

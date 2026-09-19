@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, useLocation } from "react-router";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { gameData, getChapterById } from "../../engine/gameEngine";
+import { gameData } from "../../engine/gameEngine";
 import type { GameContextValue } from "../../state/gameContext";
 
 import { ChoiceList } from "./ChoiceList";
@@ -16,8 +16,8 @@ import { ChoiceList } from "./ChoiceList";
 const { useGameMock } = vi.hoisted(() => ({ useGameMock: vi.fn() }));
 vi.mock("../../state/useGame", () => ({ useGame: useGameMock }));
 
-// Настоящая сцена главы: getChapterById(scene.chapter) в компоненте не должен
-// упасть, поэтому берём реальный chapter из данных, а не выдуманный.
+// Настоящая сцена главы: её chapter — валидный id, который компонент передаёт
+// в chooseChapter.
 const chapterScene = gameData.scenes.find((scene) => !scene.isEnding)!;
 
 // Полный контекст с пустым списком вариантов; действия — шпионы, доступность
@@ -106,9 +106,7 @@ describe("ChoiceList with no available actions", () => {
       screen.getByRole("button", { name: "Начать главу сначала" }),
     );
 
-    expect(chooseChapter).toHaveBeenCalledWith(
-      getChapterById(chapterScene.chapter),
-    );
+    expect(chooseChapter).toHaveBeenCalledWith(chapterScene.chapter);
   });
 
   test("starting a new game calls startNewGame", async () => {
@@ -129,6 +127,8 @@ describe("ChoiceList with no available actions", () => {
       screen.getByRole("button", { name: "Выбрать другую главу" }),
     );
 
-    expect(screen.getByTestId("path").textContent).toBe("/chapters");
+    expect(screen.getByTestId("path").textContent).toBe(
+      `/${gameData.meta.id}/chapters`,
+    );
   });
 });

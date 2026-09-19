@@ -147,27 +147,38 @@ DOM-узел и анимация проигрывается только при 
 
 ## Архитектура
 
-Маршрутизация на react-router (`HashRouter`) в [src/app/App.tsx](src/app/App.tsx). Три
-экрана — `/`, `/game`, `/chapters`, всё лишнее (`*`) редиректит на `/`. Общая обёртка
-страницы (фон, шрифт, `min-h-screen`) живёт там же; страницы её не дублируют.
+Маршрутизация на react-router (`HashRouter`) в [src/app/App.tsx](src/app/App.tsx):
+`/` — каталог игр ([GameCatalogPage](src/pages/GameCatalogPage.tsx)), `/:gameId/*` —
+оболочка выбранной игры ([GameShell](src/app/GameShell.tsx)), всё лишнее (`*`) редиректит
+на `/`. Общая обёртка страницы (фон, шрифт, `min-h-screen`) живёт в `App`; страницы её не
+дублируют.
+
+`GameShell` берёт `gameId` из URL, находит игру в реестре
+([src/data/games.ts](src/data/games.ts)) и монтирует её `GameProvider` с `key={gameId}`
+(смена игры = новое состояние); неизвестный `gameId` уводит на `/`. Внутри —
+[GameView](src/app/GameView.tsx): вложенные роуты экранов игры (`index` = меню, `game`,
+`chapters`, `endings`) и шапка (на меню игры свёрнута до ссылки «К играм»).
 
 `HashRouter`, а не `BrowserRouter`: игра — статика, а адреса вида `/#/game` работают на
 любом хостинге без правил переписывания на сервере. Роут — это **экран, а не сцена**:
 текущая сцена хранится в состоянии, в URL её нет — иначе кнопка «Назад» откатывала бы
 адрес, не откатывая состояние игры.
 
-`/game` защищён: без сохранения (`hasSave === false`) редиректит на `/`, чтобы прямой
-заход по ссылке не начинал игру втихую. Навигацию делают сами страницы через
-`useNavigate()`; `GameHeader` и `EndingView` пока остаются на пропсах-колбэках, `GamePage`
-для них — адаптер. Кнопка «Назад» на экране глав — `navigate(-1)` по истории (с запасным
-`/`, если истории нет: `location.key === "default"`), именованные пункты меню — прямые пути.
+`/:gameId/game` защищён: без сохранения (`hasSave === false`) редиректит в меню игры
+(`/:gameId`), чтобы прямой заход по ссылке не начинал игру втихую. Пути экранов строятся
+хелпером `gamePath(gameId, sub)` — префикс `gameId` не размазывается по компонентам
+строками. Навигацию делают сами страницы через `useNavigate()`; `EndingView` пока остаётся
+на пропсах-колбэках, `GamePage` для него — адаптер. Кнопка «Назад» на экране глав —
+`navigate(-1)` по истории (с запасным путём в меню игры, если истории нет:
+`location.key === "default"`).
 
 Состояние игры — один контекст ([src/state/gameProvider.tsx](src/state/gameProvider.tsx)),
-доступ через хук `useGame()`. `loadGame`/`createInitialGameState` вызываются в ленивых
-инициализаторах `useState` — не в теле рендера, потому что `loadGame` может писать в
-localStorage. Провайдер отдаёт наружу `gameId` активной игры (пока `= gameData.meta.id`) —
-именно им адресуются сохранение и профиль; это точка, которая станет динамической, когда
-появится выбор игры.
+доступ через хук `useGame()`. Провайдер монтируется на активную игру: `GameShell` передаёт
+ему `gameData` из реестра, а движок строится из этих данных — `createGameEngine(gameData)`
+(см. ниже). `gameId` активной игры (`= gameData.meta.id`, родом из URL) отдаётся наружу —
+им адресуются сохранение и профиль. `loadGame`/`createInitialGameState` вызываются в
+ленивых инициализаторах `useState` — не в теле рендера, потому что `loadGame` может писать
+в localStorage.
 
 Действия провайдера, меняющие экран, возвращают `boolean` (`continueGame`, `chooseChapter`):
 навигировать только при `true`, иначе состояние не изменилось, а переход бы случился.
@@ -196,12 +207,17 @@ type)` и пр.), сам id провайдеру даёт `useGame()`. **Еди�
 (3 с) и показывает полосу загрузки ([Loader](src/components/base/Loader.tsx)) по центру, а провайдеры
 монтируются уже после. Когда появится настоящий бэкенд, здесь будет реальный `fetch`.
 
-Контент полностью декларативный, в [src/data/gameData.json](src/data/gameData.json).
-Движок в `src/engine/` его интерпретирует:
+Контент полностью декларативный: каждая игра — свой `GameData`-JSON в `src/data/`
+(флагман — [gameData.json](src/data/gameData.json)). Реестр
+[src/data/games.ts](src/data/games.ts) — единственное место, знающее, какие игры есть
+(`games`, `getGameData`, `gameList`); сюда же встанет ленивая загрузка контента.
 
-- `conditions.ts` — фильтрует доступные варианты (`flag`, `stat_gte`, `has_item`)
-- `effects.ts` — применяет последствия выбора (`set_flag`, `change_stat`, `add_item`, `remove_item`)
-- `gameEngine.ts` — переходы между сценами, разблокировка глав, подбор картинки
+Движок в `src/engine/` **строится из данных игры**, а не завязан на одну:
+`createGameEngine(gameData)` возвращает функции, замкнутые на переданный контент
+(`getSceneById`, `sceneExists`, `makeChoice`, `createInitialGameState`, `getSceneImage`…);
+чистые функции (`enterChapter`, `canEnterChapter`, `getAvailableChoices`) остаются
+свободными. `conditions.ts` фильтрует варианты (`flag`, `stat_gte`, `has_item`),
+`effects.ts` применяет последствия (`set_flag`, `change_stat`, `add_item`, `remove_item`).
 
 Логику развилок держать в JSON, а не в компонентах.
 
@@ -222,15 +238,16 @@ Vitest, файлы лежат рядом с модулем (`effects.ts` → `ef
 `saveLoad` тестируется без jsdom: `localStorage` там подменяется заглушкой в памяти через
 `vi.stubGlobal`.
 
-Навигация покрыта [src/app/App.test.tsx](src/app/App.test.tsx): маршруты, guard `/game`,
-кнопка «Назад» по истории.
+Навигация покрыта [src/app/App.test.tsx](src/app/App.test.tsx): каталог и выбор игры,
+guard `/:gameId/game`, кнопка «Назад» по истории.
 
 Новый тест стоит проверять на «ложную зелень»: сломать проверяемый код и убедиться, что
 тест упал. Тест, который проходит при сломанной реализации, бесполезен.
 
 ## Грабли
 
-**Пути к картинкам.** В `gameData.json` должно быть `/images/…`, а не `/public/images/…`.
+**Пути к картинкам.** В данных игры (`gameData.json` и другие в `src/data/`) должно быть
+`/images/…`, а не `/public/images/…`.
 Второй вариант работает в `npm run dev` (Vite отдаёт файлы с диска) и отваливается 404 в
 проде, потому что `public/` копируется в корень `dist/`. Ловится только сборкой.
 
@@ -248,9 +265,9 @@ Vitest, файлы лежат рядом с модулем (`effects.ts` → `ef
 
 ## Известные незакрытые места
 
-Механика перехода к главе уже реализована: `chooseChapter` в gameProvider вызывает
-`enterChapter`, сохраняется и переключает состояние; переход делает `ChapterSelectPage`
-при `chooseChapter(...) === true`.
+Механика перехода к главе уже реализована: `chooseChapter(chapterId)` в gameProvider
+резолвит главу активным движком, вызывает `enterChapter`, сохраняется и переключает
+состояние; переход делает `ChapterSelectPage` при `chooseChapter(id) === true`.
 
 ## Язык
 

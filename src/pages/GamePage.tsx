@@ -7,7 +7,7 @@ import { SceneView } from "../components/game/SceneView";
 import { StatsBar } from "../components/game/StatsBar";
 import { useGame } from "../state/useGame";
 import { useUser } from "../state/useUser";
-import { restartGame } from "../utils/common";
+import { gamePath, restartGame } from "../utils/common";
 
 export function GamePage() {
   const navigate = useNavigate();
@@ -26,8 +26,8 @@ export function GamePage() {
         image={image}
         title={scene.title}
         text={scene.text}
-        onRestart={() => restartGame(resetGame, navigate)}
-        onChapterSelect={() => navigate("/chapters")}
+        onRestart={() => restartGame(resetGame, navigate, gameId)}
+        onChapterSelect={() => navigate(gamePath(gameId, "chapters"))}
       />
     );
   }
