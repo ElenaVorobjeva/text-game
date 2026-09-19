@@ -28,7 +28,7 @@ const SCREEN = {
   catalog: "Выбор игры", // заголовок каталога игр
   chapters: "Выбор главы", // заголовок экрана выбора глав
   // Маркер игры берётся из данных, а не хардкодится: title стартовой сцены
-  // живёт в gameData.json, и это его единственный источник правды.
+  // живёт в quietGoodLife.json, и это его единственный источник правды.
   game: getCurrentScene(createInitialGameState()).title,
 } as const;
 

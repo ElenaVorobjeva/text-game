@@ -1,4 +1,4 @@
-import rawGameData from "../data/gameData.json";
+import rawGameData from "../data/quietGoodLife.json";
 import type { GameData } from "../types/game";
 
 import { createGameEngine } from "./gameEngine";

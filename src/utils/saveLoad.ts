@@ -69,7 +69,7 @@ export function loadGame(
     return discardSave(gameId, "неверная форма сохранённого состояния");
   }
 
-  // Сцена могла исчезнуть из gameData.json, пока писался контент. Без этой
+  // Сцена могла исчезнуть из quietGoodLife.json, пока писался контент. Без этой
   // проверки getSceneById бросит исключение прямо в рендере — белый экран.
   if (!engine.sceneExists(state.currentSceneId)) {
     return discardSave(

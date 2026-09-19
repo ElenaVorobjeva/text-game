@@ -10,7 +10,7 @@ import type { GameContextValue } from "../../state/gameContext";
 import { ChoiceList } from "./ChoiceList";
 
 // «Доступных действий нет» в реальных данных недостижимо: ни у одной сцены главы
-// не бывает пустого списка вариантов (см. gameData.test — тупиков нет). Поэтому
+// не бывает пустого списка вариантов (см. gameContent.test — тупиков нет). Поэтому
 // здесь единственный в проекте мок хука — иначе эту ветку нельзя ни увидеть, ни
 // проверить. Остальные тесты компонентов ходят через настоящий GameProvider.
 const { useGameMock } = vi.hoisted(() => ({ useGameMock: vi.fn() }));
