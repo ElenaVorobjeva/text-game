@@ -30,8 +30,15 @@ export const FIRST_CHAPTER = 1;
 export type GameEngine = ReturnType<typeof createGameEngine>;
 
 export function createGameEngine(data: GameData) {
+  // Индексы строятся один раз: makeChoice и рендер ищут сцену и главу по
+  // нескольку раз на каждый ход, и линейный find растёт вместе с контентом.
+  const scenesById = new Map(data.scenes.map((scene) => [scene.id, scene]));
+  const chaptersById = new Map(
+    data.chapters.map((chapter) => [chapter.id, chapter]),
+  );
+
   function getSceneById(sceneId: string): Scene {
-    const scene = data.scenes.find((scene) => scene.id === sceneId);
+    const scene = scenesById.get(sceneId);
 
     if (!scene) {
       throw new Error(`Scene not found: ${sceneId}`);
@@ -41,11 +48,11 @@ export function createGameEngine(data: GameData) {
   }
 
   function sceneExists(sceneId: string): boolean {
-    return data.scenes.some((scene) => scene.id === sceneId);
+    return scenesById.has(sceneId);
   }
 
   function getChapterById(id: number): Chapter {
-    const chapter = data.chapters.find((chapter) => chapter.id === id);
+    const chapter = chaptersById.get(id);
 
     if (!chapter) {
       throw new Error(`Chapter not found: ${id}`);
