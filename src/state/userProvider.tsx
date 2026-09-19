@@ -6,10 +6,13 @@ import {
   type ReactNode,
 } from "react";
 
+import type { GameStateData } from "../types/game";
 import {
   addCompletedEnding,
+  clearProgress as clearStoredProgress,
   loadUser,
   USER_KEY,
+  writeProgress,
   type UserData,
 } from "../user/userStorage";
 
@@ -40,7 +43,8 @@ export function UserProvider({ initialData, children }: Props) {
   }, []);
 
   const getCompletedEndings = useCallback(
-    (gameId: string) => games[gameId]?.completedEndings ?? [],
+    (gameId: string) =>
+      Object.hasOwn(games, gameId) ? games[gameId].completedEndings : [],
     [games],
   );
 
@@ -61,14 +65,32 @@ export function UserProvider({ initialData, children }: Props) {
     setGames(next.games);
   }, []);
 
+  // Сохранения идут через провайдера, а не мимо него: иначе снимок games
+  // устаревал бы по progress, и читать «свежее» приходилось бы из localStorage.
+  const saveProgress = useCallback((gameId: string, state: GameStateData) => {
+    setGames(writeProgress(gameId, state).games);
+  }, []);
+
+  const clearProgress = useCallback((gameId: string) => {
+    setGames(clearStoredProgress(gameId).games);
+  }, []);
+
+  const data = useMemo(() => ({ games }), [games]);
+
   const value = useMemo(
     () => ({
+      data,
+      saveProgress,
+      clearProgress,
       getCompletedEndings,
       hasCompletedEndings,
       isEndingCompleted,
       completeEnding,
     }),
     [
+      data,
+      saveProgress,
+      clearProgress,
       getCompletedEndings,
       hasCompletedEndings,
       isEndingCompleted,

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import type { GameStateData } from "../types/game";
+import type { Condition, GameStateData } from "../types/game";
 
 import { areConditionsMet, isConditionMet } from "./conditions";
 
@@ -122,5 +122,19 @@ describe("areConditionsMet", () => {
         state,
       ),
     ).toBe(false);
+  });
+});
+
+describe("isConditionMet: unknown condition", () => {
+  test("throws instead of silently reporting the condition as unmet", () => {
+    const state = {
+      flags: {},
+      stats: { care: 0, connection: 0, calm: 0 },
+      inventory: [],
+    } as unknown as GameStateData;
+
+    expect(() =>
+      isConditionMet({ type: "stat_gt" } as unknown as Condition, state),
+    ).toThrow();
   });
 });

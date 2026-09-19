@@ -3,17 +3,19 @@ import { describe, expect, test } from "vitest";
 import type { Choice, GameData, GameStateData, Scene } from "../types/game";
 
 import {
-  canEnterChapter,
-  createGameEngine,
   createInitialGameState,
-  enterChapter,
   gameData,
-  getAvailableChoices,
   getChapterById,
   getCurrentScene,
   getSceneById,
   getSceneImage,
   makeChoice,
+} from "./bundledEngine";
+import {
+  canEnterChapter,
+  createGameEngine,
+  enterChapter,
+  getAvailableChoices,
 } from "./gameEngine";
 
 function makeState(overrides: Partial<GameStateData> = {}): GameStateData {

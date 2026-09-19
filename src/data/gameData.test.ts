@@ -6,12 +6,48 @@ import { gameList } from "./games";
 // (несуществующие сцены, битые картинки, тупики) до того, как игрок упрётся.
 // Прогоняются по КАЖДОЙ игре из реестра — новые игры получают ту же проверку.
 
+// Файлы из public/ — по ним проверяется, что картинки из данных существуют.
+// Импорт не выполняется, нужны только ключи (пути).
+const publicFiles = new Set(
+  Object.keys(import.meta.glob("/public/images/**/*")).map((path) =>
+    path.replace("/public", ""),
+  ),
+);
+
 for (const game of gameList) {
   describe(`content integrity: ${game.meta.id}`, () => {
     const { chapters, meta, scenes } = game;
 
     const sceneIds = new Set(scenes.map((scene) => scene.id));
     const chapterIds = new Set(chapters.map((chapter) => chapter.id));
+
+    // Опечатка в type раньше молча превращалась в «условие не выполнено» или
+    // «эффект без последствий»; теперь движок бросает исключение, а тест ловит
+    // это до игрока.
+    describe("conditions and effects", () => {
+      const CONDITION_TYPES = ["flag", "stat_gte", "has_item"];
+      const EFFECT_TYPES = [
+        "set_flag",
+        "change_stat",
+        "add_item",
+        "remove_item",
+      ];
+
+      test("every condition and effect has a known type", () => {
+        const unknown = scenes.flatMap((scene) =>
+          scene.choices.flatMap((choice) => [
+            ...(choice.conditions ?? [])
+              .filter((c) => !CONDITION_TYPES.includes(c.type))
+              .map((c) => `${choice.id}: condition ${c.type}`),
+            ...(choice.effects ?? [])
+              .filter((e) => !EFFECT_TYPES.includes(e.type))
+              .map((e) => `${choice.id}: effect ${e.type}`),
+          ]),
+        );
+
+        expect(unknown).toEqual([]);
+      });
+    });
 
     describe("scene links", () => {
       test("every choice points at a scene that exists", () => {
@@ -165,6 +201,20 @@ for (const game of gameList) {
           .map((scene) => `${scene.id}: ${scene.image}`);
 
         expect(broken).toEqual([]);
+      });
+
+      // Картинки лежат в public/: переименование или смена формата файла без
+      // правки данных даёт 404 только в браузере.
+      test("every referenced image file exists in public/", () => {
+        const paths = [
+          meta.cover,
+          ...chapters.map((chapter) => chapter.image),
+          ...scenes.flatMap((scene) => (scene.image ? [scene.image] : [])),
+        ];
+
+        const missing = paths.filter((path) => !publicFiles.has(path));
+
+        expect(missing).toEqual([]);
       });
 
       test("every ending has its own picture", () => {

@@ -1,4 +1,3 @@
-import rawGameData from "../data/gameData.json";
 import type {
   Chapter,
   ChapterSnapshot,
@@ -11,27 +10,21 @@ import type {
 import { areConditionsMet } from "./conditions";
 import { applyEffects } from "./effects";
 
-export const gameData = rawGameData as GameData;
-
-const defaultEngine = createGameEngine(gameData);
-export const {
-  getSceneById,
-  getCurrentScene,
-  sceneExists,
-  getChapterById,
-  getSceneImage,
-  makeChoice,
-  createInitialGameState,
-} = defaultEngine;
-
 // С какой главы начинается игра: она открыта и имеет снимок с самого старта.
 export const FIRST_CHAPTER = 1;
 
 export type GameEngine = ReturnType<typeof createGameEngine>;
 
 export function createGameEngine(data: GameData) {
+  // Индексы строятся один раз: makeChoice и рендер ищут сцену и главу по
+  // нескольку раз на каждый ход, и линейный find растёт вместе с контентом.
+  const scenesById = new Map(data.scenes.map((scene) => [scene.id, scene]));
+  const chaptersById = new Map(
+    data.chapters.map((chapter) => [chapter.id, chapter]),
+  );
+
   function getSceneById(sceneId: string): Scene {
-    const scene = data.scenes.find((scene) => scene.id === sceneId);
+    const scene = scenesById.get(sceneId);
 
     if (!scene) {
       throw new Error(`Scene not found: ${sceneId}`);
@@ -41,11 +34,11 @@ export function createGameEngine(data: GameData) {
   }
 
   function sceneExists(sceneId: string): boolean {
-    return data.scenes.some((scene) => scene.id === sceneId);
+    return scenesById.has(sceneId);
   }
 
   function getChapterById(id: number): Chapter {
-    const chapter = data.chapters.find((chapter) => chapter.id === id);
+    const chapter = chaptersById.get(id);
 
     if (!chapter) {
       throw new Error(`Chapter not found: ${id}`);
@@ -61,8 +54,7 @@ export function createGameEngine(data: GameData) {
     }
 
     // Сцена игры: изображение хранится в данных о соответствующей главе
-    const chapter = getChapterById(scene.chapter);
-    return chapter && chapter.image ? chapter.image : "";
+    return getChapterById(scene.chapter).image || "";
   }
 
   function getCurrentScene(state: GameStateData): Scene {

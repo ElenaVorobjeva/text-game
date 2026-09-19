@@ -1,19 +1,23 @@
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 import { Button } from "../components/base/Button";
 import { Card } from "../components/base/Card";
 import { CardGrid } from "../components/base/CardGrid";
 import { Main } from "../components/base/Main";
 import { Title } from "../components/base/Title";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
+import { useGoBack } from "../hooks/useGoBack";
 import { useGame } from "../state/useGame";
 import { useUser } from "../state/useUser";
-import { gamePath, goBack } from "../utils/common";
+import { gamePath } from "../utils/common";
 
 export function EndingsPage() {
   const { gameId, gameData } = useGame();
   const { isEndingCompleted } = useUser();
   const navigate = useNavigate();
-  const location = useLocation();
+  const goBack = useGoBack(gamePath(gameId));
+
+  useDocumentTitle(`Концовки — ${gameData.meta.title}`);
 
   const endings = gameData.scenes.filter(({ isEnding }) => isEnding);
 
@@ -32,11 +36,10 @@ export function EndingsPage() {
           return (
             <Card
               key={id}
-              type="ending"
               index={index}
-              title={title}
+              label={title}
               image={image}
-              disabled={!isAvailable}
+              closedLabel={isAvailable ? undefined : "Концовка ещё не открыта"}
               onClick={() =>
                 navigate(gamePath(gameId, `endings/${endingType}`))
               }
@@ -45,10 +48,7 @@ export function EndingsPage() {
         })}
       </CardGrid>
 
-      <Button
-        width="fullOnMobile"
-        onClick={() => goBack(navigate, location, gamePath(gameId))}
-      >
+      <Button width="fullOnMobile" onClick={goBack}>
         Назад
       </Button>
     </Main>

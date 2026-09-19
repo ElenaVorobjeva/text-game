@@ -1,3 +1,4 @@
+import { useFocusOnMount } from "../../hooks/useFocusOnMount";
 import { Button } from "../base/Button";
 import { Description } from "../base/Description";
 import { Heading } from "../base/Heading";
@@ -19,11 +20,14 @@ export function EndingView({
   onRestart,
   onChapterSelect,
 }: Props) {
+  const headingRef = useFocusOnMount<HTMLHeadingElement>();
+
   return (
     <div className="animate-fade-up flex grow flex-col items-center justify-center gap-5.5 px-6 py-5 text-center">
-      {image && <Image src={image} alt={title} />}
+      {/* alt пустой: заголовок ниже уже называет концовку. */}
+      {image && <Image src={image} alt="" />}
 
-      <Heading as="h2">Концовка: {title}</Heading>
+      <Heading ref={headingRef}>Концовка: {title}</Heading>
 
       <Description>{text}</Description>
 

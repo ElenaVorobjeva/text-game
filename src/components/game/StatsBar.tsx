@@ -16,6 +16,9 @@ export function StatsBar({ gap = "sm" }: Props) {
 
   return (
     <div
+      // role="status" — вежливый live-регион: смену характеристик после выбора
+      // скринридер озвучит, не перебивая чтение.
+      role="status"
       className={cn(
         "text-grey-blue flex flex-wrap justify-center text-base lg:justify-between",
         GAPS[gap],

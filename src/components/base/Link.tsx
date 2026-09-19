@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Link as RouterLink } from "react-router";
 
 import { cn } from "../../utils/cn";
 
@@ -28,31 +29,32 @@ const COLORS = {
   gray: "text-grey-blue hover:bg-grey-60 hover:text-grey",
 };
 
-export function Link({
-  type = "link",
-  href,
-  size = "md",
-  color = "white",
-  onClick,
-  children,
-}: Props) {
+// Пропсы не деструктурируются целиком: TS сужает union по props.type, а
+// href из деструктуризации терял бы связь с типом ссылки.
+export function Link(props: Props) {
+  const { size = "md", color = "white", children } = props;
+
   const linkStyles = cn(
-    "-mx-2.5 -my-1.5 cursor-pointer rounded-sm px-2.5 py-1.5 font-medium transition duration-150",
+    // py-2 при -my-2: область нажатия около 34px, а вёрстка не смещается.
+    "focus-ring -mx-2.5 -my-2 cursor-pointer rounded-sm px-2.5 py-2 font-medium transition duration-150",
     SIZES[size],
     COLORS[color],
   );
 
-  if (type === "button") {
+  if (props.type === "button") {
     return (
-      <button type="button" className={linkStyles} onClick={onClick}>
+      <button type="button" className={linkStyles} onClick={props.onClick}>
         {children}
       </button>
     );
   }
 
+  // Переход внутри приложения — настоящая ссылка роутера: у неё роль link,
+  // работают «открыть в новой вкладке» и средняя кнопка. Сырой <a href> под
+  // HashRouter увёл бы мимо роутера.
   return (
-    <a className={linkStyles} href={href} onClick={onClick}>
+    <RouterLink className={linkStyles} to={props.href} onClick={props.onClick}>
       {children}
-    </a>
+    </RouterLink>
   );
 }

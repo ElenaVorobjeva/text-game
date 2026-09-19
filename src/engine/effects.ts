@@ -1,4 +1,5 @@
 import type { Effect, GameStateData } from "../types/game";
+import { assertNever } from "../utils/assertNever";
 
 export function applyEffect(
   effect: Effect,
@@ -38,7 +39,7 @@ export function applyEffect(
       };
 
     default:
-      return state;
+      return assertNever(effect);
   }
 }
 

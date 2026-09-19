@@ -2,73 +2,65 @@ import { cn } from "../../utils/cn";
 
 import { ImagePlaceholder } from "./ImagePlaceholder";
 
-type BaseProps = {
+type Props = {
   index: number;
-  title: string;
+  /** Видимая подпись под картинкой. */
+  label: string;
   image: string | undefined;
-  disabled: boolean;
+  /**
+   * Карточка закрыта, если задано: это и подпись заглушки, и доступное имя
+   * кнопки. Настоящую подпись прячем — она спойлерила бы главу или концовку.
+   * Что именно закрыто, знает страница, а не Card: раньше Card ветвился по
+   * виду карточки (глава, концовка, игра), и каждый новый вид правил его.
+   */
+  closedLabel?: string;
   onClick: () => void;
 };
-
-// id нужен только карточке главы — он попадает в подпись «Глава 2: …».
-// У концовки подпись это само название, номер ей не нужен, поэтому раньше
-// в id прилетал строковый id сцены и тип расширялся до string | number.
-type Props = BaseProps &
-  (
-    | { type: "chapter"; id: number }
-    | { type: "ending"; id?: never }
-    | { type: "game"; id?: never }
-  );
 
 const IMAGE_CLASSES =
   "border-grey-160 aspect-square w-70 max-w-full rounded-lg border object-cover sm:w-45";
 
-export function Card({
-  type,
-  id,
-  index,
-  title,
-  image,
-  disabled,
-  onClick,
-}: Props) {
-  // Закрытая карточка не раскрывает ни номер главы, ни название концовки.
-  const label = disabled
-    ? "???"
-    : type === "chapter"
-      ? `Глава ${id}: ${title}`
-      : title;
+export function Card({ index, label, image, closedLabel, onClick }: Props) {
+  const isClosed = closedLabel !== undefined;
 
   return (
-    <div
+    <li
       className="animate-fade-up"
       style={{ animationDelay: `${0.05 + index * 0.07}s` }}
     >
       <button
         type="button"
-        className="flex flex-col items-center transition duration-150 enabled:cursor-pointer enabled:hover:-translate-y-[3px]"
-        disabled={disabled}
+        className="focus-ring flex flex-col items-center transition duration-150 enabled:cursor-pointer enabled:hover:-translate-y-[3px]"
+        disabled={isClosed}
+        // «???» на слух — набор знаков вопроса, поэтому имя задаём явно, а
+        // видимую подпись прячем от скринридера.
+        aria-label={closedLabel}
         onClick={onClick}
       >
-        {disabled || !image ? (
+        {isClosed || !image ? (
           <ImagePlaceholder
             className={IMAGE_CLASSES}
-            label={
-              type === "chapter" ? "Глава закрыта" : "Концовка ещё не открыта"
-            }
+            label={closedLabel ?? label}
           />
         ) : (
           <img
             className={cn(IMAGE_CLASSES, "bg-stone-100")}
             src={image}
-            alt={title}
+            // Название уже есть в подписи ниже — повторять его в alt значит
+            // заставить скринридер прочитать его дважды.
+            alt=""
+            loading="lazy"
+            decoding="async"
           />
         )}
 
-        <span className="text-grey-blue mt-3 max-w-70 text-base leading-normal sm:max-w-45">
-          {label}
+        <span
+          aria-hidden={isClosed}
+          className="text-grey-blue mt-3 max-w-70 text-base leading-normal sm:max-w-45"
+        >
+          {isClosed ? "???" : label}
         </span>
       </button>
-    </div>
+    </li>
   );
 }

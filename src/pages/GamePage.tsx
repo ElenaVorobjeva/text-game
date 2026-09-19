@@ -1,23 +1,23 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
 import { ChoiceList } from "../components/game/ChoiceList";
 import { EndingView } from "../components/game/EndingView";
 import { SceneView } from "../components/game/SceneView";
 import { StatsBar } from "../components/game/StatsBar";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
+import { useGameActions } from "../hooks/useGameActions";
 import { useGame } from "../state/useGame";
-import { useUser } from "../state/useUser";
-import { gamePath, restartGame } from "../utils/common";
+import { gamePath } from "../utils/common";
 
 export function GamePage() {
   const navigate = useNavigate();
-  const { scene, resetGame, gameId, image } = useGame();
-  const { completeEnding } = useUser();
+  const { scene, gameId, gameData, image } = useGame();
+  const { restart } = useGameActions();
 
-  useEffect(() => {
-    if (scene.isEnding && scene.endingType)
-      completeEnding(gameId, scene.endingType);
-  }, [scene, completeEnding, gameId]);
+  useDocumentTitle(`${scene.title} — ${gameData.meta.title}`);
+
+  const chapter = gameData.chapters.find(({ id }) => id === scene.chapter);
+  const chapterLabel = chapter ? `Глава ${chapter.id}: ${chapter.title}` : "";
 
   if (scene.isEnding) {
     return (
@@ -26,7 +26,7 @@ export function GamePage() {
         image={image}
         title={scene.title}
         text={scene.text}
-        onRestart={() => restartGame(resetGame, navigate, gameId)}
+        onRestart={restart}
         onChapterSelect={() => navigate(gamePath(gameId, "chapters"))}
       />
     );
@@ -40,7 +40,12 @@ export function GamePage() {
       {/* Статы видны только во время игры, над сценой. */}
       <StatsBar />
 
-      <SceneView image={image} title={scene.title} text={scene.text} />
+      <SceneView
+        image={image}
+        imageAlt={chapterLabel}
+        title={scene.title}
+        text={scene.text}
+      />
 
       <ChoiceList />
     </div>

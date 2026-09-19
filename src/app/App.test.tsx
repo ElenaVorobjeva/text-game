@@ -8,7 +8,7 @@ import {
   createInitialGameState,
   gameData,
   getCurrentScene,
-} from "../engine/gameEngine";
+} from "../engine/bundledEngine";
 import { UserProvider } from "../state/userProvider";
 import { loadUser } from "../user/userStorage";
 import { saveGame } from "../utils/saveLoad";
@@ -87,7 +87,7 @@ describe("routing: game catalog", () => {
     const user = userEvent.setup();
     renderAt(`/${GAME_ID}`);
 
-    await user.click(screen.getByRole("button", { name: "К играм" }));
+    await user.click(screen.getByRole("link", { name: "К играм" }));
 
     expect(
       await screen.findByRole("heading", { name: SCREEN.catalog }),
@@ -100,6 +100,15 @@ describe("routing: direct entry", () => {
     renderAt(`/${GAME_ID}/chapters`);
 
     expect(screen.getByRole("heading", { name: SCREEN.chapters })).toBeTruthy();
+  });
+});
+
+describe("routing: header on the menu", () => {
+  test("the header stays collapsed when the menu URL has a trailing slash", () => {
+    renderAt(`/${GAME_ID}/`);
+
+    expect(screen.getByRole("link", { name: "К играм" })).toBeTruthy();
+    expect(screen.queryByRole("link", { name: "Выбор главы" })).toBeNull();
   });
 });
 
@@ -118,6 +127,23 @@ describe("routing: game screen guard", () => {
     renderAt(`/${GAME_ID}/game`);
 
     expect(screen.getByText(SCREEN.game)).toBeTruthy();
+  });
+});
+
+describe("screen changes are announced", () => {
+  test("starting the game focuses the scene title and updates the tab title", async () => {
+    const user = userEvent.setup();
+    renderAt(`/${GAME_ID}`);
+
+    await user.click(screen.getByRole("button", { name: BUTTON.start }));
+
+    // Заголовок сцены — единственный h1 экрана: на игровом экране его иначе нет.
+    const title = await screen.findByRole("heading", {
+      level: 1,
+      name: SCREEN.game,
+    });
+    expect(document.activeElement).toBe(title);
+    expect(document.title).toContain(SCREEN.game);
   });
 });
 

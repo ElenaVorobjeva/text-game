@@ -12,7 +12,9 @@
 import type { GameStateData } from "../types/game";
 
 export const USER_KEY = "quiet-good-life-user";
-export const SERVER_LATENCY_MS = 3000;
+// Задержка нужна только чтобы увидеть лоадер при разработке: в продакшене
+// игрок не должен ждать три секунды ради чтения из localStorage.
+export const SERVER_LATENCY_MS = import.meta.env.DEV ? 3000 : 0;
 
 export type UserGameData = {
   /** endingType концовок, открытых пользователем в этой игре. */
@@ -64,6 +66,10 @@ function sanitizeGames(value: unknown): Record<string, UserGameData> {
   const games: Record<string, UserGameData> = {};
 
   for (const [gameId, raw] of Object.entries(value)) {
+    // Присваивание games["__proto__"] подменило бы прототип объекта, а не
+    // добавило запись.
+    if (gameId === "__proto__") continue;
+
     const game = (typeof raw === "object" && raw !== null ? raw : {}) as {
       completedEndings?: unknown;
       progress?: unknown;
@@ -79,17 +85,19 @@ function sanitizeGames(value: unknown): Record<string, UserGameData> {
 }
 
 export function loadUser(): UserData {
-  const raw = localStorage.getItem(USER_KEY);
-
-  if (!raw) return createEmptyUser();
-
   try {
+    const raw = localStorage.getItem(USER_KEY);
+
+    if (!raw) return createEmptyUser();
+
     const saved = JSON.parse(raw) as { games?: unknown };
 
     return { games: sanitizeGames(saved.games) };
   } catch {
-    // Битый JSON невосстановим — отдаём пустые данные, но не роняем страницу.
-    return discardUser("не удалось разобрать JSON");
+    // Битый JSON невосстановим, а getItem бросает при заблокированном
+    // хранилище (Safari private, запрет cookies): отдаём пустые данные, но не
+    // роняем страницу и не оставляем BootGate навсегда на загрузке.
+    return discardUser("не удалось прочитать или разобрать данные");
   }
 }
 
@@ -102,11 +110,20 @@ export function fetchUserData(): Promise<UserData> {
 }
 
 export function saveUser(data: UserData): void {
-  localStorage.setItem(USER_KEY, JSON.stringify(data));
+  try {
+    localStorage.setItem(USER_KEY, JSON.stringify(data));
+  } catch (error) {
+    // Квота или закрытое хранилище: исключение в обработчике клика молча
+    // «съело» бы выбор игрока. Игра продолжается в памяти, прогресс не
+    // переживёт перезагрузку — об этом остаётся след в консоли.
+    console.warn("Не удалось сохранить данные пользователя:", error);
+  }
 }
 
 function gameOf(data: UserData, gameId: string): UserGameData {
-  return data.games[gameId] ?? emptyGameData();
+  return Object.hasOwn(data.games, gameId)
+    ? data.games[gameId]
+    : emptyGameData();
 }
 
 // Точечная запись одной игры: читаем свежий объект, меняем срез игры и пишем
@@ -152,12 +169,15 @@ export function readProgress(
   return gameOf(data, gameId).progress;
 }
 
-export function writeProgress(gameId: string, progress: GameStateData): void {
-  writeGame(gameId, { progress });
+export function writeProgress(
+  gameId: string,
+  progress: GameStateData,
+): UserData {
+  return writeGame(gameId, { progress });
 }
 
-export function clearProgress(gameId: string): void {
-  writeGame(gameId, { progress: null });
+export function clearProgress(gameId: string): UserData {
+  return writeGame(gameId, { progress: null });
 }
 
 // Стирает прогресс во всех играх, не трогая собранные концовки. Нужно

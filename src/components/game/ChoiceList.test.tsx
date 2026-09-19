@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, useLocation } from "react-router";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { gameData } from "../../engine/gameEngine";
+import { gameData } from "../../engine/bundledEngine";
 import type { GameContextValue } from "../../state/gameContext";
 
 import { ChoiceList } from "./ChoiceList";

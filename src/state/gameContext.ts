@@ -1,7 +1,6 @@
 import { createContext } from "react";
 
-import type { getCurrentScene } from "../engine/gameEngine";
-import type { Choice, GameData, GameStateData } from "../types/game";
+import type { Choice, GameData, GameStateData, Scene } from "../types/game";
 
 export type GameContextValue = {
   /** id активной игры (GameData.meta.id). Пока игра одна, но профиль и
@@ -10,7 +9,7 @@ export type GameContextValue = {
   gameData: GameData;
   image: string; // изображение текущей сцены
   gameState: GameStateData;
-  scene: ReturnType<typeof getCurrentScene>;
+  scene: Scene;
   choices: Choice[];
   hasSave: boolean;
   startNewGame: () => void;

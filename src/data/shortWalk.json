@@ -4,7 +4,7 @@
     "title": "Короткая прогулка",
     "version": "0.0.1",
     "startSceneId": "sw_scene1",
-    "cover": "/images/chapter2.png",
+    "cover": "/images/chapter2.webp",
     "description": "Демо-заглушка второй игры: пара сцен и одна концовка."
   },
   "initialState": {
@@ -17,7 +17,7 @@
     {
       "id": 1,
       "title": "Прогулка",
-      "image": "/images/chapter2.png",
+      "image": "/images/chapter2.webp",
       "startScene": "sw_scene1"
     }
   ],
@@ -57,7 +57,7 @@
       "step": 1,
       "title": "Тихий отдых",
       "text": "Ты сидишь, слушая листву. День удался.",
-      "image": "/images/ending_calm.png",
+      "image": "/images/ending_calm.webp",
       "isEnding": true,
       "endingType": "rest",
       "choices": []

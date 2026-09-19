@@ -5,7 +5,7 @@ import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 import { App } from "../app/App";
-import { createInitialGameState, gameData } from "../engine/gameEngine";
+import { createInitialGameState, gameData } from "../engine/bundledEngine";
 import { addCompletedEnding, loadUser, USER_KEY } from "../user/userStorage";
 import { saveGame } from "../utils/saveLoad";
 
@@ -43,7 +43,7 @@ const GAME_ID = gameData.meta.id;
 // Заголовок страницы концовки: «Концовка:» — это подпись из UI, в данных её нет.
 const ENDING_HEADING = `Концовка: ${ending.title}`;
 // Заголовок списка концовок. Совпадает с текстом пункта меню, но это heading,
-// а пункт меню — button, поэтому по роли они не путаются.
+// а пункт меню — link, поэтому по роли они не путаются.
 const ENDINGS_LIST_HEADING = "Концовки";
 const ENDINGS_MENU_ITEM = "Концовки";
 
@@ -77,14 +77,12 @@ describe("endings completed during the session", () => {
     saveBeforeEnding();
     renderAt(`/${GAME_ID}/game`);
 
-    expect(
-      screen.queryByRole("button", { name: ENDINGS_MENU_ITEM }),
-    ).toBeNull();
+    expect(screen.queryByRole("link", { name: ENDINGS_MENU_ITEM })).toBeNull();
 
     await user.click(screen.getByRole("button", { name: finalChoice.text }));
 
     expect(
-      await screen.findByRole("button", { name: ENDINGS_MENU_ITEM }),
+      await screen.findByRole("link", { name: ENDINGS_MENU_ITEM }),
     ).toBeTruthy();
   });
 
@@ -95,7 +93,7 @@ describe("endings completed during the session", () => {
 
     await user.click(screen.getByRole("button", { name: finalChoice.text }));
     await user.click(
-      await screen.findByRole("button", { name: ENDINGS_MENU_ITEM }),
+      await screen.findByRole("link", { name: ENDINGS_MENU_ITEM }),
     );
 
     // Карточка открытой концовки: доступное имя собирается из alt картинки и
@@ -139,9 +137,7 @@ describe("profile written by another tab", () => {
   test("the storage event brings the change into this tab", async () => {
     renderAt(`/${GAME_ID}/chapters`);
 
-    expect(
-      screen.queryByRole("button", { name: ENDINGS_MENU_ITEM }),
-    ).toBeNull();
+    expect(screen.queryByRole("link", { name: ENDINGS_MENU_ITEM })).toBeNull();
 
     // Соседняя вкладка дописала концовку. Событие storage шлём руками: браузер
     // рассылает его только в другие вкладки, а jsdom — вообще не рассылает.
@@ -151,7 +147,7 @@ describe("profile written by another tab", () => {
     });
 
     expect(
-      await screen.findByRole("button", { name: ENDINGS_MENU_ITEM }),
+      await screen.findByRole("link", { name: ENDINGS_MENU_ITEM }),
     ).toBeTruthy();
   });
 
@@ -166,8 +162,6 @@ describe("profile written by another tab", () => {
     });
 
     // Чужой ключ не повод перечитывать профиль: пункт меню не появился.
-    expect(
-      screen.queryByRole("button", { name: ENDINGS_MENU_ITEM }),
-    ).toBeNull();
+    expect(screen.queryByRole("link", { name: ENDINGS_MENU_ITEM })).toBeNull();
   });
 });

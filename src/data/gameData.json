@@ -4,7 +4,7 @@
     "title": "Тихий хороший день",
     "version": "0.1.0",
     "startSceneId": "chapter1_scene1",
-    "cover": "/images/cover.png",
+    "cover": "/images/cover.webp",
     "description": "Небольшая текстовая игра о мягком ритме жизни, простых решениях и спокойном дне."
   },
   "initialState": {
@@ -21,19 +21,19 @@
     {
       "id": 1,
       "title": "Дом и утро",
-      "image": "/images/chapter1.png",
+      "image": "/images/chapter1.webp",
       "startScene": "chapter1_scene1"
     },
     {
       "id": 2,
       "title": "Люди и дела",
-      "image": "/images/chapter2.png",
+      "image": "/images/chapter2.webp",
       "startScene": "chapter2_scene1"
     },
     {
       "id": 3,
       "title": "Спокойствие и выбор",
-      "image": "/images/chapter3.png",
+      "image": "/images/chapter3.webp",
       "startScene": "chapter3_scene1"
     }
   ],
@@ -394,7 +394,7 @@
       "step": 0,
       "title": "День прожит",
       "text": "День завершился ровно и спокойно. В нем было достаточно света, простых дел и мягкого отдыха. Ничего не нужно исправлять. Ничего не нужно догонять.",
-      "image": "/images/ending_balanced.png",
+      "image": "/images/ending_balanced.webp",
       "isEnding": true,
       "endingType": "balanced",
       "choices": []
@@ -405,7 +405,7 @@
       "step": 0,
       "title": "Глубокий покой",
       "text": "Ночь раскрылась тихо. Звезды казались близкими, а день — добрым и завершенным. Внутри осталось чистое ощущение покоя.",
-      "image": "/images/ending_calm.png",
+      "image": "/images/ending_calm.webp",
       "isEnding": true,
       "endingType": "calm",
       "choices": []
@@ -416,7 +416,7 @@
       "step": 0,
       "title": "Тихая забота",
       "text": "Утром кто-то найдет маленький подарок у двери и улыбнется. День закончился не громким поступком, а простым следом доброты.",
-      "image": "/images/ending_care.png",
+      "image": "/images/ending_care.webp",
       "isEnding": true,
       "endingType": "care",
       "choices": []
@@ -427,7 +427,7 @@
       "step": 0,
       "title": "Связанный мир",
       "text": "У изгороди горел теплый фонарь, звучали голоса, и вечер становился общим. Ты был не отдельно от мира, а внутри него.",
-      "image": "/images/ending_connection.png",
+      "image": "/images/ending_connection.webp",
       "isEnding": true,
       "endingType": "connection",
       "choices": []
