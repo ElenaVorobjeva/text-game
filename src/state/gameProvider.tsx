@@ -7,18 +7,20 @@ import {
   getAvailableChoices,
 } from "../engine/gameEngine";
 import type { Choice, GameData, GameStateData } from "../types/game";
-import { loadUser, type UserData } from "../user/userStorage";
-import { loadGame, saveGame, clearSave } from "../utils/saveLoad";
+import { loadGame } from "../utils/saveLoad";
 
 import { GameContext } from "./gameContext";
+import { useUser } from "./useUser";
 
 type Props = {
-  initialData: UserData;
   gameData: GameData;
   children: ReactNode;
 };
 
-export function GameProvider({ initialData, gameData, children }: Props) {
+export function GameProvider({ gameData, children }: Props) {
+  // Профиль и запись сохранений — у UserProvider: GameProvider не читает
+  // localStorage сам.
+  const { data, saveProgress, clearProgress } = useUser();
   const engine = useMemo(() => createGameEngine(gameData), [gameData]);
   const gameId = gameData.meta.id;
 
@@ -26,7 +28,7 @@ export function GameProvider({ initialData, gameData, children }: Props) {
   // негодного сохранения) не должен вызываться дважды, а hasSave не должен
   // жить отдельно от того, что реально загрузили.
   const [initial] = useState(() => {
-    const saved = loadGame(engine, initialData, gameId);
+    const saved = loadGame(engine, data, gameId);
 
     return {
       gameState: saved ?? engine.createInitialGameState(),
@@ -51,39 +53,39 @@ export function GameProvider({ initialData, gameData, children }: Props) {
   const startNewGame = useCallback(() => {
     const initialState = engine.createInitialGameState();
 
-    saveGame(gameId, initialState);
+    saveProgress(gameId, initialState);
     setGameState(initialState);
     setHasSave(true);
-  }, [engine, gameId]);
+  }, [engine, gameId, saveProgress]);
 
   const continueGame = useCallback(() => {
-    const saved = loadGame(engine, loadUser(), gameId);
+    const saved = loadGame(engine, data, gameId);
     if (!saved) return false;
 
     setGameState(saved);
     setHasSave(true);
 
     return true;
-  }, [engine, gameId]);
+  }, [engine, gameId, data]);
 
   const resetGame = useCallback(() => {
-    clearSave(gameId);
+    clearProgress(gameId);
 
     const initialState = engine.createInitialGameState();
 
     setGameState(initialState);
     setHasSave(false);
-  }, [engine, gameId]);
+  }, [engine, gameId, clearProgress]);
 
   const choose = useCallback(
     (choice: Choice) => {
       const nextState = engine.makeChoice(choice, gameState);
 
-      saveGame(gameId, nextState);
+      saveProgress(gameId, nextState);
       setGameState(nextState);
       setHasSave(true);
     },
-    [engine, gameId, gameState],
+    [engine, gameId, gameState, saveProgress],
   );
 
   const chooseChapter = useCallback(
@@ -92,12 +94,12 @@ export function GameProvider({ initialData, gameData, children }: Props) {
 
       if (!next) return false;
 
-      saveGame(gameId, next);
+      saveProgress(gameId, next);
       setGameState(next);
 
       return true;
     },
-    [engine, gameId, gameState],
+    [engine, gameId, gameState, saveProgress],
   );
 
   // Локальное имя, чтобы не затенять одноимённую функцию движка: наружу она

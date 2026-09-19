@@ -2,7 +2,6 @@ import { Navigate, useParams } from "react-router";
 
 import { getGameData } from "../data/games";
 import { GameProvider } from "../state/gameProvider";
-import { loadUser } from "../user/userStorage";
 
 import { GameView } from "./GameView";
 
@@ -16,10 +15,8 @@ export function GameShell() {
   if (!gameId || !gameData) return <Navigate to="/" replace />;
 
   // key={gameId}: смена игры пересоздаёт провайдер с состоянием новой игры.
-  // Данные игрока читаем на входе в игру — это её точка загрузки (в будущем
-  // здесь будет fetch на игру, а не общий бут-снимок).
   return (
-    <GameProvider key={gameId} initialData={loadUser()} gameData={gameData}>
+    <GameProvider key={gameId} gameData={gameData}>
       <GameView />
     </GameProvider>
   );

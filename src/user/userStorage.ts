@@ -169,12 +169,15 @@ export function readProgress(
   return gameOf(data, gameId).progress;
 }
 
-export function writeProgress(gameId: string, progress: GameStateData): void {
-  writeGame(gameId, { progress });
+export function writeProgress(
+  gameId: string,
+  progress: GameStateData,
+): UserData {
+  return writeGame(gameId, { progress });
 }
 
-export function clearProgress(gameId: string): void {
-  writeGame(gameId, { progress: null });
+export function clearProgress(gameId: string): UserData {
+  return writeGame(gameId, { progress: null });
 }
 
 // Стирает прогресс во всех играх, не трогая собранные концовки. Нужно
