@@ -5,12 +5,14 @@ import { EndingView } from "../components/game/EndingView";
 import { SceneView } from "../components/game/SceneView";
 import { StatsBar } from "../components/game/StatsBar";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
+import { useGameActions } from "../hooks/useGameActions";
 import { useGame } from "../state/useGame";
-import { gamePath, restartGame } from "../utils/common";
+import { gamePath } from "../utils/common";
 
 export function GamePage() {
   const navigate = useNavigate();
-  const { scene, resetGame, gameId, gameData, image } = useGame();
+  const { scene, gameId, gameData, image } = useGame();
+  const { restart } = useGameActions();
 
   useDocumentTitle(`${scene.title} — ${gameData.meta.title}`);
 
@@ -24,7 +26,7 @@ export function GamePage() {
         image={image}
         title={scene.title}
         text={scene.text}
-        onRestart={() => restartGame(resetGame, navigate, gameId)}
+        onRestart={restart}
         onChapterSelect={() => navigate(gamePath(gameId, "chapters"))}
       />
     );

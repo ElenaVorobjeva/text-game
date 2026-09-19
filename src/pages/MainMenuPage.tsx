@@ -5,11 +5,13 @@ import { Heading } from "../components/base/Heading";
 import { Main } from "../components/base/Main";
 import { Row } from "../components/base/Row";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
+import { useGameActions } from "../hooks/useGameActions";
 import { useGame } from "../state/useGame";
-import { gamePath, startGame } from "../utils/common";
+import { gamePath } from "../utils/common";
 
 export function MainMenuPage() {
-  const { hasSave, startNewGame, continueGame, gameId, gameData } = useGame();
+  const { hasSave, continueGame, gameId, gameData } = useGame();
+  const { start } = useGameActions();
   const navigate = useNavigate();
 
   useDocumentTitle(gameData.meta.title);
@@ -26,13 +28,7 @@ export function MainMenuPage() {
 
       <Row>
         {!hasSave && (
-          <Button
-            size="lg"
-            width="fullOnMobile"
-            onClick={() => {
-              startGame(startNewGame, navigate, gameId);
-            }}
-          >
+          <Button size="lg" width="fullOnMobile" onClick={start}>
             Старт
           </Button>
         )}
@@ -50,13 +46,7 @@ export function MainMenuPage() {
               Продолжить
             </Button>
 
-            <Button
-              size="lg"
-              width="fullOnMobile"
-              onClick={() => {
-                startGame(startNewGame, navigate, gameId);
-              }}
-            >
+            <Button size="lg" width="fullOnMobile" onClick={start}>
               Начать сначала
             </Button>
 

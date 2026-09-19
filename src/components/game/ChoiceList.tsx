@@ -1,21 +1,16 @@
 import { useNavigate } from "react-router";
 
+import { useGameActions } from "../../hooks/useGameActions";
 import { useGame } from "../../state/useGame";
-import { gamePath, startGame } from "../../utils/common";
+import { gamePath } from "../../utils/common";
 import { Button } from "../base/Button";
 import { Row } from "../base/Row";
 
 export function ChoiceList() {
   const navigate = useNavigate();
-  const {
-    canEnterChapter,
-    chooseChapter,
-    startNewGame,
-    choose,
-    scene,
-    choices,
-    gameId,
-  } = useGame();
+  const { start } = useGameActions();
+  const { canEnterChapter, chooseChapter, choose, scene, choices, gameId } =
+    useGame();
 
   if (choices.length === 0) {
     const currentChapterId = scene.chapter;
@@ -39,13 +34,7 @@ export function ChoiceList() {
               Начать главу сначала
             </Button>
           )}
-          <Button
-            size="sm"
-            width="fullOnMobile"
-            onClick={() => {
-              startGame(startNewGame, navigate, gameId);
-            }}
-          >
+          <Button size="sm" width="fullOnMobile" onClick={start}>
             Начать игру сначала
           </Button>
 

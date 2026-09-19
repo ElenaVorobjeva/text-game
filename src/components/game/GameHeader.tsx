@@ -1,9 +1,10 @@
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
 
 import GitHubLogo from "../../assets/images/github-logo.svg?react";
+import { useGameActions } from "../../hooks/useGameActions";
 import { useGame } from "../../state/useGame";
 import { useUser } from "../../state/useUser";
-import { gamePath, restartGame } from "../../utils/common";
+import { gamePath } from "../../utils/common";
 import { Link } from "../base/Link";
 
 // Шапка игровых экранов. На меню игры (промо) сворачивается до одной ссылки
@@ -11,9 +12,9 @@ import { Link } from "../base/Link";
 // меню. Навигацию и сброс делает сама через useNavigate/useGame. Статы здесь
 // не живут: они видны только во время игры, над сценой (см. GamePage).
 export function GameHeader() {
-  const navigate = useNavigate();
   const location = useLocation();
-  const { resetGame, gameId } = useGame();
+  const { gameId } = useGame();
+  const { restart } = useGameActions();
   const { hasCompletedEndings } = useUser();
 
   const isMenu = location.pathname === gamePath(gameId);
@@ -40,11 +41,7 @@ export function GameHeader() {
               Выбор главы
             </Link>
             {/* Действие, а не переход, — поэтому кнопка. */}
-            <Link
-              type="button"
-              color="gray"
-              onClick={() => restartGame(resetGame, navigate, gameId)}
-            >
+            <Link type="button" color="gray" onClick={restart}>
               Начать заново
             </Link>
             {hasCompletedEndings(gameId) && (

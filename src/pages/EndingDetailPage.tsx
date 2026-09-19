@@ -1,4 +1,4 @@
-import { Navigate, useLocation, useNavigate, useParams } from "react-router";
+import { Navigate, useParams } from "react-router";
 
 import { Button } from "../components/base/Button";
 import { Description } from "../components/base/Description";
@@ -6,16 +6,16 @@ import { Heading } from "../components/base/Heading";
 import { Image } from "../components/base/Image";
 import { Main } from "../components/base/Main";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
+import { useGoBack } from "../hooks/useGoBack";
 import { useGame } from "../state/useGame";
 import { useUser } from "../state/useUser";
-import { gamePath, goBack } from "../utils/common";
+import { gamePath } from "../utils/common";
 
 export function EndingDetailPage() {
   const { gameId, gameData } = useGame();
   const { isEndingCompleted } = useUser();
   const { endingType } = useParams();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const goBack = useGoBack(gamePath(gameId, "endings"));
 
   const ending = gameData.scenes.find(
     (scene) => scene.isEnding && scene.endingType === endingType,
@@ -47,10 +47,7 @@ export function EndingDetailPage() {
         делает push, а «Назад» на списке — pop, и получается зацикливание между
         списком и деталью). Запасной путь — список, если истории нет (прямой заход).
       */}
-      <Button
-        width="fullOnMobile"
-        onClick={() => goBack(navigate, location, gamePath(gameId, "endings"))}
-      >
+      <Button width="fullOnMobile" onClick={goBack}>
         Назад
       </Button>
     </Main>
