@@ -19,10 +19,10 @@ export function GameHeader() {
   const isMenu = location.pathname === gamePath(gameId);
 
   return (
-    <header className="border-grey-60 flex flex-none flex-wrap justify-between gap-x-7 gap-y-2 border-b px-6 py-3.5 lg:px-10">
+    <header className="border-grey-60 flex flex-none flex-wrap justify-between gap-x-7 gap-y-3 border-b px-6 py-3.5 lg:px-10">
       <nav
         aria-label="Навигация по игре"
-        className="flex flex-wrap justify-center gap-x-7 gap-y-2"
+        className="flex flex-wrap justify-center gap-x-7 gap-y-3"
       >
         {isMenu ? (
           <Link color="gray" href="/">

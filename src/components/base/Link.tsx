@@ -35,7 +35,8 @@ export function Link(props: Props) {
   const { size = "md", color = "white", children } = props;
 
   const linkStyles = cn(
-    "-mx-2.5 -my-1.5 cursor-pointer rounded-sm px-2.5 py-1.5 font-medium transition duration-150",
+    // py-2 при -my-2: область нажатия около 34px, а вёрстка не смещается.
+    "focus-ring -mx-2.5 -my-2 cursor-pointer rounded-sm px-2.5 py-2 font-medium transition duration-150",
     SIZES[size],
     COLORS[color],
   );

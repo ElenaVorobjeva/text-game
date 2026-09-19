@@ -30,7 +30,7 @@ export function Card({ index, label, image, closedLabel, onClick }: Props) {
     >
       <button
         type="button"
-        className="flex flex-col items-center transition duration-150 enabled:cursor-pointer enabled:hover:-translate-y-[3px]"
+        className="focus-ring flex flex-col items-center transition duration-150 enabled:cursor-pointer enabled:hover:-translate-y-[3px]"
         disabled={isClosed}
         // «???» на слух — набор знаков вопроса, поэтому имя задаём явно, а
         // видимую подпись прячем от скринридера.

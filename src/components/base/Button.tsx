@@ -57,7 +57,7 @@ export function Button({
     VARIANTS[variant][color],
     SIZES[size],
     WIDTHS[width],
-    "cursor-pointer transition duration-150 will-change-transform",
+    "focus-ring cursor-pointer transition duration-150 will-change-transform",
   );
 
   return (
