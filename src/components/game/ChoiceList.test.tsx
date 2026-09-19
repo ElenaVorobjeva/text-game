@@ -4,8 +4,8 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, useLocation } from "react-router";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { gameData } from "../../engine/bundledEngine";
 import type { GameContextValue } from "../../state/gameContext";
+import { quietGoodLife } from "../../test/fixtures";
 
 import { ChoiceList } from "./ChoiceList";
 
@@ -18,15 +18,15 @@ vi.mock("../../state/useGame", () => ({ useGame: useGameMock }));
 
 // Настоящая сцена главы: её chapter — валидный id, который компонент передаёт
 // в chooseChapter.
-const chapterScene = gameData.scenes.find((scene) => !scene.isEnding)!;
+const chapterScene = quietGoodLife.scenes.find((scene) => !scene.isEnding)!;
 
 // Полный контекст с пустым списком вариантов; действия — шпионы, доступность
 // главы задаётся тестом. Разворачивать реальный провайдер не нужно: проверяем
 // именно ветку choices.length === 0.
 function makeGame(overrides: Partial<GameContextValue> = {}): GameContextValue {
   return {
-    gameId: gameData.meta.id,
-    gameData: gameData,
+    gameId: quietGoodLife.meta.id,
+    gameData: quietGoodLife,
     image: "",
     gameState: {} as GameContextValue["gameState"],
     scene: chapterScene,
@@ -128,7 +128,7 @@ describe("ChoiceList with no available actions", () => {
     );
 
     expect(screen.getByTestId("path").textContent).toBe(
-      `/${gameData.meta.id}/chapters`,
+      `/${quietGoodLife.meta.id}/chapters`,
     );
   });
 });

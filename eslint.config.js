@@ -34,6 +34,26 @@ export default defineConfig([
     },
   },
   {
+    // Фикстуры для тестов не должны попасть в бандл: код приложения не вправе
+    // их импортировать. Тестам (и самой папке test) можно.
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/test/**", "src/**/*.test.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["**/test", "**/test/*"],
+              message:
+                "Тестовые фикстуры нельзя импортировать из кода приложения.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ["src/**/*.{ts,tsx}"],
     plugins: { "import-x": importX },
     rules: {

@@ -5,7 +5,7 @@ import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 import { App } from "../app/App";
-import { createInitialGameState, gameData } from "../engine/bundledEngine";
+import { engine, quietGoodLife } from "../test/fixtures";
 import { addCompletedEnding, loadUser, USER_KEY } from "../user/userStorage";
 import { saveGame } from "../utils/saveLoad";
 
@@ -17,13 +17,15 @@ import { UserProvider } from "./userProvider";
 // сессии, и запись из соседней вкладки.
 
 function isEndingId(id: string) {
-  return gameData.scenes.some((scene) => scene.id === id && scene.isEnding);
+  return quietGoodLife.scenes.some(
+    (scene) => scene.id === id && scene.isEnding,
+  );
 }
 
 // Финальная развилка и её безусловный вариант: единственный путь к концовке,
 // доступный при любых характеристиках. Всё берётся из данных — id сцен и тексты
-// вариантов живут только в gameData.json, дублировать их в тесте нельзя.
-const finalScene = gameData.scenes.find((scene) =>
+// вариантов живут только в quietGoodLife.json, дублировать их в тесте нельзя.
+const finalScene = quietGoodLife.scenes.find((scene) =>
   scene.choices.some(
     (choice) => !choice.conditions && isEndingId(choice.nextSceneId),
   ),
@@ -33,12 +35,12 @@ const finalChoice = finalScene.choices.find(
   (choice) => !choice.conditions && isEndingId(choice.nextSceneId),
 )!;
 
-const ending = gameData.scenes.find(
+const ending = quietGoodLife.scenes.find(
   (scene) => scene.id === finalChoice.nextSceneId,
 )!;
 
 const endingType = ending.endingType!;
-const GAME_ID = gameData.meta.id;
+const GAME_ID = quietGoodLife.meta.id;
 
 // Заголовок страницы концовки: «Концовка:» — это подпись из UI, в данных её нет.
 const ENDING_HEADING = `Концовка: ${ending.title}`;
@@ -59,8 +61,8 @@ function renderAt(path: string) {
 
 // Сохранение на шаг до концовки: дальше один клик по безусловному варианту.
 function saveBeforeEnding() {
-  saveGame(gameData.meta.id, {
-    ...createInitialGameState(),
+  saveGame(quietGoodLife.meta.id, {
+    ...engine.createInitialGameState(),
     currentSceneId: finalScene.id,
   });
 }
@@ -115,7 +117,7 @@ describe("endings completed during the session", () => {
 
 describe("endings from previous sessions", () => {
   test("an ending saved earlier is available right after mount", async () => {
-    addCompletedEnding(gameData.meta.id, endingType);
+    addCompletedEnding(quietGoodLife.meta.id, endingType);
 
     renderAt(`/${GAME_ID}/endings/${endingType}`);
 
@@ -141,7 +143,7 @@ describe("profile written by another tab", () => {
 
     // Соседняя вкладка дописала концовку. Событие storage шлём руками: браузер
     // рассылает его только в другие вкладки, а jsdom — вообще не рассылает.
-    addCompletedEnding(gameData.meta.id, endingType);
+    addCompletedEnding(quietGoodLife.meta.id, endingType);
     act(() => {
       window.dispatchEvent(new StorageEvent("storage", { key: USER_KEY }));
     });
@@ -154,7 +156,7 @@ describe("profile written by another tab", () => {
   test("an unrelated storage key is ignored", async () => {
     renderAt(`/${GAME_ID}/chapters`);
 
-    addCompletedEnding(gameData.meta.id, endingType);
+    addCompletedEnding(quietGoodLife.meta.id, endingType);
     act(() => {
       window.dispatchEvent(
         new StorageEvent("storage", { key: "unrelated-key" }),

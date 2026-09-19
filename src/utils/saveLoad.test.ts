@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { gameData } from "../engine/bundledEngine";
 import { createGameEngine } from "../engine/gameEngine";
+import { quietGoodLife } from "../test/fixtures";
 import type { GameData, GameStateData } from "../types/game";
 import { loadUser, USER_KEY, type UserData } from "../user/userStorage";
 
@@ -31,7 +31,7 @@ const GAME = "quiet_good_life";
 const OTHER = "another_game";
 
 // Движок вшитой игры — им валидируется загрузка в большинстве тестов.
-const engine = createGameEngine(gameData);
+const engine = createGameEngine(quietGoodLife);
 
 // Вторая игра со своей сценой — для проверки, что loadGame валидирует по
 // переданному движку, а не по вшитому.
@@ -211,7 +211,7 @@ describe("loadGame: malformed progress", () => {
 
 describe("loadGame: content drift", () => {
   test("refuses a save pointing at a scene that no longer exists", () => {
-    // Сцену переименовали в gameData.json, а сохранение осталось старым.
+    // Сцену переименовали в quietGoodLife.json, а сохранение осталось старым.
     // Без этой проверки getSceneById падает прямо в рендере — белый экран.
     saveGame(GAME, makeState({ currentSceneId: "chapter1_scene_removed" }));
 

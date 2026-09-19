@@ -4,12 +4,8 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-import {
-  createInitialGameState,
-  gameData,
-  getCurrentScene,
-} from "../engine/bundledEngine";
 import { UserProvider } from "../state/userProvider";
+import { engine, quietGoodLife } from "../test/fixtures";
 import { loadUser } from "../user/userStorage";
 import { saveGame } from "../utils/saveLoad";
 
@@ -19,7 +15,7 @@ import { App } from "./App";
 // (MemoryRouter). GameProvider монтирует сам App (через GameRoute), поэтому
 // разворачиваем только UserProvider.
 
-const GAME_ID = gameData.meta.id;
+const GAME_ID = quietGoodLife.meta.id;
 
 // Маркер экрана — уникальный текст, по которому тест узнаёт, что показан именно
 // он. Один экран — одно значение, все проверки ссылаются сюда.
@@ -29,7 +25,7 @@ const SCREEN = {
   chapters: "Выбор главы", // заголовок экрана выбора глав
   // Маркер игры берётся из данных, а не хардкодится: title стартовой сцены
   // живёт в quietGoodLife.json, и это его единственный источник правды.
-  game: getCurrentScene(createInitialGameState()).title,
+  game: engine.getCurrentScene(engine.createInitialGameState()).title,
 } as const;
 
 // Тексты кнопок, по которым тест кликает (действия, а не маркеры экранов).
@@ -69,7 +65,9 @@ describe("routing: game catalog", () => {
     renderAt("/");
 
     await user.click(
-      screen.getByRole("button", { name: new RegExp(gameData.meta.title) }),
+      screen.getByRole("button", {
+        name: new RegExp(quietGoodLife.meta.title),
+      }),
     );
 
     expect(
@@ -122,7 +120,7 @@ describe("routing: game screen guard", () => {
   });
 
   test("the game screen with a save shows the game", () => {
-    saveGame(GAME_ID, createInitialGameState());
+    saveGame(GAME_ID, engine.createInitialGameState());
 
     renderAt(`/${GAME_ID}/game`);
 
@@ -158,7 +156,7 @@ describe("routing: navigation from the menu", () => {
   });
 
   test("Выбрать главу opens the chapter select screen", async () => {
-    saveGame(GAME_ID, createInitialGameState());
+    saveGame(GAME_ID, engine.createInitialGameState());
     const user = userEvent.setup();
     renderAt(`/${GAME_ID}`);
 
@@ -174,7 +172,7 @@ describe("routing: navigation from the menu", () => {
 
 describe("routing: back button on the chapter screen", () => {
   test("goes back through history when there is somewhere to return to", async () => {
-    saveGame(GAME_ID, createInitialGameState());
+    saveGame(GAME_ID, engine.createInitialGameState());
     const user = userEvent.setup();
     // Пришли на экран глав из игры — в истории есть предыдущая запись.
     renderAt(`/${GAME_ID}/chapters`, [
