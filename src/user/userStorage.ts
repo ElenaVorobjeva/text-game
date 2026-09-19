@@ -12,7 +12,9 @@
 import type { GameStateData } from "../types/game";
 
 export const USER_KEY = "quiet-good-life-user";
-export const SERVER_LATENCY_MS = 3000;
+// Задержка нужна только чтобы увидеть лоадер при разработке: в продакшене
+// игрок не должен ждать три секунды ради чтения из localStorage.
+export const SERVER_LATENCY_MS = import.meta.env.DEV ? 3000 : 0;
 
 export type UserGameData = {
   /** endingType концовок, открытых пользователем в этой игре. */
