@@ -3,7 +3,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, test } from "vitest";
 
-import { gameData as quietGoodLife } from "../engine/gameEngine";
+import { gameData as quietGoodLife } from "../engine/bundledEngine";
 import type { GameData } from "../types/game";
 import type { UserData } from "../user/userStorage";
 

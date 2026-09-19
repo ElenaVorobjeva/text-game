@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { createGameEngine, gameData } from "../engine/gameEngine";
+import { gameData } from "../engine/bundledEngine";
+import { createGameEngine } from "../engine/gameEngine";
 import type { GameData, GameStateData } from "../types/game";
 import { loadUser, USER_KEY, type UserData } from "../user/userStorage";
 

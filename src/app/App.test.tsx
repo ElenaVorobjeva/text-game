@@ -8,7 +8,7 @@ import {
   createInitialGameState,
   gameData,
   getCurrentScene,
-} from "../engine/gameEngine";
+} from "../engine/bundledEngine";
 import { UserProvider } from "../state/userProvider";
 import { loadUser } from "../user/userStorage";
 import { saveGame } from "../utils/saveLoad";

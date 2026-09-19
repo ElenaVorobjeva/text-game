@@ -1,4 +1,3 @@
-import rawGameData from "../data/gameData.json";
 import type {
   Chapter,
   ChapterSnapshot,
@@ -10,19 +9,6 @@ import type {
 
 import { areConditionsMet } from "./conditions";
 import { applyEffects } from "./effects";
-
-export const gameData = rawGameData as GameData;
-
-const defaultEngine = createGameEngine(gameData);
-export const {
-  getSceneById,
-  getCurrentScene,
-  sceneExists,
-  getChapterById,
-  getSceneImage,
-  makeChoice,
-  createInitialGameState,
-} = defaultEngine;
 
 // С какой главы начинается игра: она открыта и имеет снимок с самого старта.
 export const FIRST_CHAPTER = 1;
@@ -68,8 +54,7 @@ export function createGameEngine(data: GameData) {
     }
 
     // Сцена игры: изображение хранится в данных о соответствующей главе
-    const chapter = getChapterById(scene.chapter);
-    return chapter && chapter.image ? chapter.image : "";
+    return getChapterById(scene.chapter).image || "";
   }
 
   function getCurrentScene(state: GameStateData): Scene {
